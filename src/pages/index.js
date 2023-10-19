@@ -8,7 +8,7 @@ const now = new Date();
 const Page = () => (
   <>
     <Head>
-      <title>Overview | Devias Kit</title>
+      <title>Overview | Brow Lodge</title>
     </Head>
     <Box
       component="main"
