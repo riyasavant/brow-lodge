@@ -24,11 +24,12 @@ const Form = ({ title, redirectLink }) => {
           display: "flex",
           justifyContent: "space-between",
           flexDirection: "row",
+          alignItems: "center",
         }}
       >
         <Stack>
           <Typography variant="h8">{title}</Typography>
-          <Typography
+          {/* <Typography
             sx={{
               fontSize: "13px",
               color: "#6366F1",
@@ -37,7 +38,7 @@ const Form = ({ title, redirectLink }) => {
             }}
           >
             20/10/2023
-          </Typography>
+          </Typography> */}
         </Stack>
         <Button onClick={handleView}>View</Button>
       </Box>

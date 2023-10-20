@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
 import Head from "next/head";
-import { subDays, subHours } from "date-fns";
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import {
@@ -15,19 +14,14 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import { CustomersTable } from "src/sections/customer/customers-table";
 import { applyPagination } from "src/utils/apply-pagination";
 import { getClients } from "src/api/lib/client";
-
-const mock = {
-  preferredName: "Riya",
-  email: "riya@gmail.com",
-  gender: "Female",
-};
+import { useRouter } from "next/router";
 
 const useCustomers = (page, rowsPerPage) => {
-  const [response, setResponse] = useState({ data: [mock], total: 1 });
+  const [response, setResponse] = useState({ data: [], total: 0 });
 
   useEffect(() => {
     getClients()
-      .then((res) => setResponse(res))
+      .then((res) => setResponse(res.data))
       .catch(() => {});
   }, []);
 
@@ -43,6 +37,7 @@ const Page = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { customers, total } = useCustomers(page, rowsPerPage);
+  const router = useRouter();
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -90,6 +85,7 @@ const Page = () => {
                     </SvgIcon>
                   }
                   variant="contained"
+                  onClick={() => router.push("/customers/add")}
                 >
                   Add
                 </Button>
