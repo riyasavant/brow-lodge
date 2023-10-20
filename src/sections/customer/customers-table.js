@@ -15,6 +15,8 @@ import {
 import { Scrollbar } from "src/components/scrollbar";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import DeleteModal from "src/components/DeleteModal";
+import { useState } from "react";
 
 export const CustomersTable = (props) => {
   const {
@@ -25,6 +27,8 @@ export const CustomersTable = (props) => {
     page = 0,
     rowsPerPage = 0,
   } = props;
+
+  const [open, setOpen] = useState(false);
 
   return (
     <Card>
@@ -51,12 +55,12 @@ export const CustomersTable = (props) => {
                     <TableCell>{customer.email}</TableCell>
                     <TableCell>{customer.gender}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={() => null} size="medium">
+                      <IconButton onClick={() => setOpen(true)} size="medium">
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
-                      <IconButton onClick={() => null} size="medium">
+                      <IconButton onClick={() => setOpen(true)} size="medium">
                         <SvgIcon fontSize="small">
                           <TrashIcon />
                         </SvgIcon>
@@ -78,6 +82,7 @@ export const CustomersTable = (props) => {
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
       />
+      <DeleteModal open={open} onClose={() => setOpen(false)} />
     </Card>
   );
 };
