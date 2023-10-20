@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 import { styled } from "@mui/material/styles";
 // import { withAuthGuard } from 'src/hocs/with-auth-guard';
 import { SideNav } from "./side-nav";
-import { TopNav } from "./top-nav";
+import NavBar from "src/components/NavBar";
 import { withAuthGuard } from "src/auth/withAuthGuard";
 
 const SIDE_NAV_WIDTH = 280;
@@ -45,7 +45,7 @@ export const Layout = withAuthGuard((props) => {
 
   return (
     <>
-      <TopNav />
+      <NavBar onNavOpen={() => setOpenNav(true)} />
       <SideNav onClose={() => setOpenNav(false)} open={openNav} />
       <LayoutRoot>
         <LayoutContainer>{children}</LayoutContainer>

@@ -9,16 +9,18 @@ import {
   Popover,
   Typography,
 } from "@mui/material";
+import { useAuth } from "src/auth/useAuth";
 
-export const AccountPopover = (props) => {
+const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
+  const auth = useAuth();
 
   const handleSignOut = useCallback(() => {
     onClose?.();
-    // auth.signOut();
+    auth.logout();
     router.push("/auth/login");
-  }, [onClose, router]);
+  }, [onClose, router, auth]);
 
   return (
     <Popover
@@ -64,3 +66,5 @@ AccountPopover.propTypes = {
   onClose: PropTypes.func,
   open: PropTypes.bool.isRequired,
 };
+
+export default AccountPopover;
