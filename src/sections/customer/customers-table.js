@@ -12,11 +12,12 @@ import {
   IconButton,
   SvgIcon,
 } from "@mui/material";
-import { Scrollbar } from "src/components/scrollbar";
+import { Scrollbar } from "src/components/Scrollbar";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
 import DeleteModal from "src/components/DeleteModal";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 export const CustomersTable = (props) => {
   const {
@@ -27,6 +28,7 @@ export const CustomersTable = (props) => {
     page = 0,
     rowsPerPage = 0,
   } = props;
+  const router = useRouter();
 
   const [open, setOpen] = useState(false);
 
@@ -55,7 +57,10 @@ export const CustomersTable = (props) => {
                     <TableCell>{customer.email}</TableCell>
                     <TableCell>{customer.gender}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={() => setOpen(true)} size="medium">
+                      <IconButton
+                        onClick={() => router.push(`/customers/${customer.id}`)}
+                        size="medium"
+                      >
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>

@@ -15,9 +15,10 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { createClient } from "src/api/lib/client";
+import { updateClient, getClientProfileById } from "src/api/lib/client";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const gender = [
   {
@@ -36,14 +37,33 @@ const gender = [
 
 const Page = () => {
   const router = useRouter();
+  const [data, setData] = useState({
+    firstName: "",
+    lastName: "",
+    preferredName: "",
+    email: "",
+    gender: "Female",
+  });
+
+  useEffect(() => {
+    console.log(router.query.id);
+    getClientProfileById(router.query.id)
+      .then((res) => {
+        const clientData = res.data;
+        setData({
+          firstName: clientData.firstName || "",
+          lastName: clientData.lastName || "",
+          preferredName: clientData.preferredName || "",
+          email: clientData.email || "",
+          gender: clientData.gender || "Female",
+        });
+      })
+      .catch(() => {});
+  }, [router.query.id]);
+
   const formik = useFormik({
-    initialValues: {
-      firstName: "",
-      lastName: "",
-      preferredName: "",
-      email: "",
-      gender: "Female",
-    },
+    initialValues: data,
+    enableReinitialize: true,
     validationSchema: Yup.object({
       email: Yup.string()
         .email("Must be a valid email")
@@ -55,7 +75,7 @@ const Page = () => {
       //   address: Yup.string().required("Address is required"),
     }),
     onSubmit: (values, helpers) => {
-      createClient(values)
+      updateClient(router.query.id, values)
         .then((response) => {
           if (response.status === 200) {
             router.push("/customers");
@@ -70,6 +90,8 @@ const Page = () => {
     },
   });
 
+  console.log(formik);
+
   return (
     <Box
       component="main"
@@ -81,7 +103,7 @@ const Page = () => {
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <div>
-            <Typography variant="h4">Add customer</Typography>
+            <Typography variant="h4">Edit customer</Typography>
           </div>
           <form noValidate onSubmit={formik.handleSubmit}>
             <Card>
@@ -216,7 +238,7 @@ const Page = () => {
               <Divider />
               <CardActions sx={{ justifyContent: "flex-end" }}>
                 <Button variant="contained" type="submit">
-                  Add
+                  Edit
                 </Button>
               </CardActions>
             </Card>

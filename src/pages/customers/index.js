@@ -30,7 +30,7 @@ const useCustomers = (page, rowsPerPage) => {
       customers: applyPagination(response.data, page, rowsPerPage),
       total: response.total,
     };
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, response.data, response.total]);
 };
 
 const Page = () => {
