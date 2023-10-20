@@ -35,7 +35,7 @@ export const items = [
   },
   {
     title: "Forms",
-    path: "/settings",
+    path: "/forms",
     icon: (
       <SvgIcon fontSize="small">
         <FolderMinusIcon />

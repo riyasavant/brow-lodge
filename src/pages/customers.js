@@ -11,12 +11,10 @@ import {
   SvgIcon,
   Typography,
 } from "@mui/material";
-import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
+import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import { CustomersTable } from "src/sections/customer/customers-table";
 import { applyPagination } from "src/utils/apply-pagination";
 import { getClients } from "src/api/lib/client";
-
-const now = new Date();
 
 const mock = {
   preferredName: "Riya",

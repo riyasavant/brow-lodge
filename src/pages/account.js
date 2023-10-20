@@ -6,7 +6,7 @@ import {
   Typography,
   Unstable_Grid2 as Grid,
 } from "@mui/material";
-import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
+import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import { AccountProfileDetails } from "src/sections/account/account-profile-details";
 
 const Page = () => (

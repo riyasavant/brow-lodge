@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
 import Head from "next/head";
-import { subDays, subHours } from "date-fns";
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import {
@@ -11,7 +10,7 @@ import {
   SvgIcon,
   Typography,
 } from "@mui/material";
-import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
+import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import { CustomersTable } from "src/sections/customer/customers-table";
 import { applyPagination } from "src/utils/apply-pagination";
 import { getClients } from "src/api/lib/client";

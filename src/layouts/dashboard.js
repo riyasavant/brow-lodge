@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { styled } from "@mui/material/styles";
-// import { withAuthGuard } from 'src/hocs/with-auth-guard';
-import { SideNav } from "./side-nav";
+import SideNav from "src/components/SideNav";
 import NavBar from "src/components/NavBar";
 import { withAuthGuard } from "src/auth/withAuthGuard";
 

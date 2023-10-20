@@ -1,4 +1,3 @@
-import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import PropTypes from "prop-types";
 import {
@@ -11,12 +10,19 @@ import {
 } from "@mui/material";
 import { Scrollbar } from "src/components/scrollbar";
 import { items } from "./config";
-import { SideNavItem } from "./side-nav-item";
+import SideNavItem from "./Item";
 
-export const SideNav = (props) => {
+const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
+
+  const isItemActive = (currentPath) => {
+    if (currentPath !== "/") {
+      return pathname.startsWith(currentPath);
+    }
+    return pathname === currentPath;
+  };
 
   const content = (
     <Scrollbar
@@ -76,7 +82,7 @@ export const SideNav = (props) => {
             }}
           >
             {items.map((item) => {
-              const active = item.path ? pathname === item.path : false;
+              const active = isItemActive(item.path);
 
               return (
                 <SideNavItem
@@ -140,3 +146,5 @@ SideNav.propTypes = {
   onClose: PropTypes.func,
   open: PropTypes.bool,
 };
+
+export default SideNav;

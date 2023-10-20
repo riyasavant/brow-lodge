@@ -1,25 +1,27 @@
 import Head from "next/head";
-import { Box } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
-import { useAuthContext } from "src/auth/authContext";
-
-const now = new Date();
 
 const Page = () => {
-  const { user } = useAuthContext();
   return (
     <>
       <Head>
-        <title>Overview | Brow Lodge</title>
+        <title>Forms | Brow Lodge</title>
       </Head>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          px: 8,
+          py: 8,
         }}
       >
-        <h1>{`Welcome, ${user?.Staff?.preferredName}`}</h1>
+        <Container maxWidth="xl">
+          <Stack spacing={3}>
+            <Typography variant="h4">
+              Eyelash Extension Consultation Card
+            </Typography>
+          </Stack>
+        </Container>
       </Box>
     </>
   );
