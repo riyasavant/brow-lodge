@@ -3,22 +3,20 @@ import { CacheProvider } from "@emotion/react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { CssBaseline } from "@mui/material";
+import { AuthConsumer, AuthProvider } from "src/auth/authContext";
 import { ThemeProvider } from "@mui/material/styles";
-import { AuthConsumer, AuthProvider } from "src/contexts/auth-context";
 import { createTheme } from "src/theme";
 import { createEmotionCache } from "src/utils/create-emotion-cache";
 import "simplebar-react/dist/simplebar.min.css";
+import Loader from "src/components/loader";
 
 const clientSideEmotionCache = createEmotionCache();
 
-const SplashScreen = () => null;
-
 const App = (props) => {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const { emotionCache = clientSideEmotionCache, Component, pageProps } = props;
+  const theme = createTheme();
 
   const getLayout = Component.getLayout ?? ((page) => page);
-
-  const theme = createTheme();
 
   return (
     <CacheProvider value={emotionCache}>
@@ -33,7 +31,7 @@ const App = (props) => {
             <AuthConsumer>
               {(auth) =>
                 auth.isLoading ? (
-                  <SplashScreen />
+                  <Loader />
                 ) : (
                   getLayout(<Component {...pageProps} />)
                 )

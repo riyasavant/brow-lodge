@@ -1,6 +1,4 @@
-import { useCallback, useState } from "react";
 import Head from "next/head";
-import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,21 +6,35 @@ import {
   Alert,
   Box,
   Button,
-  FormHelperText,
-  Link,
   Stack,
-  Tab,
-  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
-import { useAuth } from "src/hooks/use-auth";
-import { Layout as AuthLayout } from "src/layouts/auth/layout";
+import { useAuth } from "src/auth/useAuth";
+import { doLogin } from "src/api/lib/auth";
+import { parseServerErrorMsg } from "src/utils/axios";
 
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
-  const [method, setMethod] = useState("email");
+
+  const login = async (credentials, helpers) => {
+    doLogin(credentials.email, credentials.password)
+      .then((res) => {
+        console.log(res.status);
+        const { jwt, user } = res;
+        window.sessionStorage.setItem("auth-token", jwt);
+        auth.setLogin(jwt, user);
+        router.push("/");
+      })
+      .catch((err) => {
+        const msg = parseServerErrorMsg(err);
+        helpers.setStatus({ success: false });
+        helpers.setErrors({ submit: msg });
+        helpers.setSubmitting(false);
+      });
+  };
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -34,28 +46,10 @@ const Page = () => {
         .email("Must be a valid email")
         .max(255)
         .required("Email is required"),
-      password: Yup.string().max(255).required("Password is required"),
+      password: Yup.string().max(255).min(6).required("Password is required"),
     }),
-    onSubmit: async (values, helpers) => {
-      try {
-        await auth.signIn(values.email, values.password);
-        router.push("/customers");
-      } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
-      }
-    },
+    onSubmit: login,
   });
-
-  const handleMethodChange = useCallback((event, value) => {
-    setMethod(value);
-  }, []);
-
-  const handleSkip = useCallback(() => {
-    auth.skip();
-    router.push("/");
-  }, [auth, router]);
 
   return (
     <>
@@ -137,7 +131,5 @@ const Page = () => {
     </>
   );
 };
-
-// Page.getLayout = (page) => <AuthLayout>{page}</AuthLayout>;
 
 export default Page;
