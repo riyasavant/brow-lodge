@@ -1,26 +1,29 @@
 import Head from "next/head";
-import { subDays, subHours } from "date-fns";
-import { Box, Container, Unstable_Grid2 as Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
+import { useAuthContext } from "src/auth/authContext";
 
 const now = new Date();
 
-const Page = () => (
-  <>
-    <Head>
-      <title>Overview | Brow Lodge</title>
-    </Head>
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8,
-      }}
-    >
-      Dashboard
-    </Box>
-  </>
-);
+const Page = () => {
+  const { user } = useAuthContext();
+  return (
+    <>
+      <Head>
+        <title>Overview | Brow Lodge</title>
+      </Head>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          px: 8,
+        }}
+      >
+        <h1>{`Welcome, ${user?.Staff?.preferredName}`}</h1>
+      </Box>
+    </>
+  );
+};
 
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 

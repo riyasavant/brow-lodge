@@ -13,6 +13,7 @@ import {
 import { useAuth } from "src/auth/useAuth";
 import { doLogin } from "src/api/lib/auth";
 import { parseServerErrorMsg } from "src/utils/axios";
+import { getUserProfile } from "src/api/lib/auth";
 
 const Page = () => {
   const router = useRouter();
@@ -21,11 +22,19 @@ const Page = () => {
   const login = async (credentials, helpers) => {
     doLogin(credentials.email, credentials.password)
       .then((res) => {
-        console.log(res.status);
-        const { jwt, user } = res;
-        window.sessionStorage.setItem("auth-token", jwt);
-        auth.setLogin(jwt, user);
-        router.push("/");
+        const { jwt, user } = res.data;
+        getUserProfile(jwt)
+          .then((response) => {
+            window.sessionStorage.setItem("auth-token", jwt);
+            window.localStorage.setItem("auth-token", jwt);
+            auth.setLogin(jwt, response.data);
+            router.push("/");
+          })
+          .catch(() => {
+            window.sessionStorage.setItem("auth-token", jwt);
+            auth.setLogin(jwt, user);
+            router.push("/");
+          });
       })
       .catch((err) => {
         const msg = parseServerErrorMsg(err);

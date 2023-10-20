@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import { format } from "date-fns";
 import {
   Box,
   Card,
@@ -10,8 +9,12 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  IconButton,
+  SvgIcon,
 } from "@mui/material";
 import { Scrollbar } from "src/components/scrollbar";
+import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
 
 export const CustomersTable = (props) => {
   const {
@@ -21,7 +24,6 @@ export const CustomersTable = (props) => {
     onRowsPerPageChange,
     page = 0,
     rowsPerPage = 0,
-    selected = [],
   } = props;
 
   return (
@@ -33,30 +35,33 @@ export const CustomersTable = (props) => {
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Signed Up</TableCell>
+                <TableCell>Gender</TableCell>
+                <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {items.map((customer) => {
-                const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, "dd/MM/yyyy");
-
                 return (
-                  <TableRow hover key={customer.id} selected={isSelected}>
+                  <TableRow hover key={customer.id}>
                     <TableCell>
                       <Typography variant="subtitle2">
-                        {customer.name}
+                        {customer.preferredName}
                       </Typography>
                     </TableCell>
                     <TableCell>{customer.email}</TableCell>
-                    <TableCell>
-                      {customer.address.city}, {customer.address.state},{" "}
-                      {customer.address.country}
+                    <TableCell>{customer.gender}</TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={() => null} size="medium">
+                        <SvgIcon fontSize="small">
+                          <PencilIcon />
+                        </SvgIcon>
+                      </IconButton>
+                      <IconButton onClick={() => null} size="medium">
+                        <SvgIcon fontSize="small">
+                          <TrashIcon />
+                        </SvgIcon>
+                      </IconButton>
                     </TableCell>
-                    <TableCell>{customer.phone}</TableCell>
-                    <TableCell>{createdAt}</TableCell>
                   </TableRow>
                 );
               })}

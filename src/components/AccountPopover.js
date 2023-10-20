@@ -10,11 +10,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useAuth } from "src/auth/useAuth";
+import { useAuthContext } from "src/auth/authContext";
 
 const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
   const auth = useAuth();
+  const { user } = useAuthContext();
 
   const handleSignOut = useCallback(() => {
     onClose?.();
@@ -41,7 +43,7 @@ const AccountPopover = (props) => {
       >
         <Typography variant="overline">Account</Typography>
         <Typography color="text.secondary" variant="body2">
-          Anika Visser
+          {`${user.firstName || ""} ${user.lastName || ""}`.trim()}
         </Typography>
       </Box>
       <Divider />
