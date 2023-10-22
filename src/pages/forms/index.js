@@ -31,7 +31,7 @@ const Page = () => {
               <Grid xs={12} md={6}>
                 <Form
                   title="Eyelash Extension Consultation Card"
-                  redirectLink="/forms/eyelash-extension-consultation"
+                  redirectLink="/forms/eyelash-extension"
                 />
               </Grid>
             </Grid>
