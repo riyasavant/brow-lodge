@@ -1,6 +1,5 @@
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Head from "next/head";
-import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import {
   Box,
@@ -11,33 +10,29 @@ import {
   Typography,
 } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
-import { CustomersTable } from "src/sections/customer/customers-table";
-import { applyPagination } from "src/utils/apply-pagination";
-import { getClients } from "src/api/lib/client";
+import { getClients, deleteClient } from "src/api/lib/client";
 import { useRouter } from "next/router";
+import CustomTable from "src/components/Table";
 
-const useCustomers = (page, rowsPerPage) => {
-  const [response, setResponse] = useState({ data: [], total: 0 });
-
-  useEffect(() => {
-    getClients()
-      .then((res) => setResponse(res.data))
-      .catch(() => {});
-  }, []);
-
-  return useMemo(() => {
-    return {
-      customers: applyPagination(response.data, page, rowsPerPage),
-      total: response.total,
-    };
-  }, [page, rowsPerPage, response.data, response.total]);
-};
+const headers = [
+  { key: "preferredName", label: "Name" },
+  { key: "email", label: "Email" },
+  { key: "gender", label: "Gender" },
+];
 
 const Page = () => {
+  const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { customers, total } = useCustomers(page, rowsPerPage);
   const router = useRouter();
+
+  useEffect(() => {
+    getClients(page, rowsPerPage)
+      .then((res) => {
+        setResponse(res.data);
+      })
+      .catch(() => {});
+  }, [rowsPerPage, page]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -46,6 +41,22 @@ const Page = () => {
   const handleRowsPerPageChange = useCallback((event) => {
     setRowsPerPage(event.target.value);
   }, []);
+
+  const onEdit = (id) => {
+    router.push(`/customers/${id}`);
+  };
+
+  const onDelete = (id) => {
+    deleteClient(id)
+      .then((res) => {
+        getClients(page, rowsPerPage)
+          .then((res) => {
+            setResponse(res.data);
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
+  };
 
   return (
     <>
@@ -64,18 +75,6 @@ const Page = () => {
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
                 <Typography variant="h4">Customers</Typography>
-                <Stack alignItems="center" direction="row" spacing={1}>
-                  <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
-                      </SvgIcon>
-                    }
-                  >
-                    Export
-                  </Button>
-                </Stack>
               </Stack>
               <div>
                 <Button
@@ -91,13 +90,16 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            <CustomersTable
-              count={total}
-              items={customers}
+            <CustomTable
+              count={response.total}
+              items={response.data}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
               page={page}
               rowsPerPage={rowsPerPage}
+              headers={headers}
+              onDelete={onDelete}
+              onEdit={onEdit}
             />
           </Stack>
         </Container>

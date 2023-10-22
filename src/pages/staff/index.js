@@ -1,6 +1,5 @@
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Head from "next/head";
-import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import {
   Box,
@@ -11,39 +10,29 @@ import {
   Typography,
 } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
-import { CustomersTable } from "src/sections/customer/customers-table";
-import { applyPagination } from "src/utils/apply-pagination";
-import { getClients } from "src/api/lib/client";
+import { getStaffProfiles, deleteStaff } from "src/api/lib/staff";
+import CustomTable from "src/components/Table";
+import { useRouter } from "next/router";
 
-const now = new Date();
-
-const mock = {
-  preferredName: "Riya",
-  email: "riya@gmail.com",
-  gender: "Female",
-};
-
-const useCustomers = (page, rowsPerPage) => {
-  const [response, setResponse] = useState({ data: [mock], total: 1 });
-
-  useEffect(() => {
-    getClients()
-      .then((res) => setResponse(res))
-      .catch(() => {});
-  }, []);
-
-  return useMemo(() => {
-    return {
-      customers: applyPagination(response.data, page, rowsPerPage),
-      total: response.total,
-    };
-  }, [page, rowsPerPage]);
-};
+const headers = [
+  { key: "preferredName", label: "Name" },
+  { key: "email", label: "Email" },
+  { key: "gender", label: "Gender" },
+];
 
 const Page = () => {
+  const router = useRouter();
+  const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { customers, total } = useCustomers(page, rowsPerPage);
+
+  useEffect(() => {
+    getStaffProfiles(page, rowsPerPage)
+      .then((res) => {
+        setResponse(res.data);
+      })
+      .catch(() => {});
+  }, [rowsPerPage, page]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -52,6 +41,22 @@ const Page = () => {
   const handleRowsPerPageChange = useCallback((event) => {
     setRowsPerPage(event.target.value);
   }, []);
+
+  const onEdit = (id) => {
+    router.push(`/staff/${id}`);
+  };
+
+  const onDelete = (id) => {
+    deleteStaff(id)
+      .then((res) => {
+        getStaffProfiles(page, rowsPerPage)
+          .then((res) => {
+            setResponse(res.data);
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
+  };
 
   return (
     <>
@@ -70,18 +75,6 @@ const Page = () => {
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
                 <Typography variant="h4">Staff</Typography>
-                <Stack alignItems="center" direction="row" spacing={1}>
-                  <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
-                      </SvgIcon>
-                    }
-                  >
-                    Export
-                  </Button>
-                </Stack>
               </Stack>
               <div>
                 <Button
@@ -91,18 +84,22 @@ const Page = () => {
                     </SvgIcon>
                   }
                   variant="contained"
+                  onClick={() => router.push("/staff/add")}
                 >
                   Add
                 </Button>
               </div>
             </Stack>
-            <CustomersTable
-              count={total}
-              items={customers}
+            <CustomTable
+              count={response.total}
+              items={response.data}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
               page={page}
               rowsPerPage={rowsPerPage}
+              headers={headers}
+              onDelete={onDelete}
+              onEdit={onEdit}
             />
           </Stack>
         </Container>

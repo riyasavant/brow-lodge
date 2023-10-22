@@ -1,7 +1,9 @@
 import axios from "src/api/config";
 
-export const getClients = () => {
-  return axios.get("/client-profile?sort=preferredName:ASC");
+export const getClients = (page, items) => {
+  return axios.get(
+    `/client-profile?sort=preferredName:ASC&page=${page + 1}&pageSize=${items}`
+  );
 };
 
 export const getClientProfileById = (id) => {
@@ -13,7 +15,7 @@ export const createClient = (payload) => {
 };
 
 export const deleteClient = (id) => {
-  return axios.delete(`/client-profile/${id}`, payload);
+  return axios.delete(`/client-profile/${id}`);
 };
 
 export const updateClient = (id, payload) => {
