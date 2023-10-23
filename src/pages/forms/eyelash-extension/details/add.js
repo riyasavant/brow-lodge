@@ -20,9 +20,9 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
 import { createEyelashExtensionDetail } from "src/api/lib/forms/details";
+import Breadcrumb from "src/components/Breadcrumb";
 
 const Page = () => {
   const [formDate, setFormDate] = useState(new Date());
@@ -70,23 +70,41 @@ const Page = () => {
     },
   });
 
+  const breadcrumbItems = [
+    { label: "All Forms", isActive: false, link: "/forms" },
+    {
+      label: "Eyelash Extension",
+      isActive: false,
+      link: "/forms/eyelash-extension",
+    },
+    {
+      label: "Details",
+      isActive: false,
+      link: `/forms/eyelash-extension/details?id=${router.query.id}&name=${router.query.name}`,
+    },
+    { label: "Add", isActive: true },
+  ];
+
   return (
     <Box
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8,
+        py: 4,
       }}
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
-          <Stack spacing={2}>
-            <Typography variant="h6">
-              Add Eyelash Extension Consultation Card Details
-            </Typography>
-            <Typography variant="h8" color="primary" fontWeight="bold">
-              {`Client: ${router.query.name}`}
-            </Typography>
+          <Stack spacing={3}>
+            <Breadcrumb items={breadcrumbItems} />
+            <Stack spacing={2}>
+              <Typography variant="h6">
+                Add Eyelash Extension Consultation Card Details
+              </Typography>
+              <Typography variant="h8" color="primary" fontWeight="bold">
+                {`Client: ${router.query.name}`}
+              </Typography>
+            </Stack>
           </Stack>
           <form noValidate onSubmit={formik.handleSubmit}>
             <Card>

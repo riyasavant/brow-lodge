@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { getEyelashExtensionEntries } from "src/api/lib/forms/eyelash-extension";
 import dayjs from "dayjs";
 import { deleteEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension";
+import Breadcrumb from "src/components/Breadcrumb";
 
 const headers = [
   { key: "date", label: "Date" },
@@ -75,6 +76,11 @@ const Page = () => {
       .catch(() => {});
   };
 
+  const breadcrumbItems = [
+    { label: "All Forms", isActive: false, link: "/forms" },
+    { label: "Eyelash Extension", isActive: true, link: "" },
+  ];
+
   return (
     <>
       <Head>
@@ -84,13 +90,19 @@ const Page = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8,
+          py: 4,
         }}
       >
         <Container maxWidth="xl">
           <Stack spacing={3}>
-            <Stack direction="row" justifyContent="space-between" spacing={4}>
-              <Stack spacing={1}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="flex-end"
+              spacing={4}
+            >
+              <Stack spacing={4}>
+                <Breadcrumb items={breadcrumbItems} />
                 <Typography variant="h6">
                   Eyelash Extension Consultation Card
                 </Typography>

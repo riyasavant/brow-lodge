@@ -3,8 +3,8 @@ import Bars3Icon from "@heroicons/react/24/solid/Bars3Icon";
 import UserIcon from "@heroicons/react/24/solid/UserIcon";
 import { Box, IconButton, Stack, SvgIcon, useMediaQuery } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { usePopover } from "src/hooks/use-popover";
-import AccountPopover from "./AccountPopover";
+import { usePopover } from "src/components/AccountPopover/usePopover";
+import AccountPopover from "src/components/AccountPopover";
 
 const SIDE_NAV_WIDTH = 280;
 const TOP_NAV_HEIGHT = 64;

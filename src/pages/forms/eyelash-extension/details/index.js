@@ -17,6 +17,7 @@ import {
   getEyelashExtensionDetails,
   deleteEyelashExtensionDetail,
 } from "src/api/lib/forms/details";
+import Breadcrumb from "src/components/Breadcrumb";
 
 const headers = [
   { key: "date", label: "Date" },
@@ -70,6 +71,16 @@ const Page = () => {
     );
   };
 
+  const breadcrumbItems = [
+    { label: "All Forms", isActive: false, link: "/forms" },
+    {
+      label: "Eyelash Extension",
+      isActive: false,
+      link: "/forms/eyelash-extension",
+    },
+    { label: "Details", isActive: true },
+  ];
+
   const onDelete = (id) => {
     deleteEyelashExtensionDetail(id)
       .then(() => {
@@ -95,19 +106,27 @@ const Page = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8,
+          py: 4,
         }}
       >
         <Container maxWidth="xl">
           <Stack spacing={3}>
-            <Stack direction="row" justifyContent="space-between" spacing={4}>
-              <Stack spacing={1}>
-                <Typography variant="h6">
-                  Eyelash Extension Consultation Card Details
-                </Typography>
-                <Typography variant="h8" color="primary" fontWeight="bold">
-                  {`Client: ${router.query.name}`}
-                </Typography>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="flex-end"
+              spacing={4}
+            >
+              <Stack spacing={3}>
+                <Breadcrumb items={breadcrumbItems} />
+                <Stack spacing={1}>
+                  <Typography variant="h6">
+                    Eyelash Extension Consultation Card Details
+                  </Typography>
+                  <Typography variant="h8" color="primary" fontWeight="bold">
+                    {`Client: ${router.query.name}`}
+                  </Typography>
+                </Stack>
               </Stack>
               <div>
                 <Button
@@ -137,7 +156,6 @@ const Page = () => {
               headers={headers}
               onDelete={onDelete}
               onEdit={onEdit}
-              isRowClickable
             />
           </Stack>
         </Container>

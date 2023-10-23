@@ -34,6 +34,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
 import { getClients } from "src/api/lib/client";
+import Breadcrumb from "src/components/Breadcrumb";
 
 const Page = () => {
   const [formDate, setFormDate] = useState(new Date());
@@ -131,16 +132,27 @@ const Page = () => {
       .catch(() => {});
   }, [router.query.id]);
 
+  const breadcrumbItems = [
+    { label: "All Forms", isActive: false, link: "/forms" },
+    {
+      label: "Eyelash Extension",
+      isActive: false,
+      link: "/forms/eyelash-extension",
+    },
+    { label: "Edit", isActive: true, link: "" },
+  ];
+
   return (
     <Box
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8,
+        py: 4,
       }}
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
+          <Breadcrumb items={breadcrumbItems} />
           <div>
             <Typography variant="h6">
               Add Eyelash Extension Consultation Card

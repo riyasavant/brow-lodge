@@ -16,7 +16,7 @@ const Page = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          px: 8,
+          px: 4,
         }}
       >
         <h1>{`Welcome, ${user?.Staff?.preferredName}`}</h1>

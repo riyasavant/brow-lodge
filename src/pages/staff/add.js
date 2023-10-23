@@ -19,6 +19,7 @@ import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { createStaff } from "src/api/lib/staff";
 import { useState } from "react";
+import Breadcrumb from "src/components/Breadcrumb";
 
 const gender = [
   {
@@ -141,16 +142,22 @@ const Page = () => {
     formik.handleChange(e);
   };
 
+  const breadcrumbItems = [
+    { label: "Staff", isActive: false, link: "/staff" },
+    { label: "Add staff", isActive: true, link: "" },
+  ];
+
   return (
     <Box
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8,
+        py: 4,
       }}
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
+          <Breadcrumb items={breadcrumbItems} />
           <div>
             <Typography variant="h4">Add staff</Typography>
           </div>

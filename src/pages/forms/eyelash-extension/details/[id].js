@@ -25,6 +25,7 @@ import {
   getEyelashExtensionDetailById,
   updateEyelashExtensionDetail,
 } from "src/api/lib/forms/details";
+import Breadcrumb from "src/components/Breadcrumb";
 
 const Page = () => {
   const [formDate, setFormDate] = useState(new Date());
@@ -88,23 +89,41 @@ const Page = () => {
       .catch(() => {});
   }, [router.query.id]);
 
+  const breadcrumbItems = [
+    { label: "All Forms", isActive: false, link: "/forms" },
+    {
+      label: "Eyelash Extension",
+      isActive: false,
+      link: "/forms/eyelash-extension",
+    },
+    {
+      label: "Details",
+      isActive: false,
+      link: `/forms/eyelash-extension/details?id=${router.query.formId}&name=${router.query.name}`,
+    },
+    { label: "Edit", isActive: true },
+  ];
+
   return (
     <Box
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8,
+        py: 4,
       }}
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <Stack spacing={2}>
-            <Typography variant="h6">
-              Edit Eyelash Extension Consultation Card Details
-            </Typography>
-            <Typography variant="h8" color="primary" fontWeight="bold">
-              {`Client: ${router.query.name}`}
-            </Typography>
+            <Breadcrumb items={breadcrumbItems} />
+            <Stack spacing={2}>
+              <Typography variant="h6">
+                Edit Eyelash Extension Consultation Card Details
+              </Typography>
+              <Typography variant="h8" color="primary" fontWeight="bold">
+                {`Client: ${router.query.name}`}
+              </Typography>
+            </Stack>
           </Stack>
           <form noValidate onSubmit={formik.handleSubmit}>
             <Card>

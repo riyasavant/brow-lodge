@@ -18,6 +18,7 @@ import * as Yup from "yup";
 import { createClient } from "src/api/lib/client";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
+import Breadcrumb from "src/components/Breadcrumb";
 
 const gender = [
   {
@@ -70,16 +71,22 @@ const Page = () => {
     },
   });
 
+  const breadcrumbItems = [
+    { label: "Customers", isActive: false, link: "/customers" },
+    { label: "Add customer", isActive: true, link: "" },
+  ];
+
   return (
     <Box
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8,
+        py: 4,
       }}
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
+          <Breadcrumb items={breadcrumbItems} />
           <div>
             <Typography variant="h4">Add customer</Typography>
           </div>

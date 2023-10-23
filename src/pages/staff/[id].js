@@ -19,6 +19,7 @@ import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getStaffProfileById, updateStaff } from "src/api/lib/staff";
+import Breadcrumb from "src/components/Breadcrumb";
 
 const gender = [
   {
@@ -89,18 +90,22 @@ const Page = () => {
     },
   });
 
-  console.log(formik);
+  const breadcrumbItems = [
+    { label: "Staff", isActive: false, link: "/staff" },
+    { label: "Edit staff", isActive: true, link: "" },
+  ];
 
   return (
     <Box
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8,
+        py: 4,
       }}
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
+          <Breadcrumb items={breadcrumbItems} />
           <div>
             <Typography variant="h4">Edit staff</Typography>
           </div>
