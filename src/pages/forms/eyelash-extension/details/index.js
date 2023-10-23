@@ -12,9 +12,7 @@ import {
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
-import { getEyelashExtensionEntries } from "src/api/lib/forms/eyelash-extension";
 import dayjs from "dayjs";
-import { deleteEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension";
 import {
   getEyelashExtensionDetails,
   deleteEyelashExtensionDetail,
@@ -68,7 +66,7 @@ const Page = () => {
 
   const onEdit = (id) => {
     router.push(
-      `/forms/eyelash-extension/details/${id}?name=${router.query.name}`
+      `/forms/eyelash-extension/details/${id}?name=${router.query.name}&formId=${router.query.id}`
     );
   };
 

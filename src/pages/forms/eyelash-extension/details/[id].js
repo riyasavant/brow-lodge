@@ -22,7 +22,6 @@ import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
 import {
-  createEyelashExtensionDetail,
   getEyelashExtensionDetailById,
   updateEyelashExtensionDetail,
 } from "src/api/lib/forms/details";
@@ -56,13 +55,13 @@ const Page = () => {
         eyeFeedback: values.eyeFeedback || "",
         careFeedback: values.careFeedback || "",
         date: dayjs(formDate).format(),
-        eyelash: router.query.id,
+        eyelash: router.query.formId,
       };
 
       updateEyelashExtensionDetail(router.query.id, payload)
         .then(() => {
           router.push(
-            `/forms/eyelash-extension/details?id=${router.query.id}&name=${router.query.name}`
+            `/forms/eyelash-extension/details?id=${router.query.formId}&name=${router.query.name}`
           );
         })
         .catch((err) => {

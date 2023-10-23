@@ -20,7 +20,7 @@ import { deleteEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension"
 const headers = [
   { key: "date", label: "Date" },
   { key: "name", label: "Name" },
-  { key: "doctorName", label: "doctorName" },
+  { key: "doctorName", label: "Doctor's Name" },
 ];
 
 const parseData = (data) => {
