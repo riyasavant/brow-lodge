@@ -10,24 +10,32 @@ import {
   Typography,
 } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
-import { getStaffProfiles, deleteStaff } from "src/api/lib/staff";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
 import { getEyelashExtensionEntries } from "src/api/lib/forms/eyelash-extension";
 import dayjs from "dayjs";
 import { deleteEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension";
+import {
+  getEyelashExtensionDetails,
+  deleteEyelashExtensionDetail,
+} from "src/api/lib/forms/details";
 
 const headers = [
   { key: "date", label: "Date" },
-  { key: "name", label: "Name" },
-  { key: "doctorName", label: "doctorName" },
+  { key: "therapist", label: "Therapist" },
+  { key: "feedback", label: "Is the answer to any of the 4 questions 'Yes'?" },
+  { key: "eyeFeedback", label: "Eyes OK after treatment?" },
+  { key: "careFeedback", label: "After Care Given?" },
+  { key: "signature", label: "Client Signature" },
 ];
 
 const parseData = (data) => {
   return data.map((form) => ({
     date: dayjs(form?.date || new Date()).format("DD/MM/YYYY"),
-    name: form?.Client?.preferredName || "",
-    doctorName: form?.doctorName || "",
+    therapist: form?.therapist || "",
+    feedback: form?.feedback || "",
+    eyeFeedback: form?.eyeFeedback || "",
+    careFeedback: form?.careFeedback || "",
     id: form?.id,
   }));
 };
@@ -39,8 +47,9 @@ const Page = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    getEyelashExtensionEntries(page, rowsPerPage)
+    getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
       .then((res) => {
+        console.log(res);
         setResponse({
           data: parseData(res.data?.data),
           total: res.data?.total,
@@ -58,14 +67,17 @@ const Page = () => {
   }, []);
 
   const onEdit = (id) => {
-    router.push(`/forms/eyelash-extension/${id}`);
+    router.push(
+      `/forms/eyelash-extension/details/${id}?name=${router.query.name}`
+    );
   };
 
   const onDelete = (id) => {
-    deleteEyelashExtensionForm(id)
+    deleteEyelashExtensionDetail(id)
       .then(() => {
-        getEyelashExtensionEntries(page, rowsPerPage)
+        getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
           .then((res) => {
+            console.log(res);
             setResponse({
               data: parseData(res.data?.data),
               total: res.data?.total,
@@ -93,7 +105,10 @@ const Page = () => {
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
                 <Typography variant="h6">
-                  Eyelash Extension Consultation Card
+                  Eyelash Extension Consultation Card Details
+                </Typography>
+                <Typography variant="h8" color="primary" fontWeight="bold">
+                  {`Client: ${router.query.name}`}
                 </Typography>
               </Stack>
               <div>
@@ -104,7 +119,11 @@ const Page = () => {
                     </SvgIcon>
                   }
                   variant="contained"
-                  onClick={() => router.push("/forms/eyelash-extension/add")}
+                  onClick={() =>
+                    router.push(
+                      `/forms/eyelash-extension/details/add?id=${router.query.id}&name=${router.query.name}`
+                    )
+                  }
                 >
                   Add
                 </Button>
@@ -121,11 +140,6 @@ const Page = () => {
               onDelete={onDelete}
               onEdit={onEdit}
               isRowClickable
-              onRowClick={(id, name) =>
-                router.push(
-                  `/forms/eyelash-extension/details?id=${id}&name=${name}`
-                )
-              }
             />
           </Stack>
         </Container>

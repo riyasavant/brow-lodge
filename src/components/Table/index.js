@@ -30,6 +30,8 @@ const CustomTable = (props) => {
     onEdit = () => {},
     headers = [],
     hasActionsColumn = true,
+    isRowClickable = false,
+    onRowClick = () => {},
   } = props;
   const [modalData, setModalData] = useState({ show: false, id: "" });
 
@@ -56,11 +58,20 @@ const CustomTable = (props) => {
             <TableBody>
               {items.map((customer) => {
                 return (
-                  <TableRow hover key={customer.id}>
+                  <TableRow
+                    hover
+                    key={customer.id}
+                    sx={{ cursor: isRowClickable ? "pointer" : "auto" }}
+                    onClick={() => {
+                      isRowClickable
+                        ? onRowClick(customer.id, customer.name)
+                        : onRowClick(customer.id);
+                    }}
+                  >
                     {headers.map((header) => {
                       if (header.key === "preferredName") {
                         return (
-                          <TableCell key={header.key}>
+                          <TableCell key={header.key} minWidth={120}>
                             <Typography variant="subtitle2">
                               {customer.preferredName}
                             </Typography>
@@ -68,13 +79,13 @@ const CustomTable = (props) => {
                         );
                       }
                       return (
-                        <TableCell key={header.key}>
+                        <TableCell key={header.key} minWidth={120}>
                           {customer[header.key]}
                         </TableCell>
                       );
                     })}
                     {hasActionsColumn && (
-                      <TableCell align="right">
+                      <TableCell align="right" minWidth={120}>
                         <IconButton
                           onClick={() => onEdit(customer.id)}
                           size="medium"
