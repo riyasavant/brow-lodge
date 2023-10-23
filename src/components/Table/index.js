@@ -93,7 +93,10 @@ const CustomTable = (props) => {
                     {hasActionsColumn && (
                       <TableCell align="right" minWidth={120}>
                         <IconButton
-                          onClick={() => onEdit(customer.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(customer.id);
+                          }}
                           size="medium"
                         >
                           <SvgIcon fontSize="small">
@@ -101,9 +104,10 @@ const CustomTable = (props) => {
                           </SvgIcon>
                         </IconButton>
                         <IconButton
-                          onClick={() =>
-                            setModalData({ show: true, id: customer.id })
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setModalData({ show: true, id: customer.id });
+                          }}
                           size="medium"
                         >
                           <SvgIcon fontSize="small">

@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
-import { getStaffProfiles, deleteStaff } from "src/api/lib/staff";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
 import { getEyelashExtensionEntries } from "src/api/lib/forms/eyelash-extension";
