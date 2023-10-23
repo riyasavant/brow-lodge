@@ -6,13 +6,14 @@ import {
   useRef,
 } from "react";
 import PropTypes from "prop-types";
-import { doLogin } from "src/api/lib/auth";
 import { useRouter } from "next/router";
+import { getUserProfile } from "src/api/lib/auth";
 
 const HANDLERS = {
   LOGIN: "LOGIN",
   LOGOUT: "LOGOUT",
   INITIALIZE: "INITIALIZE",
+  IS_LOADING: "IS_LOADING",
 };
 
 const initialState = {
@@ -39,10 +40,19 @@ const handlers = {
       isAuthenticated: false,
     };
   },
-  [HANDLERS.INITIALIZE]: (state) => {
+  [HANDLERS.INITIALIZE]: (state, action) => {
     return {
       ...state,
       isLoading: false,
+      authToken: action.payload.authToken || null,
+      isAuthenticated: action.payload.authToken ? true : false,
+      user: action.payload.user,
+    };
+  },
+  [HANDLERS.IS_LOADING]: (state, action) => {
+    return {
+      ...state,
+      isLoading: action.payload,
     };
   },
 };
@@ -60,7 +70,7 @@ export const AuthProvider = (props) => {
   const initialized = useRef(false);
   const router = useRouter();
 
-  const initialize = async () => {
+  const initialize = () => {
     // Prevent from calling twice in development mode with React.StrictMode enabled
     if (initialized.current) {
       return;
@@ -73,14 +83,35 @@ export const AuthProvider = (props) => {
       jwt = window.sessionStorage.getItem("token");
     }
 
+    // Get user profile here
+
     if (jwt) {
-      dispatch({
-        type: HANDLERS.INITIALIZE,
-      });
+      try {
+        getUserProfile(jwt).then((res) => {
+          dispatch({
+            type: HANDLERS.INITIALIZE,
+            payload: {
+              authToken: jwt,
+              isAuthenticated: true,
+              user: res.data,
+            },
+          });
+        });
+      } catch {
+        window.localStorage.clear();
+        window.sessionStorage.clear();
+        dispatch({
+          type: HANDLERS.IS_LOADING,
+          payload: false,
+        });
+      }
     } else {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
       router.push("/auth/login");
       dispatch({
-        type: HANDLERS.INITIALIZE,
+        type: HANDLERS.IS_LOADING,
+        payload: false,
       });
     }
   };

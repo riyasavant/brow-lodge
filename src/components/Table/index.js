@@ -11,6 +11,7 @@ import {
   Typography,
   IconButton,
   SvgIcon,
+  Alert,
 } from "@mui/material";
 import { Scrollbar } from "src/components/Scrollbar";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
@@ -42,6 +43,11 @@ const CustomTable = (props) => {
 
   return (
     <Card>
+      {items.length === 0 && (
+        <Alert color="primary" severity="info" sx={{ mt: 1, fontSize: "15px" }}>
+          There is no data available.
+        </Alert>
+      )}
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>

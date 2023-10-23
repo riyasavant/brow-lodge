@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { useAuthContext } from "./authContext";
 
 export const AuthGuard = (props) => {
   const { children } = props;
   const router = useRouter();
-  const { isAuthenticated } = useAuthContext();
   const ignore = useRef(false);
   const [checked, setChecked] = useState(false);
 
@@ -26,7 +24,12 @@ export const AuthGuard = (props) => {
 
     ignore.current = true;
 
-    if (!isAuthenticated) {
+    let jwt = window.localStorage.getItem("auth-token");
+    if (!jwt) {
+      jwt = window.sessionStorage.getItem("auth-token");
+    }
+
+    if (!jwt) {
       router
         .replace({
           pathname: "/auth/login",
