@@ -14,12 +14,23 @@ import { getStaffProfiles, deleteStaff } from "src/api/lib/staff";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
 import { getEyelashExtensionEntries } from "src/api/lib/forms/eyelash-extension";
+import dayjs from "dayjs";
+import { deleteEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension";
 
 const headers = [
-  { key: "preferredName", label: "Name" },
-  { key: "email", label: "Email" },
-  { key: "gender", label: "Gender" },
+  { key: "date", label: "Date" },
+  { key: "name", label: "Name" },
+  { key: "doctorName", label: "doctorName" },
 ];
+
+const parseData = (data) => {
+  return data.map((form) => ({
+    date: dayjs(form?.date || new Date()).format("DD/MM/YYYY"),
+    name: form?.Client?.preferredName || "",
+    doctorName: form?.doctorName || "",
+    id: form?.id,
+  }));
+};
 
 const Page = () => {
   const router = useRouter();
@@ -30,7 +41,10 @@ const Page = () => {
   useEffect(() => {
     getEyelashExtensionEntries(page, rowsPerPage)
       .then((res) => {
-        setResponse(res.data);
+        setResponse({
+          data: parseData(res.data?.data),
+          total: res.data?.total,
+        });
       })
       .catch(() => {});
   }, [rowsPerPage, page]);
@@ -44,15 +58,18 @@ const Page = () => {
   }, []);
 
   const onEdit = (id) => {
-    router.push(`/staff/${id}`);
+    router.push(`/forms/eyelash-extension/${id}`);
   };
 
   const onDelete = (id) => {
-    deleteStaff(id)
-      .then((res) => {
-        getStaffProfiles(page, rowsPerPage)
+    deleteEyelashExtensionForm(id)
+      .then(() => {
+        getEyelashExtensionEntries(page, rowsPerPage)
           .then((res) => {
-            setResponse(res.data);
+            setResponse({
+              data: parseData(res.data?.data),
+              total: res.data?.total,
+            });
           })
           .catch(() => {});
       })
@@ -75,7 +92,7 @@ const Page = () => {
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h5">
+                <Typography variant="h6">
                   Eyelash Extension Consultation Card
                 </Typography>
               </Stack>

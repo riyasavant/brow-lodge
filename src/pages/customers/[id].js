@@ -46,7 +46,6 @@ const Page = () => {
   });
 
   useEffect(() => {
-    console.log(router.query.id);
     getClientProfileById(router.query.id)
       .then((res) => {
         const clientData = res.data;

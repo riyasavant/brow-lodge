@@ -8,14 +8,14 @@ export const createEyelashExtension = (payload) => {
   return axios.post(`/eyelash-extension`, payload);
 };
 
-export const createClient = (payload) => {
-  return axios.post("/client-profile", payload);
+export const getEyelashExtensionById = (id) => {
+  return axios.get(`/eyelash-extension/${id}`);
 };
 
-export const deleteClient = (id) => {
-  return axios.delete(`/client-profile/${id}`);
+export const deleteEyelashExtensionForm = (id) => {
+  return axios.delete(`/eyelash-extension/${id}`);
 };
 
-export const updateClient = (id, payload) => {
-  return axios.put(`/client-profile/${id}`, payload);
+export const updateEyelashExtensionForm = (id, payload) => {
+  return axios.put(`/eyelash-extension/${id}`, payload);
 };
