@@ -7,7 +7,6 @@ import {
   TextField,
   Unstable_Grid2 as Grid,
   CardHeader,
-  Button,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -22,7 +21,7 @@ const getPlaceholder = (data, key) => {
   return data.filter((item) => item.value === key)[0].label;
 };
 
-const Search = ({ headers }) => {
+const Search = ({ headers, onChange }) => {
   const allColumns = parseColumns(headers);
   const [column, setColumn] = useState(allColumns[0].value);
   return (
@@ -63,6 +62,7 @@ const Search = ({ headers }) => {
                 </SvgIcon>
               </InputAdornment>
             }
+            onChange={(e) => onChange(e.target.value, column)}
           />
         </Grid>
       </Grid>

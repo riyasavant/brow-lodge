@@ -16,6 +16,8 @@ import {
 import { Scrollbar } from "src/components/Scrollbar";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import ArrowLongDownIcon from "@heroicons/react/24/solid/ArrowLongDownIcon";
+import ArrowLongUpIcon from "@heroicons/react/24/solid/ArrowLongUpIcon";
 import DeleteModal from "src/components/DeleteModal";
 import { useState } from "react";
 import Search from "../Search";
@@ -34,6 +36,7 @@ const CustomTable = (props) => {
     hasActionsColumn = true,
     isRowClickable = false,
     onRowClick = () => {},
+    onSearch = () => {},
   } = props;
   const [modalData, setModalData] = useState({ show: false, id: "" });
 
@@ -44,7 +47,7 @@ const CustomTable = (props) => {
 
   return (
     <>
-      <Search headers={headers} />
+      <Search headers={headers} onChange={onSearch} />
       <Card>
         {items.length === 0 && (
           <Alert
@@ -61,7 +64,31 @@ const CustomTable = (props) => {
               <TableHead>
                 <TableRow>
                   {headers.map((header) => (
-                    <TableCell key={header.key}>{header.label}</TableCell>
+                    <TableCell key={header.key}>
+                      {header.label}
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(customer.id);
+                        }}
+                        sx={{ padding: 0, ml: "10px" }}
+                      >
+                        <SvgIcon fontSize="small">
+                          <ArrowLongDownIcon />
+                        </SvgIcon>
+                      </IconButton>
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(customer.id);
+                        }}
+                        sx={{ padding: 0 }}
+                      >
+                        <SvgIcon fontSize="small">
+                          <ArrowLongUpIcon />
+                        </SvgIcon>
+                      </IconButton>
+                    </TableCell>
                   ))}
                   {hasActionsColumn && (
                     <TableCell align="right">Actions</TableCell>

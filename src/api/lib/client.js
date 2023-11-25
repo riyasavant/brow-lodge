@@ -1,8 +1,13 @@
 import axios from "src/api/config";
 
-export const getClients = (page, items) => {
+export const getClients = (page, items, filter = null) => {
+  const filterQuery = filter
+    ? `&where[${filter.column}_startsWith]=${filter.value}`
+    : "";
   return axios.get(
-    `/client-profile?sort=preferredName:ASC&page=${page + 1}&pageSize=${items}`
+    `/client-profile?sort=preferredName:ASC&page=${
+      page + 1
+    }&pageSize=${items}${filterQuery}`
   );
 };
 

@@ -58,6 +58,14 @@ const Page = () => {
       .catch(() => {});
   };
 
+  const onSearch = (value, column) => {
+    getClients(page, rowsPerPage, { column, value })
+      .then((res) => {
+        setResponse(res.data);
+      })
+      .catch(() => {});
+  };
+
   return (
     <>
       <Head>
@@ -100,6 +108,7 @@ const Page = () => {
               headers={headers}
               onDelete={onDelete}
               onEdit={onEdit}
+              onSearch={onSearch}
             />
           </Stack>
         </Container>
