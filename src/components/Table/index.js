@@ -18,6 +18,7 @@ import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
 import DeleteModal from "src/components/DeleteModal";
 import { useState } from "react";
+import Search from "../Search";
 
 const CustomTable = (props) => {
   const {
@@ -42,102 +43,109 @@ const CustomTable = (props) => {
   };
 
   return (
-    <Card>
-      {items.length === 0 && (
-        <Alert color="primary" severity="info" sx={{ mt: 1, fontSize: "15px" }}>
-          There is no data available.
-        </Alert>
-      )}
-      <Scrollbar>
-        <Box sx={{ minWidth: 800 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {headers.map((header) => (
-                  <TableCell key={header.key}>{header.label}</TableCell>
-                ))}
-                {hasActionsColumn && (
-                  <TableCell align="right">Actions</TableCell>
-                )}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.map((customer) => {
-                return (
-                  <TableRow
-                    hover
-                    key={customer.id}
-                    sx={{ cursor: isRowClickable ? "pointer" : "auto" }}
-                    onClick={() => {
-                      isRowClickable
-                        ? onRowClick(customer.id, customer.name)
-                        : onRowClick(customer.id);
-                    }}
-                  >
-                    {headers.map((header) => {
-                      if (header.key === "preferredName") {
+    <>
+      <Search headers={headers} />
+      <Card>
+        {items.length === 0 && (
+          <Alert
+            color="primary"
+            severity="info"
+            sx={{ mt: 1, fontSize: "15px" }}
+          >
+            There is no data available.
+          </Alert>
+        )}
+        <Scrollbar>
+          <Box sx={{ minWidth: 800 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {headers.map((header) => (
+                    <TableCell key={header.key}>{header.label}</TableCell>
+                  ))}
+                  {hasActionsColumn && (
+                    <TableCell align="right">Actions</TableCell>
+                  )}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {items.map((customer) => {
+                  return (
+                    <TableRow
+                      hover
+                      key={customer.id}
+                      sx={{ cursor: isRowClickable ? "pointer" : "auto" }}
+                      onClick={() => {
+                        isRowClickable
+                          ? onRowClick(customer.id, customer.name)
+                          : onRowClick(customer.id);
+                      }}
+                    >
+                      {headers.map((header) => {
+                        if (header.key === "preferredName") {
+                          return (
+                            <TableCell key={header.key} minWidth={120}>
+                              <Typography variant="subtitle2">
+                                {customer.preferredName}
+                              </Typography>
+                            </TableCell>
+                          );
+                        }
                         return (
                           <TableCell key={header.key} minWidth={120}>
-                            <Typography variant="subtitle2">
-                              {customer.preferredName}
-                            </Typography>
+                            {customer[header.key]}
                           </TableCell>
                         );
-                      }
-                      return (
-                        <TableCell key={header.key} minWidth={120}>
-                          {customer[header.key]}
+                      })}
+                      {hasActionsColumn && (
+                        <TableCell align="right" minWidth={120}>
+                          <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEdit(customer.id);
+                            }}
+                            size="medium"
+                          >
+                            <SvgIcon fontSize="small">
+                              <PencilIcon />
+                            </SvgIcon>
+                          </IconButton>
+                          <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setModalData({ show: true, id: customer.id });
+                            }}
+                            size="medium"
+                          >
+                            <SvgIcon fontSize="small">
+                              <TrashIcon />
+                            </SvgIcon>
+                          </IconButton>
                         </TableCell>
-                      );
-                    })}
-                    {hasActionsColumn && (
-                      <TableCell align="right" minWidth={120}>
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEdit(customer.id);
-                          }}
-                          size="medium"
-                        >
-                          <SvgIcon fontSize="small">
-                            <PencilIcon />
-                          </SvgIcon>
-                        </IconButton>
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setModalData({ show: true, id: customer.id });
-                          }}
-                          size="medium"
-                        >
-                          <SvgIcon fontSize="small">
-                            <TrashIcon />
-                          </SvgIcon>
-                        </IconButton>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </Box>
-      </Scrollbar>
-      <TablePagination
-        component="div"
-        count={count}
-        onPageChange={onPageChange}
-        onRowsPerPageChange={onRowsPerPageChange}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
-      <DeleteModal
-        open={modalData.show}
-        onClose={() => setModalData({ show: false, id: "" })}
-        onDelete={onDeleteEntry}
-      />
-    </Card>
+                      )}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Box>
+        </Scrollbar>
+        <TablePagination
+          component="div"
+          count={count}
+          onPageChange={onPageChange}
+          onRowsPerPageChange={onRowsPerPageChange}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+        />
+        <DeleteModal
+          open={modalData.show}
+          onClose={() => setModalData({ show: false, id: "" })}
+          onDelete={onDeleteEntry}
+        />
+      </Card>
+    </>
   );
 };
 

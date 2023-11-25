@@ -78,7 +78,7 @@ const Page = () => {
 
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
-    { label: "Eyelash Extension", isActive: true, link: "" },
+    { label: "Waxing", isActive: true, link: "" },
   ];
 
   return (
@@ -103,9 +103,7 @@ const Page = () => {
             >
               <Stack spacing={4}>
                 <Breadcrumb items={breadcrumbItems} />
-                <Typography variant="h5">
-                  Eyelash Extension Consultation Card
-                </Typography>
+                <Typography variant="h5">Waxing Consultation Card</Typography>
               </Stack>
               <div>
                 <Button

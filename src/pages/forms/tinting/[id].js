@@ -19,7 +19,10 @@ import * as Yup from "yup";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { getClients } from "src/api/lib/client";
+import {
+  getEyelashExtensionById,
+  updateEyelashExtensionForm,
+} from "src/api/lib/forms/eyelash-extension";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -30,6 +33,7 @@ import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
+import { getClients } from "src/api/lib/client";
 import Breadcrumb from "src/components/Breadcrumb";
 
 const Page = () => {
@@ -39,20 +43,25 @@ const Page = () => {
   const [skinTest, setSkinTest] = useState(false);
   const [skinTestDate, setSkinTestDate] = useState(new Date());
   const [clients, setClients] = useState([]);
+
+  // Form initial values
+  const [formData, setFormData] = useState({
+    day: "",
+    evening: "",
+    technicianName: "",
+    doctorName: "",
+    doctorAddress: "",
+    isPregnant: "false",
+    eyeSyndrome: "false",
+    hrt: "false",
+    eyeComplaint: "false",
+    client: clients.length > 0 ? clients[0].value : "",
+  });
+
   const router = useRouter();
+
   const formik = useFormik({
-    initialValues: {
-      day: "",
-      evening: "",
-      technicianName: "",
-      doctorName: "",
-      doctorAddress: "",
-      isPregnant: "false",
-      eyeSyndrome: "false",
-      hrt: "false",
-      eyeComplaint: "false",
-      client: clients.length > 0 ? clients[0].value : "",
-    },
+    initialValues: formData,
     enableReinitialize: true,
     validationSchema: Yup.object({
       day: Yup.string().required("Tel (Day) is required"),
@@ -64,7 +73,6 @@ const Page = () => {
     onSubmit: (values, helpers) => {
       const payload = {
         ...values,
-        doctorName: imgUrl,
         isPregnant: values.isPregnant === "true" ? true : false,
         eyeSyndrome: values.eyeSyndrome === "true" ? true : false,
         hrt: values.hrt === "true" ? true : false,
@@ -74,8 +82,8 @@ const Page = () => {
         date: dayjs(formDate).format(),
       };
 
-      createEyelashExtension(payload)
-        .then((res) => {
+      updateEyelashExtensionForm(router.query.id, payload)
+        .then(() => {
           router.push("/forms/eyelash-extension");
         })
         .catch((err) => {
@@ -95,12 +103,34 @@ const Page = () => {
   };
 
   useEffect(() => {
-    getClients(0, 1000)
+    getEyelashExtensionById(router.query.id)
       .then((res) => {
-        setClients(parseClients(res.data.data));
+        getClients(0, 1000).then((response) => {
+          console.log(response, res);
+          const formData = res.data;
+          const client = response.data.data.filter(
+            (client) => client.id === formData.client
+          )[0];
+          setClients(parseClients(response.data.data));
+          setFormData({
+            day: formData.day || "",
+            evening: formData.evening || "",
+            technicianName: formData.technicianName || "",
+            doctorName: formData.doctorName || "",
+            doctorAddress: formData.doctorAddress || "",
+            isPregnant: formData.isPregnant ? "true" : "false",
+            eyeSyndrome: formData.eyeSyndrome ? "true" : "false",
+            hrt: formData.hrt ? "true" : "false",
+            eyeComplaint: formData.eyeComplaint ? "true" : "false",
+            client: client.id,
+          });
+          setFormDate(formData.date);
+          setSkinTest(formData.skinPatchTest);
+          setSkinTestDate(formData.skinPatchTestDate);
+        });
       })
       .catch(() => {});
-  }, []);
+  }, [router.query.id]);
 
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
@@ -109,10 +139,8 @@ const Page = () => {
       isActive: false,
       link: "/forms/eyelash-extension",
     },
-    { label: "Add", isActive: true, link: "/forms/eyelash-extension" },
+    { label: "Edit", isActive: true, link: "" },
   ];
-
-  console.log("sign", typeof imgUrl, imgUrl);
 
   return (
     <Box
@@ -436,7 +464,7 @@ const Page = () => {
                             control={
                               <Checkbox
                                 name="skinPatchTest"
-                                value={skinTest}
+                                checked={skinTest}
                                 onChange={() => setSkinTest((prev) => !prev)}
                               />
                             }
@@ -567,7 +595,7 @@ const Page = () => {
                   Cancel
                 </Button>
                 <Button variant="contained" type="submit">
-                  Add
+                  Edit
                 </Button>
               </CardActions>
             </Card>

@@ -34,6 +34,18 @@ const Page = () => {
                   redirectLink="/forms/eyelash-extension"
                 />
               </Grid>
+              <Grid xs={12} md={6}>
+                <Form
+                  title="Waxing Consultation Card"
+                  redirectLink="/forms/waxing"
+                />
+              </Grid>
+              <Grid xs={12} md={6}>
+                <Form
+                  title="Eyelash and Brow Tint Consultation Card"
+                  redirectLink="/forms/tinting"
+                />
+              </Grid>
             </Grid>
           </Stack>
         </Container>
