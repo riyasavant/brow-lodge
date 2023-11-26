@@ -8,7 +8,8 @@ import {
   Unstable_Grid2 as Grid,
   CardHeader,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import debounce from "lodash.debounce";
 
 const parseColumns = (data) => {
   return data.map((item) => ({
@@ -24,6 +25,17 @@ const getPlaceholder = (data, key) => {
 const Search = ({ headers, onChange }) => {
   const allColumns = parseColumns(headers);
   const [column, setColumn] = useState(allColumns[0].value);
+
+  const debouncedResults = useMemo(() => {
+    return debounce((value, column) => onChange(column, value), 500);
+  }, [onChange]);
+
+  useEffect(() => {
+    return () => {
+      debouncedResults.cancel();
+    };
+  });
+
   return (
     <Card sx={{ px: 2 }}>
       <CardHeader
@@ -52,7 +64,6 @@ const Search = ({ headers, onChange }) => {
         </Grid>
         <Grid xs={12} sm={8}>
           <OutlinedInput
-            defaultValue=""
             fullWidth
             placeholder={`Search ${getPlaceholder(allColumns, column)}`}
             startAdornment={
@@ -62,7 +73,7 @@ const Search = ({ headers, onChange }) => {
                 </SvgIcon>
               </InputAdornment>
             }
-            onChange={(e) => onChange(e.target.value, column)}
+            onChange={(e) => debouncedResults(e.target.value, column)}
           />
         </Grid>
       </Grid>

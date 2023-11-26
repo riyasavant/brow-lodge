@@ -18,9 +18,9 @@ import { deleteEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension"
 import Breadcrumb from "src/components/Breadcrumb";
 
 const headers = [
-  { key: "date", label: "Date" },
-  { key: "name", label: "Name" },
-  { key: "doctorName", label: "Doctor's Name" },
+  { key: "date", label: "Date", sort: true },
+  { key: "name", label: "Name", sort: true },
+  { key: "doctorName", label: "Doctor's Name", sort: true },
 ];
 
 const parseData = (data) => {
@@ -36,10 +36,11 @@ const Page = () => {
   const router = useRouter();
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
+  const [sort, setSort] = useState({ column: "date", value: "DESC" });
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    getEyelashExtensionEntries(page, rowsPerPage)
+    getEyelashExtensionEntries(page, rowsPerPage, sort)
       .then((res) => {
         setResponse({
           data: parseData(res.data?.data),
@@ -47,7 +48,7 @@ const Page = () => {
         });
       })
       .catch(() => {});
-  }, [rowsPerPage, page]);
+  }, [rowsPerPage, page, sort]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -61,6 +62,10 @@ const Page = () => {
     router.push(`/forms/eyelash-extension/${id}`);
   };
 
+  const onSort = useCallback((column, value) => {
+    setSort({ column, value });
+  }, []);
+
   const onDelete = (id) => {
     deleteEyelashExtensionForm(id)
       .then(() => {
@@ -72,6 +77,17 @@ const Page = () => {
             });
           })
           .catch(() => {});
+      })
+      .catch(() => {});
+  };
+
+  const onSearch = (column, value) => {
+    getEyelashExtensionEntries(page, rowsPerPage, sort, { column, value })
+      .then((res) => {
+        setResponse({
+          data: parseData(res.data?.data),
+          total: res.data?.total,
+        });
       })
       .catch(() => {});
   };
@@ -137,6 +153,9 @@ const Page = () => {
                   `/forms/eyelash-extension/details?id=${id}&name=${name}`
                 )
               }
+              sort={sort}
+              onSort={onSort}
+              onSearch={onSearch}
             />
           </Stack>
         </Container>

@@ -64,7 +64,6 @@ const Page = () => {
     onSubmit: (values, helpers) => {
       const payload = {
         ...values,
-        doctorName: imgUrl,
         isPregnant: values.isPregnant === "true" ? true : false,
         eyeSyndrome: values.eyeSyndrome === "true" ? true : false,
         hrt: values.hrt === "true" ? true : false,

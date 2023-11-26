@@ -63,7 +63,7 @@ const Page = () => {
       .catch(() => {});
   };
 
-  const onSearch = (value, column) => {
+  const onSearch = (column, value) => {
     getClients(page, rowsPerPage, { column, value })
       .then((res) => {
         setResponse(res.data);
