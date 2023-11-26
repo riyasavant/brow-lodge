@@ -29,16 +29,6 @@ const Form = ({ title, redirectLink }) => {
       >
         <Stack>
           <Typography variant="h8">{title}</Typography>
-          {/* <Typography
-            sx={{
-              fontSize: "13px",
-              color: "#6366F1",
-              marginTop: "5px",
-              fontWeight: "bold",
-            }}
-          >
-            20/10/2023
-          </Typography> */}
         </Stack>
         <Button onClick={handleView}>View</Button>
       </Box>

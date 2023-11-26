@@ -15,9 +15,9 @@ import { useRouter } from "next/router";
 import CustomTable from "src/components/Table";
 
 const headers = [
-  { key: "preferredName", label: "Name" },
-  { key: "email", label: "Email" },
-  { key: "gender", label: "Gender" },
+  { key: "preferredName", label: "Name", sort: true },
+  { key: "email", label: "Email", sort: true },
+  { key: "gender", label: "Gender", sort: true },
 ];
 
 const Page = () => {
@@ -60,6 +60,14 @@ const Page = () => {
 
   const onSearch = (value, column) => {
     getClients(page, rowsPerPage, { column, value })
+      .then((res) => {
+        setResponse(res.data);
+      })
+      .catch(() => {});
+  };
+
+  const onSort = (column, value) => {
+    getClients(page, rowsPerPage, null, { column, value })
       .then((res) => {
         setResponse(res.data);
       })
@@ -109,6 +117,7 @@ const Page = () => {
               onDelete={onDelete}
               onEdit={onEdit}
               onSearch={onSearch}
+              onSort={onSort}
             />
           </Stack>
         </Container>

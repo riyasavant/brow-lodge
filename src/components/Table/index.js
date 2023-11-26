@@ -21,6 +21,7 @@ import ArrowLongUpIcon from "@heroicons/react/24/solid/ArrowLongUpIcon";
 import DeleteModal from "src/components/DeleteModal";
 import { useState } from "react";
 import Search from "../Search";
+import Sort from "../Sort";
 
 const CustomTable = (props) => {
   const {
@@ -37,6 +38,7 @@ const CustomTable = (props) => {
     isRowClickable = false,
     onRowClick = () => {},
     onSearch = () => {},
+    onSort = () => {},
   } = props;
   const [modalData, setModalData] = useState({ show: false, id: "" });
 
@@ -66,28 +68,9 @@ const CustomTable = (props) => {
                   {headers.map((header) => (
                     <TableCell key={header.key}>
                       {header.label}
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEdit(customer.id);
-                        }}
-                        sx={{ padding: 0, ml: "10px" }}
-                      >
-                        <SvgIcon fontSize="small">
-                          <ArrowLongDownIcon />
-                        </SvgIcon>
-                      </IconButton>
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEdit(customer.id);
-                        }}
-                        sx={{ padding: 0 }}
-                      >
-                        <SvgIcon fontSize="small">
-                          <ArrowLongUpIcon />
-                        </SvgIcon>
-                      </IconButton>
+                      {header.sort && (
+                        <Sort column={header.key} onSort={onSort} />
+                      )}
                     </TableCell>
                   ))}
                   {hasActionsColumn && (
