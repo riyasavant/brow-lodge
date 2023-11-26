@@ -115,7 +115,7 @@ const Page = () => {
                     </SvgIcon>
                   }
                   variant="contained"
-                  onClick={() => router.push("/forms/eyelash-extension/add")}
+                  onClick={() => router.push("/forms/tinting/add")}
                 >
                   Add
                 </Button>

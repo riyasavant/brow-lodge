@@ -31,6 +31,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
+import { width } from "@mui/system";
 
 const Page = () => {
   const [formDate, setFormDate] = useState(new Date());
@@ -105,11 +106,11 @@ const Page = () => {
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
     {
-      label: "Eyelash Extension",
+      label: "Waxing",
       isActive: false,
-      link: "/forms/eyelash-extension",
+      link: "/forms/waxing",
     },
-    { label: "Add", isActive: true, link: "/forms/eyelash-extension" },
+    { label: "Add", isActive: true, link: "/forms/waxing" },
   ];
 
   console.log("sign", typeof imgUrl, imgUrl);
@@ -126,9 +127,7 @@ const Page = () => {
         <Stack spacing={3}>
           <Breadcrumb items={breadcrumbItems} />
           <div>
-            <Typography variant="h6">
-              Add Eyelash Extension Consultation Card
-            </Typography>
+            <Typography variant="h6">Add Waxing Consultation Card</Typography>
           </div>
           <form noValidate onSubmit={formik.handleSubmit}>
             <Card>
@@ -235,28 +234,6 @@ const Page = () => {
                         required
                       />
                     </Grid>
-                    <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.technicianName &&
-                            formik.errors.technicianName
-                          )
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.technicianName &&
-                          formik.errors.technicianName
-                        }
-                        label="Name of Technician"
-                        name="technicianName"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.technicianName}
-                        required
-                      />
-                    </Grid>
                     <Grid xs={12}>
                       <Typography
                         sx={{ mt: 1, ml: 2, fontWeight: "bold" }}
@@ -265,133 +242,405 @@ const Page = () => {
                         Do any of the following apply to you?
                       </Typography>
                     </Grid>
-                    <Grid xs={12} md={6}>
-                      <FormControl sx={{ ml: 2 }}>
-                        <FormLabel id="demo-row-radio-buttons-group-label">
-                          Are you pregnant or breast-feeding
-                        </FormLabel>
-                        <RadioGroup
-                          row
-                          aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="isPregnant"
-                          onChange={formik.handleChange}
-                          value={formik.values.isPregnant}
-                        >
+                    <Grid xs={12} ml={2} container>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
                           <FormControlLabel
-                            value="true"
                             control={
-                              <Radio
-                                sx={{
-                                  "& .MuiSvgIcon-root": {
-                                    fontSize: 20,
-                                  },
-                                }}
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
                               />
                             }
-                            label="Yes"
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Diabetes
+                              </Typography>
+                            }
+                            labelPlacement="end"
                           />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
                           <FormControlLabel
-                            value="false"
                             control={
-                              <Radio
-                                sx={{
-                                  "& .MuiSvgIcon-root": {
-                                    fontSize: 20,
-                                  },
-                                }}
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
                               />
                             }
-                            label="No"
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Epilepsy
+                              </Typography>
+                            }
+                            labelPlacement="end"
                           />
-                        </RadioGroup>
-                      </FormControl>
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Moles
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Hypersensitive Skin
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Oedema
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Phlebitis
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Pregnancy
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                New Scar Tissue (under 3 months old)
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Psoriasis
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Poor Circulation
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Skin Diseases
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Undiagnosed Lumps and Bumps
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Sunburn
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={4} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Varicose Veins
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
                     </Grid>
-                    <Grid xs={12} md={6}>
-                      <FormControl sx={{ ml: 2 }}>
-                        <FormLabel id="demo-row-radio-buttons-group-label">
-                          Do you suffer from Dry Eye Syndrome or Conjunctivitis?
-                        </FormLabel>
-                        <RadioGroup
-                          row
-                          aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="eyeSyndrome"
-                          onChange={formik.handleChange}
-                          value={formik.values.eyeSyndrome}
-                        >
+                    <Grid xs={12} pt={0}>
+                      <Box
+                        sx={{ display: "flex", ml: 2, alignItems: "center" }}
+                      >
+                        <FormGroup>
                           <FormControlLabel
-                            value="true"
                             control={
-                              <Radio
-                                sx={{
-                                  "& .MuiSvgIcon-root": {
-                                    fontSize: 20,
-                                  },
-                                }}
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
                               />
                             }
-                            label="Yes"
-                          />
-                          <FormControlLabel
-                            value="false"
-                            control={
-                              <Radio
-                                sx={{
-                                  "& .MuiSvgIcon-root": {
-                                    fontSize: 20,
-                                  },
-                                }}
-                              />
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Prescribed medicine (give details)
+                              </Typography>
                             }
-                            label="No"
+                            labelPlacement="end"
                           />
-                        </RadioGroup>
-                      </FormControl>
+                        </FormGroup>
+                        {skinTest && (
+                          <TextField
+                            sx={{ width: "400px" }}
+                            variant="standard"
+                            error={!!(formik.touched.day && formik.errors.day)}
+                            helperText={formik.touched.day && formik.errors.day}
+                            label="Skin Diagnosis"
+                            name="day"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            type="text"
+                            value={formik.values.day}
+                            required
+                          />
+                        )}
+                      </Box>
                     </Grid>
-                    <Grid xs={12} md={6}>
-                      <FormControl sx={{ ml: 2 }}>
-                        <FormLabel id="demo-row-radio-buttons-group-label">
-                          Are you taking HRT (Hormone Replacement Therapy)
-                        </FormLabel>
-                        <RadioGroup
-                          row
-                          aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="hrt"
-                          onChange={formik.handleChange}
-                          value={formik.values.hrt}
-                        >
-                          <FormControlLabel
-                            value="true"
-                            control={
-                              <Radio
-                                sx={{
-                                  "& .MuiSvgIcon-root": {
-                                    fontSize: 20,
-                                  },
-                                }}
-                              />
-                            }
-                            label="Yes"
-                          />
-                          <FormControlLabel
-                            value="false"
-                            control={
-                              <Radio
-                                sx={{
-                                  "& .MuiSvgIcon-root": {
-                                    fontSize: 20,
-                                  },
-                                }}
-                              />
-                            }
-                            label="No"
-                          />
-                        </RadioGroup>
-                      </FormControl>
+                    <Grid xs={12}>
+                      <Typography
+                        sx={{ mt: 1, ml: 2, fontWeight: "bold" }}
+                        variant="body2"
+                      >
+                        Do you use any of these products?
+                      </Typography>
                     </Grid>
-                    <Grid xs={12} md={6}>
+                    <Grid xs={12} ml={2} container>
+                      <Grid xs={12} sm={6} md={3} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Retin A
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={3} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Accutane
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={3} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                Glycolic Acid
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid xs={12} sm={6} md={3} p={0}>
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                name="skinPatchTest"
+                                value={skinTest}
+                                onChange={() => setSkinTest((prev) => !prev)}
+                              />
+                            }
+                            label={
+                              <Typography sx={{ fontSize: "14px" }}>
+                                AHA Skin Care
+                              </Typography>
+                            }
+                            labelPlacement="end"
+                          />
+                        </FormGroup>
+                      </Grid>
+                    </Grid>
+                    <Grid xs={12}>
                       <FormControl sx={{ ml: 2 }}>
-                        <FormLabel id="demo-row-radio-buttons-group-label">
-                          Have you previously had eye complaints
+                        <FormLabel
+                          id="demo-row-radio-buttons-group-label"
+                          sx={{ color: "red" }}
+                        >
+                          Have you had waxing treatment before
                         </FormLabel>
                         <RadioGroup
                           row
@@ -428,84 +677,7 @@ const Page = () => {
                           />
                         </RadioGroup>
                       </FormControl>
-                    </Grid>
-                    <Grid xs={12}>
-                      <Box sx={{ display: "flex", mt: 3, ml: 2 }}>
-                        <FormGroup>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
-                              />
-                            }
-                            label={
-                              <Typography
-                                sx={{ color: "red", fontSize: "14px" }}
-                              >
-                                Skin patch test carried out?
-                              </Typography>
-                            }
-                            labelPlacement="end"
-                          />
-                        </FormGroup>
-                        {skinTest && (
-                          <DatePicker
-                            format="DD/MM/YYYY"
-                            label="Skin patch test date"
-                            value={dayjs(skinTestDate)}
-                            onChange={(val) => setSkinTestDate(val)}
-                          />
-                        )}
-                      </Box>
                       <Divider sx={{ mt: 2 }} />
-                      <div>
-                        <ul>
-                          <li style={{ fontSize: "14px" }}>
-                            I accept full responsibility for determining the
-                            length and type of lashes that have been agreed
-                            during the course of my consultation.
-                          </li>
-                          <li style={{ fontSize: "14px" }}>
-                            I further understand that it is not uncommon for
-                            some eyelashes to fall out prematurely whilst the
-                            eyelashes adjust and set.
-                          </li>
-                          <li style={{ fontSize: "14px" }}>
-                            I can confirm that I have received the relevant
-                            aftercare information leaflet for my records and
-                            understand that I should follow the recommendations.
-                          </li>
-                          <li style={{ fontSize: "14px" }}>
-                            It is my responsibility to carry out the advised
-                            aftercare routine to keep the lashes looking thick,
-                            full & conditioned, I acknowledge that eyelash
-                            extensions, when not cared for properly: can be
-                            permanently lost and/ or look unslightly.
-                          </li>
-                          <li style={{ fontSize: "14px" }}>
-                            I am aware that I will be charged an additional fee
-                            for any further maintenance treatments.
-                          </li>
-                          <li style={{ fontSize: "14px" }}>
-                            I understand that there is a risk that there may be
-                            a negative reaction from the application of eyelash
-                            extensions. Should this occur there could be
-                            swelling, redness or a rash. I appreciate that there
-                            is a risk that Brow Lodge cannot foresee however I
-                            wish to receive the treatment and agree that Brow
-                            Lodge shall not be responsible for these or any
-                            reaction that I may experience from this service.
-                          </li>
-                          <li style={{ fontSize: "14px" }}>
-                            I understand that Brow Lodge cannot be responsible
-                            for any undisclosed information regarding an eyelash
-                            extension treatment.
-                          </li>
-                        </ul>
-                      </div>
-                      <Divider />
                       <Box sx={{ ml: 2 }}>
                         <p
                           style={{
@@ -514,11 +686,12 @@ const Page = () => {
                             fontStyle: "italic",
                           }}
                         >
-                          I (the undersigned) have read and understand the above
-                          and all that has been explained. I am fully aware of
-                          the potential risk and that future maintenance
-                          treatments will be required for both after care and
-                          home care
+                          I understand that I am responsible for notifying the
+                          Beauty Therapist if any of the above information
+                          should change before treatment. All medical data is
+                          correct to the best of my knowledge. I hereby
+                          indemnify the therapist against any adverse reaction
+                          sustained as a result of the treatment.
                         </p>
                       </Box>
                     </Grid>
