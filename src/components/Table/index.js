@@ -38,6 +38,7 @@ const CustomTable = (props) => {
     isRowClickable = false,
     onRowClick = () => {},
     onSearch = () => {},
+    sort = {},
     onSort = () => {},
   } = props;
   const [modalData, setModalData] = useState({ show: false, id: "" });
@@ -69,7 +70,7 @@ const CustomTable = (props) => {
                     <TableCell key={header.key}>
                       {header.label}
                       {header.sort && (
-                        <Sort column={header.key} onSort={onSort} />
+                        <Sort column={header.key} onSort={onSort} sort={sort} />
                       )}
                     </TableCell>
                   ))}

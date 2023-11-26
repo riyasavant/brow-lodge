@@ -2,7 +2,14 @@ import { IconButton, SvgIcon } from "@mui/material";
 import ArrowLongDownIcon from "@heroicons/react/24/solid/ArrowLongDownIcon";
 import ArrowLongUpIcon from "@heroicons/react/24/solid/ArrowLongUpIcon";
 
-const Sort = ({ column, onSort }) => {
+const Sort = ({ column, sort, onSort }) => {
+  const getColor = (type) => {
+    if (column === sort.column && type === sort.value) {
+      return "primary";
+    }
+    return "inherit";
+  };
+
   return (
     <>
       <IconButton
@@ -11,7 +18,7 @@ const Sort = ({ column, onSort }) => {
         }}
         sx={{ padding: 0, ml: "10px" }}
       >
-        <SvgIcon fontSize="small">
+        <SvgIcon fontSize="small" color={getColor("DESC")}>
           <ArrowLongDownIcon />
         </SvgIcon>
       </IconButton>
@@ -21,7 +28,7 @@ const Sort = ({ column, onSort }) => {
         }}
         sx={{ padding: 0 }}
       >
-        <SvgIcon fontSize="small">
+        <SvgIcon fontSize="small" color={getColor("ASC")}>
           <ArrowLongUpIcon />
         </SvgIcon>
       </IconButton>

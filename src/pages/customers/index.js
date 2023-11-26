@@ -24,15 +24,16 @@ const Page = () => {
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sort, setSort] = useState({ column: "preferredName", value: "ASC" });
   const router = useRouter();
 
   useEffect(() => {
-    getClients(page, rowsPerPage)
+    getClients(page, rowsPerPage, null, sort)
       .then((res) => {
         setResponse(res.data);
       })
       .catch(() => {});
-  }, [rowsPerPage, page]);
+  }, [rowsPerPage, page, sort]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -40,6 +41,10 @@ const Page = () => {
 
   const handleRowsPerPageChange = useCallback((event) => {
     setRowsPerPage(event.target.value);
+  }, []);
+
+  const onSort = useCallback((column, value) => {
+    setSort({ column, value });
   }, []);
 
   const onEdit = (id) => {
@@ -60,14 +65,6 @@ const Page = () => {
 
   const onSearch = (value, column) => {
     getClients(page, rowsPerPage, { column, value })
-      .then((res) => {
-        setResponse(res.data);
-      })
-      .catch(() => {});
-  };
-
-  const onSort = (column, value) => {
-    getClients(page, rowsPerPage, null, { column, value })
       .then((res) => {
         setResponse(res.data);
       })
@@ -118,6 +115,7 @@ const Page = () => {
               onEdit={onEdit}
               onSearch={onSearch}
               onSort={onSort}
+              sort={sort}
             />
           </Stack>
         </Container>

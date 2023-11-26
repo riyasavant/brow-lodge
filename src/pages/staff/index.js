@@ -15,9 +15,9 @@ import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
 
 const headers = [
-  { key: "preferredName", label: "Name" },
-  { key: "email", label: "Email" },
-  { key: "gender", label: "Gender" },
+  { key: "preferredName", label: "Name", sort: true },
+  { key: "email", label: "Email", sort: true },
+  { key: "gender", label: "Gender", sort: true },
 ];
 
 const Page = () => {
@@ -25,14 +25,15 @@ const Page = () => {
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sort, setSort] = useState({ column: "preferredName", value: "ASC" });
 
   useEffect(() => {
-    getStaffProfiles(page, rowsPerPage)
+    getStaffProfiles(page, rowsPerPage, sort)
       .then((res) => {
         setResponse(res.data);
       })
       .catch(() => {});
-  }, [rowsPerPage, page]);
+  }, [rowsPerPage, page, sort]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -40,6 +41,10 @@ const Page = () => {
 
   const handleRowsPerPageChange = useCallback((event) => {
     setRowsPerPage(event.target.value);
+  }, []);
+
+  const onSort = useCallback((column, value) => {
+    setSort({ column, value });
   }, []);
 
   const onEdit = (id) => {
@@ -100,6 +105,8 @@ const Page = () => {
               headers={headers}
               onDelete={onDelete}
               onEdit={onEdit}
+              onSort={onSort}
+              sort={sort}
             />
           </Stack>
         </Container>

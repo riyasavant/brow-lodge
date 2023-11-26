@@ -1,8 +1,14 @@
 import axios from "../config";
 
-export const getStaffProfiles = (page, items) => {
+export const getStaffProfiles = (page, items, sort = null, filter = null) => {
+  const filterQuery = filter
+    ? `&where[${filter.column}_startsWith]=${filter.value}`
+    : "";
+  const sortQuery = sort
+    ? `&sort=${sort.column}:${sort.value}`
+    : "&sort=preferredName:ASC";
   return axios.get(
-    `/staff-profile?sort=preferredName:ASC&page=${page + 1}&pageSize=${items}`
+    `/staff-profile?page=${page + 1}&pageSize=${items}${sortQuery}`
   );
 };
 
