@@ -14,6 +14,12 @@ import { getClients, deleteClient } from "src/api/lib/client";
 import { useRouter } from "next/router";
 import CustomTable from "src/components/Table";
 
+const searchData = [
+  { value: "preferredName", label: "Name" },
+  { value: "email", label: "Email" },
+  { value: "gender", label: "Gender" },
+];
+
 const headers = [
   { key: "preferredName", label: "Name", sort: true },
   { key: "email", label: "Email", sort: true },
@@ -25,15 +31,16 @@ const Page = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [sort, setSort] = useState({ column: "preferredName", value: "ASC" });
+  const [search, setSearch] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    getClients(page, rowsPerPage, null, sort)
+    getClients(page, rowsPerPage, search, sort)
       .then((res) => {
         setResponse(res.data);
       })
       .catch(() => {});
-  }, [rowsPerPage, page, sort]);
+  }, [rowsPerPage, page, sort, search]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -64,11 +71,11 @@ const Page = () => {
   };
 
   const onSearch = (column, value) => {
-    getClients(page, rowsPerPage, { column, value })
-      .then((res) => {
-        setResponse(res.data);
-      })
-      .catch(() => {});
+    setSearch({ column, value });
+  };
+
+  const onResetSearch = () => {
+    setSearch(null);
   };
 
   return (
@@ -116,6 +123,8 @@ const Page = () => {
               onSearch={onSearch}
               onSort={onSort}
               sort={sort}
+              onResetSearch={onResetSearch}
+              search={searchData}
             />
           </Stack>
         </Container>

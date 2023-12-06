@@ -18,14 +18,30 @@ import {
   deleteEyelashExtensionDetail,
 } from "src/api/lib/forms/details";
 import Breadcrumb from "src/components/Breadcrumb";
+import useFilter from "src/utils/useFilter";
 
 const headers = [
-  { key: "date", label: "Date" },
-  { key: "therapist", label: "Therapist" },
-  { key: "feedback", label: "Is the answer to any of the 4 questions 'Yes'?" },
-  { key: "eyeFeedback", label: "Eyes OK after treatment?" },
-  { key: "careFeedback", label: "After Care Given?" },
+  { key: "date", label: "Date", sort: true },
+  { key: "therapist", label: "Therapist", sort: true },
+  {
+    key: "feedback",
+    label: "Is the answer to any of the 4 questions 'Yes'?",
+    sort: true,
+  },
+  { key: "eyeFeedback", label: "Eyes OK after treatment?", sort: true },
+  { key: "careFeedback", label: "After Care Given?", sort: true },
   { key: "signature", label: "Client Signature" },
+];
+
+const searchData = [
+  { value: "date", label: "Date" },
+  { value: "therapist", label: "Therapist" },
+  {
+    value: "feedback",
+    label: "Is the answer to any of the 4 questions 'Yes'?",
+  },
+  { value: "eyeFeedback", label: "Eyes OK after treatment?" },
+  { value: "careFeedback", label: "After Care Given?" },
 ];
 
 const parseData = (data) => {
@@ -44,9 +60,10 @@ const Page = () => {
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { sort, search, setSearch, setSort, resetSearch } = useFilter();
 
   useEffect(() => {
-    getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
+    getEyelashExtensionDetails(page, rowsPerPage, router.query.id, sort, search)
       .then((res) => {
         setResponse({
           data: parseData(res.data?.data),
@@ -54,7 +71,7 @@ const Page = () => {
         });
       })
       .catch(() => {});
-  }, [rowsPerPage, page]);
+  }, [rowsPerPage, page, sort, search, router.query.id]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -154,6 +171,11 @@ const Page = () => {
               headers={headers}
               onDelete={onDelete}
               onEdit={onEdit}
+              search={searchData}
+              onResetSearch={resetSearch}
+              onSearch={setSearch}
+              onSort={setSort}
+              sort={sort}
             />
           </Stack>
         </Container>

@@ -23,6 +23,12 @@ const headers = [
   { key: "doctorName", label: "Doctor's Name", sort: true },
 ];
 
+const searchData = [
+  { value: "date", label: "Date" },
+  { value: "Client.preferredName", label: "Name" },
+  { value: "doctorName", label: "Doctor's Name" },
+];
+
 const parseData = (data) => {
   return data.map((form) => ({
     date: dayjs(form?.date || new Date()).format("DD/MM/YYYY"),
@@ -37,10 +43,11 @@ const Page = () => {
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [sort, setSort] = useState({ column: "date", value: "DESC" });
+  const [search, setSearch] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    getEyelashExtensionEntries(page, rowsPerPage, sort)
+    getEyelashExtensionEntries(page, rowsPerPage, sort, search)
       .then((res) => {
         setResponse({
           data: parseData(res.data?.data),
@@ -48,7 +55,7 @@ const Page = () => {
         });
       })
       .catch(() => {});
-  }, [rowsPerPage, page, sort]);
+  }, [rowsPerPage, page, sort, search]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -82,14 +89,11 @@ const Page = () => {
   };
 
   const onSearch = (column, value) => {
-    getEyelashExtensionEntries(page, rowsPerPage, sort, { column, value })
-      .then((res) => {
-        setResponse({
-          data: parseData(res.data?.data),
-          total: res.data?.total,
-        });
-      })
-      .catch(() => {});
+    setSearch({ column, value });
+  };
+
+  const onResetSearch = () => {
+    setSearch(null);
   };
 
   const breadcrumbItems = [
@@ -156,6 +160,8 @@ const Page = () => {
               sort={sort}
               onSort={onSort}
               onSearch={onSearch}
+              onResetSearch={onResetSearch}
+              search={searchData}
             />
           </Stack>
         </Container>

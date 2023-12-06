@@ -1,4 +1,5 @@
 import MagnifyingGlassIcon from "@heroicons/react/24/solid/MagnifyingGlassIcon";
+import ArrowUTurnLeftIcon from "@heroicons/react/24/solid/ArrowUturnLeftIcon";
 import {
   Card,
   InputAdornment,
@@ -7,29 +8,20 @@ import {
   TextField,
   Unstable_Grid2 as Grid,
   CardHeader,
+  Button,
 } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import debounce from "lodash.debounce";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
-const parseColumns = (data) => {
-  return data.map((item) => ({
-    value: item.key,
-    label: item.label,
-  }));
-};
-
-const getPlaceholder = (data, key) => {
-  return data.filter((item) => item.value === key)[0].label;
-};
-
-const Search = ({ headers, onChange }) => {
-  const allColumns = parseColumns(headers);
-  const [column, setColumn] = useState(allColumns[0].value);
+const Search = ({ headers, onChange, onResetSearch }) => {
+  const [column, setColumn] = useState(headers[0].value);
+  const [dateVal, setDateVal] = useState(null);
+  const [val, setVal] = useState("");
 
   const debouncedResults = useMemo(() => {
-    return debounce((value, column) => onChange(column, value), 500);
+    return debounce((value, column) => onChange({ column, value }), 500);
   }, [onChange]);
 
   useEffect(() => {
@@ -39,10 +31,29 @@ const Search = ({ headers, onChange }) => {
   });
 
   const onDateSearch = (value) => {
+    setDateVal(value);
     if (dayjs(value).format() !== "Invalid Date") {
-      onChange("date", value);
+      onChange({ column: "date", value });
     }
   };
+
+  const onValueSearch = (value) => {
+    setVal(value);
+  };
+
+  const reset = () => {
+    setDateVal(null);
+    setVal("");
+    onResetSearch();
+  };
+
+  useEffect(() => {
+    if (val !== "") {
+      debouncedResults(val, column);
+    } else {
+      onResetSearch();
+    }
+  }, [val]);
 
   return (
     <Card sx={{ px: 2 }}>
@@ -52,7 +63,7 @@ const Search = ({ headers, onChange }) => {
         sx={{ px: 0, color: "#4337C9" }}
       />
       <Grid container spacing={3} sx={{ pb: 2, alignItems: "center" }}>
-        <Grid xs={12} sm={6}>
+        <Grid xs={12} sm={4}>
           <TextField
             fullWidth
             label="Select Column"
@@ -63,7 +74,7 @@ const Search = ({ headers, onChange }) => {
             SelectProps={{ native: true }}
             value={column}
           >
-            {allColumns.map((option) => (
+            {headers.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -73,6 +84,7 @@ const Search = ({ headers, onChange }) => {
         <Grid xs={12} sm={6}>
           {column === "date" && (
             <DatePicker
+              value={dateVal}
               sx={{ width: "100%" }}
               fullWidth
               format="DD/MM/YYYY"
@@ -82,8 +94,9 @@ const Search = ({ headers, onChange }) => {
           )}
           {column !== "date" && (
             <OutlinedInput
+              value={val}
               fullWidth
-              placeholder={`Search ${getPlaceholder(allColumns, column)}`}
+              placeholder={`Search`}
               startAdornment={
                 <InputAdornment position="start">
                   <SvgIcon color="action" fontSize="small">
@@ -91,9 +104,17 @@ const Search = ({ headers, onChange }) => {
                   </SvgIcon>
                 </InputAdornment>
               }
-              onChange={(e) => debouncedResults(e.target.value, column)}
+              onChange={(e) => onValueSearch(e.target.value)}
             />
           )}
+        </Grid>
+        <Grid xs={12} sm={2}>
+          <Button fullWidth variant="contained" onClick={reset}>
+            <SvgIcon fontSize="small" sx={{ mr: 1 }}>
+              <ArrowUTurnLeftIcon />
+            </SvgIcon>
+            Clear
+          </Button>
         </Grid>
       </Grid>
     </Card>

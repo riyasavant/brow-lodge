@@ -38,8 +38,10 @@ const CustomTable = (props) => {
     isRowClickable = false,
     onRowClick = () => {},
     onSearch = () => {},
+    search = [],
     sort = {},
     onSort = () => {},
+    onResetSearch = () => {},
   } = props;
   const [modalData, setModalData] = useState({ show: false, id: "" });
 
@@ -50,7 +52,11 @@ const CustomTable = (props) => {
 
   return (
     <>
-      <Search headers={headers} onChange={onSearch} />
+      <Search
+        headers={search}
+        onChange={onSearch}
+        onResetSearch={onResetSearch}
+      />
       <Card>
         {items.length === 0 && (
           <Alert
@@ -67,15 +73,37 @@ const CustomTable = (props) => {
               <TableHead>
                 <TableRow>
                   {headers.map((header) => (
-                    <TableCell key={header.key}>
-                      {header.label}
-                      {header.sort && (
-                        <Sort column={header.key} onSort={onSort} sort={sort} />
-                      )}
+                    <TableCell key={header.key} sx={{ minWidth: "200px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        {header.label}
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          {header.sort && (
+                            <Sort
+                              column={header.key}
+                              onSort={onSort}
+                              sort={sort}
+                            />
+                          )}
+                        </div>
+                      </div>
                     </TableCell>
                   ))}
                   {hasActionsColumn && (
-                    <TableCell align="right">Actions</TableCell>
+                    <TableCell align="right" sx={{ minWidth: "120px" }}>
+                      Actions
+                    </TableCell>
                   )}
                 </TableRow>
               </TableHead>
@@ -95,7 +123,10 @@ const CustomTable = (props) => {
                       {headers.map((header) => {
                         if (header.key === "preferredName") {
                           return (
-                            <TableCell key={header.key} minWidth={120}>
+                            <TableCell
+                              key={header.key}
+                              sx={{ minWidth: "200px" }}
+                            >
                               <Typography variant="subtitle2">
                                 {customer.preferredName}
                               </Typography>
@@ -103,13 +134,16 @@ const CustomTable = (props) => {
                           );
                         }
                         return (
-                          <TableCell key={header.key} minWidth={120}>
+                          <TableCell
+                            key={header.key}
+                            sx={{ minWidth: "200px" }}
+                          >
                             {customer[header.key]}
                           </TableCell>
                         );
                       })}
                       {hasActionsColumn && (
-                        <TableCell align="right" minWidth={120}>
+                        <TableCell align="right" sx={{ minWidth: "120px" }}>
                           <IconButton
                             onClick={(e) => {
                               e.stopPropagation();

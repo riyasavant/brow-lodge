@@ -1,10 +1,24 @@
 import axios from "src/api/config";
 
-export const getEyelashExtensionDetails = (page, items, id) => {
+export const getEyelashExtensionDetails = (
+  page,
+  items,
+  id,
+  sort = null,
+  filter = null
+) => {
+  const filterQuery = filter
+    ? `&where[${filter.column}_${
+        filter.column === "date" ? "eq" : "contains"
+      }]=${filter.value}`
+    : "";
+  const sortQuery = sort
+    ? `&sort=${sort.column}:${sort.value}`
+    : "&sort=date:DESC";
   return axios.get(
     `/eyelash-extension-details?page=${
       page + 1
-    }&pageSize=${items}&where[Eyelash.id_eq]=${id}`
+    }&pageSize=${items}&where[Eyelash.id_eq]=${id}${filterQuery}${sortQuery}`
   );
 };
 

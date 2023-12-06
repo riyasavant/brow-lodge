@@ -14,7 +14,7 @@ const Sort = ({ column, sort, onSort }) => {
     <>
       <IconButton
         onClick={() => {
-          onSort(column, "DESC");
+          onSort({ column, value: "DESC" });
         }}
         sx={{ padding: 0, ml: "10px" }}
       >
@@ -24,7 +24,7 @@ const Sort = ({ column, sort, onSort }) => {
       </IconButton>
       <IconButton
         onClick={() => {
-          onSort(column, "ASC");
+          onSort({ column, value: "ASC" });
         }}
         sx={{ padding: 0 }}
       >

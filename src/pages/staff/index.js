@@ -20,20 +20,27 @@ const headers = [
   { key: "gender", label: "Gender", sort: true },
 ];
 
+const searchData = [
+  { value: "preferredName", label: "Name" },
+  { value: "email", label: "Email" },
+  { value: "gender", label: "Gender" },
+];
+
 const Page = () => {
   const router = useRouter();
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [search, setSearch] = useState(null);
   const [sort, setSort] = useState({ column: "preferredName", value: "ASC" });
 
   useEffect(() => {
-    getStaffProfiles(page, rowsPerPage, sort)
+    getStaffProfiles(page, rowsPerPage, sort, search)
       .then((res) => {
         setResponse(res.data);
       })
       .catch(() => {});
-  }, [rowsPerPage, page, sort]);
+  }, [rowsPerPage, page, sort, search]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -61,6 +68,14 @@ const Page = () => {
           .catch(() => {});
       })
       .catch(() => {});
+  };
+
+  const onSearch = (column, value) => {
+    setSearch({ column, value });
+  };
+
+  const onResetSearch = () => {
+    setSearch(null);
   };
 
   return (
@@ -107,6 +122,9 @@ const Page = () => {
               onEdit={onEdit}
               onSort={onSort}
               sort={sort}
+              onResetSearch={onResetSearch}
+              onSearch={onSearch}
+              search={searchData}
             />
           </Stack>
         </Container>
