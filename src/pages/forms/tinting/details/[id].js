@@ -21,21 +21,20 @@ import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
-import {
-  getEyelashExtensionDetailById,
-  updateEyelashExtensionDetail,
-} from "src/api/lib/forms/details";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/lib/structure";
 
 const Page = () => {
+  const api = useApiStructure("/tint-consultation-details");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
   const [data, setData] = useState({
     therapist: "",
-    feedback: "",
-    eyeFeedback: "",
-    careFeedback: "",
+    browColour: "",
+    lashColour: "",
+    overleafCondition: "",
+    careGiven: "",
   });
 
   const router = useRouter();
@@ -45,24 +44,25 @@ const Page = () => {
     enableReinitialize: true,
     validationSchema: Yup.object({
       therapist: Yup.string().required("This field is required"),
-      feedback: Yup.string().required("This field is required"),
-      eyeFeedback: Yup.string().required("This field is required"),
-      careFeedback: Yup.string().required("This field is required"),
+      browColour: Yup.string().required("This field is required"),
+      lashColour: Yup.string().required("This field is required"),
+      overleafCondition: Yup.string().required("This field is required"),
+      careGiven: Yup.string().required("This field is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
-        therapist: values.therapist || "",
-        feedback: values.feedback || "",
-        eyeFeedback: values.eyeFeedback || "",
-        careFeedback: values.careFeedback || "",
+        ...values,
         date: dayjs(formDate).format(),
-        eyelash: router.query.formId,
+        tint: router.query.id,
+        clientSign: imgUrl,
+        careGiven: true,
       };
 
-      updateEyelashExtensionDetail(router.query.id, payload)
+      api
+        .update(router.query.id, payload)
         .then(() => {
           router.push(
-            `/forms/eyelash-extension/details?id=${router.query.formId}&name=${router.query.name}`
+            `/forms/tinting/details?id=${router.query.formId}&name=${router.query.name}`
           );
         })
         .catch((err) => {
@@ -75,16 +75,19 @@ const Page = () => {
   });
 
   useEffect(() => {
-    getEyelashExtensionDetailById(router.query.id)
+    api
+      .getById(router.query.id)
       .then((res) => {
         const formData = res.data;
         setData({
           therapist: formData.therapist || "",
-          feedback: formData.feedback || "",
-          eyeFeedback: formData.eyeFeedback || "",
-          careFeedback: formData.careFeedback || "",
+          lashColour: formData.lashColour || "",
+          browColour: formData.browColour || "",
+          overleafCondition: formData.overleafCondition || "",
+          careGiven: formData.careGiven || "",
         });
         setFormDate(formData.date);
+        setImgUrl(formData.clientSign);
       })
       .catch(() => {});
   }, [router.query.id]);
@@ -92,14 +95,14 @@ const Page = () => {
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
     {
-      label: "Eyelash Extension",
+      label: "Eyelash and Brow Tinting",
       isActive: false,
-      link: "/forms/eyelash-extension",
+      link: "/forms/tinting",
     },
     {
       label: "Details",
       isActive: false,
-      link: `/forms/eyelash-extension/details?id=${router.query.formId}&name=${router.query.name}`,
+      link: `/forms/tinting/details?id=${router.query.formId}&name=${router.query.name}`,
     },
     { label: "Edit", isActive: true },
   ];
@@ -118,7 +121,7 @@ const Page = () => {
             <Breadcrumb items={breadcrumbItems} />
             <Stack spacing={2}>
               <Typography variant="h6">
-                Edit Eyelash Extension Consultation Card Details
+                Edit Eyelash and Brow Tinting Consultation Card Details
               </Typography>
               <Typography variant="h8" color="primary" fontWeight="bold">
                 {`Client: ${router.query.name}`}
@@ -138,8 +141,7 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
-                            formik.touched.therapist &&
-                            formik.errors.dtherapistay
+                            formik.touched.therapist && formik.errors.therapist
                           )
                         }
                         fullWidth
@@ -158,18 +160,21 @@ const Page = () => {
                     <Grid xs={12} md={6}>
                       <TextField
                         error={
-                          !!(formik.touched.feedback && formik.errors.feedback)
+                          !!(
+                            formik.touched.lashColour &&
+                            formik.errors.lashColour
+                          )
                         }
                         fullWidth
                         helperText={
-                          formik.touched.feedback && formik.errors.feedback
+                          formik.touched.lashColour && formik.errors.lashColour
                         }
-                        label="Is the answer to any of the 4 questions 'Yes'?"
-                        name="feedback"
+                        label="Lash Colour"
+                        name="lashColour"
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         type="text"
-                        value={formik.values.feedback}
+                        value={formik.values.lashColour}
                         required
                       />
                     </Grid>
@@ -177,21 +182,20 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
-                            formik.touched.eyeFeedback &&
-                            formik.errors.eyeFeedback
+                            formik.touched.browColour &&
+                            formik.errors.browColour
                           )
                         }
                         fullWidth
                         helperText={
-                          formik.touched.eyeFeedback &&
-                          formik.errors.eyeFeedback
+                          formik.touched.browColour && formik.errors.browColour
                         }
-                        label="Eyes OK after treatment?"
-                        name="eyeFeedback"
+                        label="Brow Colour"
+                        name="browColour"
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         type="text"
-                        value={formik.values.eyeFeedback}
+                        value={formik.values.browColour}
                         required
                       />
                     </Grid>
@@ -199,21 +203,41 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
-                            formik.touched.careFeedback &&
-                            formik.errors.careFeedback
+                            formik.touched.overleafCondition &&
+                            formik.errors.overleafCondition
                           )
                         }
                         fullWidth
                         helperText={
-                          formik.touched.careFeedback &&
-                          formik.errors.careFeedback
+                          formik.touched.overleafCondition &&
+                          formik.errors.overleafCondition
                         }
-                        label="After Care Given?"
-                        name="careFeedback"
+                        label="Do any of the conditions overleaf apply to you"
+                        name="overleafCondition"
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         type="text"
-                        value={formik.values.careFeedback}
+                        value={formik.values.overleafCondition}
+                        required
+                      />
+                    </Grid>
+                    <Grid xs={12} md={6}>
+                      <TextField
+                        error={
+                          !!(
+                            formik.touched.careGiven && formik.errors.careGiven
+                          )
+                        }
+                        fullWidth
+                        helperText={
+                          formik.touched.careGiven && formik.errors.careGiven
+                        }
+                        label="After Care Leaflet Given?"
+                        name="careGiven"
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                        type="text"
+                        value={formik.values.careGiven}
                         required
                       />
                     </Grid>
@@ -260,7 +284,7 @@ const Page = () => {
                   variant="outlined"
                   onClick={() =>
                     router.push(
-                      `/forms/eyelash-extension/details?id=${router.query.id}&name=${router.query.name}`
+                      `/forms/tinting/details?id=${router.query.id}&name=${router.query.name}`
                     )
                   }
                 >

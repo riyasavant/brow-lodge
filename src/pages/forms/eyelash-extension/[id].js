@@ -46,8 +46,6 @@ const Page = () => {
 
   // Form initial values
   const [formData, setFormData] = useState({
-    day: "",
-    evening: "",
     technicianName: "",
     doctorName: "",
     doctorAddress: "",
@@ -64,8 +62,6 @@ const Page = () => {
     initialValues: formData,
     enableReinitialize: true,
     validationSchema: Yup.object({
-      day: Yup.string().required("Tel (Day) is required"),
-      evening: Yup.string().required("Evening is required"),
       technicianName: Yup.string().required("Technician name is required"),
       doctorName: Yup.string().required("Doctor's name is required"),
       doctorAddress: Yup.string().required("Doctor's address is required"),
@@ -112,8 +108,6 @@ const Page = () => {
           )[0];
           setClients(parseClients(response.data.data));
           setFormData({
-            day: formData.day || "",
-            evening: formData.evening || "",
             technicianName: formData.technicianName || "",
             doctorName: formData.doctorName || "",
             doctorAddress: formData.doctorAddress || "",
@@ -186,38 +180,6 @@ const Page = () => {
                           </option>
                         ))}
                       </TextField>
-                    </Grid>
-                    <Grid xs={12} md={6}>
-                      <TextField
-                        error={!!(formik.touched.day && formik.errors.day)}
-                        fullWidth
-                        helperText={formik.touched.day && formik.errors.day}
-                        label="Tel (Day)"
-                        name="day"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.day}
-                        required
-                      />
-                    </Grid>
-                    <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(formik.touched.evening && formik.errors.evening)
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.evening && formik.errors.evening
-                        }
-                        label="Evening"
-                        name="evening"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.evening}
-                        required
-                      />
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField

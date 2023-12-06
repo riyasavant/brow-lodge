@@ -21,6 +21,7 @@ const searchData = [
   { value: "date", label: "Date" },
   { value: "name", label: "Name" },
   { value: "doctorName", label: "Doctor's Name" },
+  { key: "clientSign", label: "Client signature", sort: true },
 ];
 
 const headers = [
@@ -34,6 +35,7 @@ const parseData = (data) => {
     date: dayjs(form?.date || new Date()).format("DD/MM/YYYY"),
     name: form?.Client?.preferredName || "",
     doctorName: form?.doctorName || "",
+    clientSign: form?.clientSign || "",
     id: form?.id,
   }));
 };

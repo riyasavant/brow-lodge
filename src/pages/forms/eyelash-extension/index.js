@@ -12,9 +12,7 @@ import {
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
-import { getEyelashExtensionEntries } from "src/api/lib/forms/eyelash-extension";
 import dayjs from "dayjs";
-import { deleteEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/lib/structure";
 import useFilter from "src/utils/useFilter";
@@ -23,6 +21,7 @@ const headers = [
   { key: "date", label: "Date", sort: true },
   { key: "name", label: "Name", sort: true },
   { key: "doctorName", label: "Doctor's Name", sort: true },
+  { key: "clientSign", label: "Client signature", sort: true },
 ];
 
 const searchData = [
@@ -36,6 +35,7 @@ const parseData = (data) => {
     date: dayjs(form?.date || new Date()).format("DD/MM/YYYY"),
     name: form?.Client?.preferredName || "",
     doctorName: form?.doctorName || "",
+    clientSign: form?.clientSign || "",
     id: form?.id,
   }));
 };

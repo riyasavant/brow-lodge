@@ -13,40 +13,63 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
-import {
-  getEyelashExtensionDetails,
-  deleteEyelashExtensionDetail,
-} from "src/api/lib/forms/details";
 import Breadcrumb from "src/components/Breadcrumb";
+import useFilter from "src/utils/useFilter";
+import useApiStructure from "src/api/lib/structure";
 
 const headers = [
-  { key: "date", label: "Date" },
-  { key: "therapist", label: "Therapist" },
-  { key: "feedback", label: "Is the answer to any of the 4 questions 'Yes'?" },
-  { key: "eyeFeedback", label: "Eyes OK after treatment?" },
-  { key: "careFeedback", label: "After Care Given?" },
-  { key: "signature", label: "Client Signature" },
+  { key: "date", label: "Date", sort: true },
+  { value: "therapist", label: "Therapist", sort: true },
+  { key: "browColour", label: "Brow Colour", sort: true },
+  { key: "lashColour", label: "Lash Colour", sort: true },
+  {
+    key: "overleafCondition",
+    label: "Do any of the conditions overleaf apply to you?",
+    sort: true,
+  },
+  { key: "careGiven", label: "After Care Leaflet Given?", sort: true },
+  { key: "clientSign", label: "Client Signature" },
+];
+
+const searchData = [
+  { value: "date", label: "Date" },
+  { value: "therapist", label: "Therapist" },
+  { value: "browColour", label: "Brow Colour" },
+  { value: "lashColour", label: "Lash Colour" },
+  {
+    value: "overleafCondition",
+    label: "Do any of the conditions overleaf apply to you?",
+  },
+  { value: "careGiven", label: "After Care Leaflet Given?" },
 ];
 
 const parseData = (data) => {
   return data.map((form) => ({
     date: dayjs(form?.date || new Date()).format("DD/MM/YYYY"),
     therapist: form?.therapist || "",
-    feedback: form?.feedback || "",
-    eyeFeedback: form?.eyeFeedback || "",
-    careFeedback: form?.careFeedback || "",
+    browColour: form?.browColour || "",
+    lashColour: form?.lashColour || "",
+    overleafCondition: form?.overleafCondition || "",
+    careGiven: form?.careGiven || "",
+    clientSign: form?.clientSign || "",
     id: form?.id,
   }));
 };
 
 const Page = () => {
+  const api = useApiStructure("/tint-consultation-details");
   const router = useRouter();
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { sort, search, setSearch, setSort, resetSearch } = useFilter({
+    column: "date",
+    value: "DESC",
+  });
 
   useEffect(() => {
-    getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
+    api
+      .getAllDetails(router.query.id, "Tint", page, rowsPerPage, sort, search)
       .then((res) => {
         setResponse({
           data: parseData(res.data?.data),
@@ -66,24 +89,33 @@ const Page = () => {
 
   const onEdit = (id) => {
     router.push(
-      `/forms/eyelash-extension/details/${id}?name=${router.query.name}&formId=${router.query.id}`
+      `/forms/tinting/details/${id}?name=${router.query.name}&formId=${router.query.id}`
     );
   };
 
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
     {
-      label: "Eyelash Extension",
+      label: "Eyelash and Brow Tinting",
       isActive: false,
-      link: "/forms/eyelash-extension",
+      link: "/forms/tinting",
     },
     { label: "Details", isActive: true },
   ];
 
   const onDelete = (id) => {
-    deleteEyelashExtensionDetail(id)
+    api
+      .deleteEntry(id)
       .then(() => {
-        getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
+        api
+          .getAllDetails(
+            router.query.id,
+            "Tint",
+            page,
+            rowsPerPage,
+            sort,
+            search
+          )
           .then((res) => {
             setResponse({
               data: parseData(res.data?.data),
@@ -119,7 +151,7 @@ const Page = () => {
                 <Breadcrumb items={breadcrumbItems} />
                 <Stack spacing={1}>
                   <Typography variant="h6">
-                    Eyelash Extension Consultation Card Details
+                    Eyelash and Brow Tint Consultation Card Details
                   </Typography>
                   <Typography variant="h8" color="primary" fontWeight="bold">
                     {`Client: ${router.query.name}`}
@@ -136,7 +168,7 @@ const Page = () => {
                   variant="contained"
                   onClick={() =>
                     router.push(
-                      `/forms/eyelash-extension/details/add?id=${router.query.id}&name=${router.query.name}`
+                      `/forms/tinting/details/add?id=${router.query.id}&name=${router.query.name}`
                     )
                   }
                 >
@@ -154,6 +186,11 @@ const Page = () => {
               headers={headers}
               onDelete={onDelete}
               onEdit={onEdit}
+              sort={sort}
+              onSearch={setSearch}
+              onResetSearch={resetSearch}
+              onSort={setSort}
+              search={searchData}
             />
           </Stack>
         </Container>
