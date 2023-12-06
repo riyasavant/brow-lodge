@@ -48,7 +48,6 @@ const Page = () => {
   useEffect(() => {
     getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
       .then((res) => {
-        console.log(res);
         setResponse({
           data: parseData(res.data?.data),
           total: res.data?.total,
@@ -86,7 +85,6 @@ const Page = () => {
       .then(() => {
         getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
           .then((res) => {
-            console.log(res);
             setResponse({
               data: parseData(res.data?.data),
               total: res.data?.total,

@@ -106,7 +106,6 @@ const Page = () => {
     getEyelashExtensionById(router.query.id)
       .then((res) => {
         getClients(0, 1000).then((response) => {
-          console.log(response, res);
           const formData = res.data;
           const client = response.data.data.filter(
             (client) => client.id === formData.client

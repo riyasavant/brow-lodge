@@ -112,8 +112,6 @@ const Page = () => {
     { label: "Add", isActive: true, link: "/forms/tinting" },
   ];
 
-  console.log("sign", typeof imgUrl, imgUrl);
-
   return (
     <Box
       component="main"

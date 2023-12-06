@@ -9,7 +9,6 @@ const Breadcrumb = ({ items }) => {
 
   function handleClick(event) {
     event.preventDefault();
-    console.log(event);
     router.push(`${event.target.pathname}${event.target.search || ""}`);
   }
 

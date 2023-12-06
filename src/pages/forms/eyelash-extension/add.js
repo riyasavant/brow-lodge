@@ -111,8 +111,6 @@ const Page = () => {
     { label: "Add", isActive: true, link: "/forms/eyelash-extension" },
   ];
 
-  console.log("sign", typeof imgUrl, imgUrl);
-
   return (
     <Box
       component="main"

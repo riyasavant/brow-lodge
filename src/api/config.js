@@ -16,8 +16,6 @@ axios.interceptors.request.use(
       jwt = window.sessionStorage.getItem("auth-token");
     }
 
-    console.log("jwt", jwt);
-
     if (jwt) {
       config.headers = {
         Authorization: `Bearer ${jwt}`,
@@ -36,15 +34,14 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log(error);
-    // if (
-    //   error?.response?.status === 401 &&
-    //   window.location.pathname !== "/auth/login"
-    // ) {
-    //   window.localStorage.clear();
-    //   window.sessionStorage.clear();
-    //   window.location = "/auth/login";
-    // }
+    if (
+      error?.response?.status === 401 &&
+      window.location.pathname !== "/auth/login"
+    ) {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.location = "/auth/login";
+    }
     return Promise.reject(error);
   }
 );

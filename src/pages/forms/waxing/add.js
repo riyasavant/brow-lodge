@@ -113,8 +113,6 @@ const Page = () => {
     { label: "Add", isActive: true, link: "/forms/waxing" },
   ];
 
-  console.log("sign", typeof imgUrl, imgUrl);
-
   return (
     <Box
       component="main"

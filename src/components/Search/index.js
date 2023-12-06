@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import debounce from "lodash.debounce";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 const parseColumns = (data) => {
   return data.map((item) => ({
@@ -36,6 +38,12 @@ const Search = ({ headers, onChange }) => {
     };
   });
 
+  const onDateSearch = (value) => {
+    if (dayjs(value).format() !== "Invalid Date") {
+      onChange("date", value);
+    }
+  };
+
   return (
     <Card sx={{ px: 2 }}>
       <CardHeader
@@ -44,7 +52,7 @@ const Search = ({ headers, onChange }) => {
         sx={{ px: 0, color: "#4337C9" }}
       />
       <Grid container spacing={3} sx={{ pb: 2, alignItems: "center" }}>
-        <Grid xs={12} sm={4}>
+        <Grid xs={12} sm={6}>
           <TextField
             fullWidth
             label="Select Column"
@@ -62,19 +70,30 @@ const Search = ({ headers, onChange }) => {
             ))}
           </TextField>
         </Grid>
-        <Grid xs={12} sm={8}>
-          <OutlinedInput
-            fullWidth
-            placeholder={`Search ${getPlaceholder(allColumns, column)}`}
-            startAdornment={
-              <InputAdornment position="start">
-                <SvgIcon color="action" fontSize="small">
-                  <MagnifyingGlassIcon />
-                </SvgIcon>
-              </InputAdornment>
-            }
-            onChange={(e) => debouncedResults(e.target.value, column)}
-          />
+        <Grid xs={12} sm={6}>
+          {column === "date" && (
+            <DatePicker
+              sx={{ width: "100%" }}
+              fullWidth
+              format="DD/MM/YYYY"
+              label="Search Date"
+              onChange={onDateSearch}
+            />
+          )}
+          {column !== "date" && (
+            <OutlinedInput
+              fullWidth
+              placeholder={`Search ${getPlaceholder(allColumns, column)}`}
+              startAdornment={
+                <InputAdornment position="start">
+                  <SvgIcon color="action" fontSize="small">
+                    <MagnifyingGlassIcon />
+                  </SvgIcon>
+                </InputAdornment>
+              }
+              onChange={(e) => debouncedResults(e.target.value, column)}
+            />
+          )}
         </Grid>
       </Grid>
     </Card>

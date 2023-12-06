@@ -7,7 +7,9 @@ export const getEyelashExtensionEntries = (
   filter = null
 ) => {
   const filterQuery = filter
-    ? `&where[${filter.column}_contains]=${filter.value}`
+    ? `&where[${filter.column}_${
+        filter.column === "date" ? "eq" : "contains"
+      }]=${filter.value}`
     : "";
   const sortQuery = sort
     ? `&sort=${sort.column}:${sort.value}`
