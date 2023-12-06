@@ -35,8 +35,10 @@ axios.interceptors.response.use(
   },
   (error) => {
     if (
-      error?.response?.status === 401 &&
-      window.location.pathname !== "/auth/login"
+      (error?.response?.status === 401 &&
+        window.location.pathname !== "/auth/login") ||
+      (error?.response?.status === 404 &&
+        error?.response?.message === "User not found!")
     ) {
       window.localStorage.clear();
       window.sessionStorage.clear();
