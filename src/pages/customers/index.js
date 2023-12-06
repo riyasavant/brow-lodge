@@ -10,9 +10,10 @@ import {
   Typography,
 } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
-import { getClients, deleteClient } from "src/api/lib/client";
 import { useRouter } from "next/router";
 import CustomTable from "src/components/Table";
+import useFilter from "src/utils/useFilter";
+import useApiStructure from "src/api/lib/structure";
 
 const searchData = [
   { value: "preferredName", label: "Name" },
@@ -30,12 +31,16 @@ const Page = () => {
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [sort, setSort] = useState({ column: "preferredName", value: "ASC" });
-  const [search, setSearch] = useState(null);
   const router = useRouter();
+  const { sort, search, setSearch, setSort, resetSearch } = useFilter({
+    column: "preferredName",
+    value: "ASC",
+  });
+  const api = useApiStructure("/client-profile");
 
   useEffect(() => {
-    getClients(page, rowsPerPage, search, sort)
+    api
+      .getAll(page, rowsPerPage, sort, search)
       .then((res) => {
         setResponse(res.data);
       })
@@ -50,32 +55,22 @@ const Page = () => {
     setRowsPerPage(event.target.value);
   }, []);
 
-  const onSort = useCallback((column, value) => {
-    setSort({ column, value });
-  }, []);
-
   const onEdit = (id) => {
     router.push(`/customers/${id}`);
   };
 
   const onDelete = (id) => {
-    deleteClient(id)
+    api
+      .deleteEntry(id)
       .then((res) => {
-        getClients(page, rowsPerPage)
+        api
+          .getAll(page, rowsPerPage, sort, search)
           .then((res) => {
             setResponse(res.data);
           })
           .catch(() => {});
       })
       .catch(() => {});
-  };
-
-  const onSearch = (column, value) => {
-    setSearch({ column, value });
-  };
-
-  const onResetSearch = () => {
-    setSearch(null);
   };
 
   return (
@@ -120,10 +115,10 @@ const Page = () => {
               headers={headers}
               onDelete={onDelete}
               onEdit={onEdit}
-              onSearch={onSearch}
-              onSort={onSort}
+              onSearch={setSearch}
+              onSort={setSort}
               sort={sort}
-              onResetSearch={onResetSearch}
+              onResetSearch={resetSearch}
               search={searchData}
             />
           </Stack>

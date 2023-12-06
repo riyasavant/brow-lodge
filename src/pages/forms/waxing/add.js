@@ -31,53 +31,50 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
-import { width } from "@mui/system";
+import useApiStructure from "src/api/lib/structure";
 
 const Page = () => {
+  const api = useApiStructure("/wax-consultation");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
-  const [skinTest, setSkinTest] = useState(false);
-  const [skinTestDate, setSkinTestDate] = useState(new Date());
+  const [prescribedMedicine, setPrescribedMedicine] = useState(false);
+  const [medicineDetails, setDetails] = useState("");
+  const [diseases, setDiseases] = useState({});
+  const [products, setProducts] = useState({});
   const [clients, setClients] = useState([]);
+  const [waxTreatment, setWaxTreatment] = useState(false);
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      day: "",
-      evening: "",
-      technicianName: "",
       doctorName: "",
       doctorAddress: "",
-      isPregnant: "false",
-      eyeSyndrome: "false",
-      hrt: "false",
-      eyeComplaint: "false",
       client: clients.length > 0 ? clients[0].value : "",
+      clientSign: null,
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
-      day: Yup.string().required("Tel (Day) is required"),
-      evening: Yup.string().required("Evening is required"),
-      technicianName: Yup.string().required("Technician name is required"),
       doctorName: Yup.string().required("Doctor's name is required"),
       doctorAddress: Yup.string().required("Doctor's address is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
         ...values,
-        doctorName: imgUrl,
-        isPregnant: values.isPregnant === "true" ? true : false,
-        eyeSyndrome: values.eyeSyndrome === "true" ? true : false,
-        hrt: values.hrt === "true" ? true : false,
-        eyeComplaint: values.eyeComplaint === "true" ? true : false,
-        skinPatchTest: skinTest,
-        skinPatchTestDate: dayjs(skinTestDate).format(),
         date: dayjs(formDate).format(),
+        containProducts: Object.keys(products).filter(
+          (selected) => products[selected]
+        ),
+        disease: Object.keys(diseases).filter((selected) => diseases[selected]),
+        clientSign: imgUrl,
+        waxTreatment,
       };
 
-      createEyelashExtension(payload)
+      console.log(payload);
+
+      api
+        .create(payload)
         .then((res) => {
-          router.push("/forms/eyelash-extension");
+          router.push("/forms/waxing");
         })
         .catch((err) => {
           const msg = parseServerErrorMsg(err);
@@ -112,6 +109,38 @@ const Page = () => {
     },
     { label: "Add", isActive: true, link: "/forms/waxing" },
   ];
+
+  const handleDiseaseSelection = (e) => {
+    if (e.target.checked) {
+      const parsed = {
+        ...diseases,
+        [e.target.name]: true,
+      };
+      setDiseases(parsed);
+    } else {
+      const parsed = {
+        ...diseases,
+        [e.target.name]: false,
+      };
+      setDiseases(parsed);
+    }
+  };
+
+  const handleProductsSelection = (e) => {
+    if (e.target.checked) {
+      const parsed = {
+        ...products,
+        [e.target.name]: true,
+      };
+      setProducts(parsed);
+    } else {
+      const parsed = {
+        ...products,
+        [e.target.name]: false,
+      };
+      setProducts(parsed);
+    }
+  };
 
   return (
     <Box
@@ -156,38 +185,6 @@ const Page = () => {
                           </option>
                         ))}
                       </TextField>
-                    </Grid>
-                    <Grid xs={12} md={6}>
-                      <TextField
-                        error={!!(formik.touched.day && formik.errors.day)}
-                        fullWidth
-                        helperText={formik.touched.day && formik.errors.day}
-                        label="Tel (Day)"
-                        name="day"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.day}
-                        required
-                      />
-                    </Grid>
-                    <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(formik.touched.evening && formik.errors.evening)
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.evening && formik.errors.evening
-                        }
-                        label="Evening"
-                        name="evening"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.evening}
-                        required
-                      />
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField
@@ -246,9 +243,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="diabetes"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -265,9 +261,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="epilepsy"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -284,9 +279,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="moles"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -303,9 +297,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="hypersensitiveSkin"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -322,9 +315,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="oedema"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -341,9 +333,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="phlebitis"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -360,9 +351,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="pregnancy"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -379,9 +369,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="newScarTissue"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -398,9 +387,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="psoriasis"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -417,9 +405,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="poorCirculation"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -436,9 +423,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="skinDiseases"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -455,9 +441,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="undiagnosedLumpsAndBumps"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -474,9 +459,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="sunburn"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -493,9 +477,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="varicoseVeins"
+                                onChange={(e) => handleDiseaseSelection(e)}
                               />
                             }
                             label={
@@ -516,9 +499,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="prescribedMedicine"
+                                value={prescribedMedicine}
+                                onChange={() =>
+                                  setPrescribedMedicine((prev) => !prev)
+                                }
                               />
                             }
                             label={
@@ -529,18 +514,15 @@ const Page = () => {
                             labelPlacement="end"
                           />
                         </FormGroup>
-                        {skinTest && (
+                        {prescribedMedicine && (
                           <TextField
                             sx={{ width: "400px" }}
                             variant="standard"
-                            error={!!(formik.touched.day && formik.errors.day)}
-                            helperText={formik.touched.day && formik.errors.day}
-                            label="Skin Diagnosis"
-                            name="day"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
+                            label="Details"
+                            name="prescribedMedicineDetails"
+                            onChange={(e) => setDetails(e.target.value)}
                             type="text"
-                            value={formik.values.day}
+                            value={medicineDetails}
                             required
                           />
                         )}
@@ -560,9 +542,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="retinA"
+                                onChange={handleProductsSelection}
                               />
                             }
                             label={
@@ -579,9 +560,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="accutane"
+                                onChange={handleProductsSelection}
                               />
                             }
                             label={
@@ -598,9 +578,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="glycolicAcid"
+                                onChange={handleProductsSelection}
                               />
                             }
                             label={
@@ -617,9 +596,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="AHASkinCare"
+                                onChange={handleProductsSelection}
                               />
                             }
                             label={
@@ -643,14 +621,20 @@ const Page = () => {
                         <RadioGroup
                           row
                           aria-labelledby="demo-row-radio-buttons-group-label"
-                          name="eyeComplaint"
-                          onChange={formik.handleChange}
-                          value={formik.values.eyeComplaint}
+                          name="waxTreatment"
+                          onChange={(e) => {
+                            if (e.target.value === "true") {
+                              setWaxTreatment(true);
+                            } else {
+                              setWaxTreatment(false);
+                            }
+                          }}
                         >
                           <FormControlLabel
                             value="true"
                             control={
                               <Radio
+                                checked={waxTreatment}
                                 sx={{
                                   "& .MuiSvgIcon-root": {
                                     fontSize: 20,
@@ -664,6 +648,7 @@ const Page = () => {
                             value="false"
                             control={
                               <Radio
+                                checked={!waxTreatment}
                                 sx={{
                                   "& .MuiSvgIcon-root": {
                                     fontSize: 20,
@@ -737,7 +722,11 @@ const Page = () => {
                 >
                   Cancel
                 </Button>
-                <Button variant="contained" type="submit">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={imgUrl === ""}
+                >
                   Add
                 </Button>
               </CardActions>

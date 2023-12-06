@@ -16,6 +16,8 @@ import { getEyelashExtensionEntries } from "src/api/lib/forms/eyelash-extension"
 import dayjs from "dayjs";
 import { deleteEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/lib/structure";
+import useFilter from "src/utils/useFilter";
 
 const headers = [
   { key: "date", label: "Date", sort: true },
@@ -42,12 +44,16 @@ const Page = () => {
   const router = useRouter();
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
-  const [sort, setSort] = useState({ column: "date", value: "DESC" });
-  const [search, setSearch] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const api = useApiStructure("/eyelash-extension");
+  const { sort, search, setSearch, setSort, resetSearch } = useFilter({
+    column: "date",
+    value: "DESC",
+  });
 
   useEffect(() => {
-    getEyelashExtensionEntries(page, rowsPerPage, sort, search)
+    api
+      .getAll(page, rowsPerPage, sort, search)
       .then((res) => {
         setResponse({
           data: parseData(res.data?.data),
@@ -69,14 +75,12 @@ const Page = () => {
     router.push(`/forms/eyelash-extension/${id}`);
   };
 
-  const onSort = useCallback((column, value) => {
-    setSort({ column, value });
-  }, []);
-
   const onDelete = (id) => {
-    deleteEyelashExtensionForm(id)
+    api
+      .deleteEntry(id)
       .then(() => {
-        getEyelashExtensionEntries(page, rowsPerPage)
+        api
+          .getAll(page, rowsPerPage, sort, search)
           .then((res) => {
             setResponse({
               data: parseData(res.data?.data),
@@ -158,9 +162,9 @@ const Page = () => {
                 )
               }
               sort={sort}
-              onSort={onSort}
-              onSearch={onSearch}
-              onResetSearch={onResetSearch}
+              onSort={setSort}
+              onSearch={setSearch}
+              onResetSearch={resetSearch}
               search={searchData}
             />
           </Stack>

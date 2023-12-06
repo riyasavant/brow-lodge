@@ -13,12 +13,9 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
-import {
-  getEyelashExtensionDetails,
-  deleteEyelashExtensionDetail,
-} from "src/api/lib/forms/details";
 import Breadcrumb from "src/components/Breadcrumb";
 import useFilter from "src/utils/useFilter";
+import useApiStructure from "src/api/lib/structure";
 
 const headers = [
   { key: "date", label: "Date", sort: true },
@@ -60,10 +57,22 @@ const Page = () => {
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { sort, search, setSearch, setSort, resetSearch } = useFilter();
+  const { sort, search, setSearch, setSort, resetSearch } = useFilter({
+    column: "date",
+    value: "DESC",
+  });
+  const api = useApiStructure("/eyelash-extension-details");
 
   useEffect(() => {
-    getEyelashExtensionDetails(page, rowsPerPage, router.query.id, sort, search)
+    api
+      .getAllDetails(
+        router.query.id,
+        "Eyelash",
+        page,
+        rowsPerPage,
+        sort,
+        search
+      )
       .then((res) => {
         setResponse({
           data: parseData(res.data?.data),
@@ -98,9 +107,18 @@ const Page = () => {
   ];
 
   const onDelete = (id) => {
-    deleteEyelashExtensionDetail(id)
+    api
+      .deleteEntry(id)
       .then(() => {
-        getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
+        api
+          .getAllDetails(
+            router.query.id,
+            "Eyelash",
+            page,
+            rowsPerPage,
+            sort,
+            search
+          )
           .then((res) => {
             setResponse({
               data: parseData(res.data?.data),

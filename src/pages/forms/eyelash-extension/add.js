@@ -19,7 +19,6 @@ import * as Yup from "yup";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { getClients } from "src/api/lib/client";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -31,8 +30,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/lib/structure";
 
 const Page = () => {
+  const clientApi = useApiStructure("/client-profile");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
@@ -94,7 +95,8 @@ const Page = () => {
   };
 
   useEffect(() => {
-    getClients(0, 1000)
+    clientApi
+      .getAll(0, 1000)
       .then((res) => {
         setClients(parseClients(res.data.data));
       })

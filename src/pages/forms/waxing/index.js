@@ -12,15 +12,21 @@ import {
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
-import { getEyelashExtensionEntries } from "src/api/lib/forms/eyelash-extension";
 import dayjs from "dayjs";
-import { deleteEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension";
 import Breadcrumb from "src/components/Breadcrumb";
+import useFilter from "src/utils/useFilter";
+import useApiStructure from "src/api/lib/structure";
 
 const headers = [
-  { key: "date", label: "Date" },
-  { key: "name", label: "Name" },
-  { key: "doctorName", label: "Doctor's Name" },
+  { key: "date", label: "Date", sort: true },
+  { key: "name", label: "Name", sort: true },
+  { key: "doctorName", label: "Doctor's Name", sort: true },
+];
+
+const searchData = [
+  { value: "date", label: "Date" },
+  { value: "name", label: "Name" },
+  { value: "doctorName", label: "Doctor's Name" },
 ];
 
 const parseData = (data) => {
@@ -37,9 +43,15 @@ const Page = () => {
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const api = useApiStructure("/wax-consultation");
+  const { sort, search, setSort, setSearch, resetSearch } = useFilter({
+    column: "date",
+    value: "DESC",
+  });
 
   useEffect(() => {
-    getEyelashExtensionEntries(page, rowsPerPage)
+    api
+      .getAll(page, rowsPerPage, sort, search)
       .then((res) => {
         setResponse({
           data: parseData(res.data?.data),
@@ -47,7 +59,7 @@ const Page = () => {
         });
       })
       .catch(() => {});
-  }, [rowsPerPage, page]);
+  }, [rowsPerPage, page, sort, search]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -58,13 +70,15 @@ const Page = () => {
   }, []);
 
   const onEdit = (id) => {
-    router.push(`/forms/eyelash-extension/${id}`);
+    router.push(`/forms/waxing/${id}`);
   };
 
   const onDelete = (id) => {
-    deleteEyelashExtensionForm(id)
+    api
+      .deleteEntry(id)
       .then(() => {
-        getEyelashExtensionEntries(page, rowsPerPage)
+        api
+          .getAll(page, rowsPerPage, sort, search)
           .then((res) => {
             setResponse({
               data: parseData(res.data?.data),
@@ -135,6 +149,11 @@ const Page = () => {
                   `/forms/eyelash-extension/details?id=${id}&name=${name}`
                 )
               }
+              sort={sort}
+              search={searchData}
+              onSearch={setSearch}
+              onSort={setSort}
+              onResetSearch={resetSearch}
             />
           </Stack>
         </Container>
