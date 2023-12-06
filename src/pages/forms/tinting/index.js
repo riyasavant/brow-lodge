@@ -21,13 +21,13 @@ const searchData = [
   { value: "date", label: "Date" },
   { value: "name", label: "Name" },
   { value: "doctorName", label: "Doctor's Name" },
-  { key: "clientSign", label: "Client signature", sort: true },
 ];
 
 const headers = [
-  { key: "date", label: "Date" },
-  { key: "name", label: "Name" },
-  { key: "doctorName", label: "Doctor's Name" },
+  { key: "date", label: "Date", sort: true },
+  { key: "name", label: "Name", sort: true },
+  { key: "doctorName", label: "Doctor's Name", sort: true },
+  { key: "clientSign", label: "Client signature" },
 ];
 
 const parseData = (data) => {
