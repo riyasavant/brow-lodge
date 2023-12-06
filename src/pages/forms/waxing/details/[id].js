@@ -26,16 +26,19 @@ import {
   updateEyelashExtensionDetail,
 } from "src/api/lib/forms/details";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/lib/structure";
 
 const Page = () => {
+  const api = useApiStructure("/wax-consultation-details");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
   const [data, setData] = useState({
     therapist: "",
-    feedback: "",
-    eyeFeedback: "",
-    careFeedback: "",
+    skinBefore: "",
+    skinAfter: "",
+    treatment: "",
+    careGiven: "",
   });
 
   const router = useRouter();
@@ -45,24 +48,24 @@ const Page = () => {
     enableReinitialize: true,
     validationSchema: Yup.object({
       therapist: Yup.string().required("This field is required"),
-      feedback: Yup.string().required("This field is required"),
-      eyeFeedback: Yup.string().required("This field is required"),
-      careFeedback: Yup.string().required("This field is required"),
+      skinBefore: Yup.string().required("This field is required"),
+      skinAfter: Yup.string().required("This field is required"),
+      treatment: Yup.string().required("This field is required"),
+      careGiven: Yup.string().required("This field is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
-        therapist: values.therapist || "",
-        feedback: values.feedback || "",
-        eyeFeedback: values.eyeFeedback || "",
-        careFeedback: values.careFeedback || "",
+        ...values,
         date: dayjs(formDate).format(),
-        eyelash: router.query.formId,
+        wax: router.query.formId,
+        clientSign: imgUrl,
       };
 
-      updateEyelashExtensionDetail(router.query.id, payload)
+      api
+        .update(router.query.id, payload)
         .then(() => {
           router.push(
-            `/forms/eyelash-extension/details?id=${router.query.formId}&name=${router.query.name}`
+            `/forms/waxing/details?id=${router.query.formId}&name=${router.query.name}`
           );
         })
         .catch((err) => {
@@ -75,16 +78,19 @@ const Page = () => {
   });
 
   useEffect(() => {
-    getEyelashExtensionDetailById(router.query.id)
+    api
+      .getById(router.query.id)
       .then((res) => {
         const formData = res.data;
         setData({
           therapist: formData.therapist || "",
-          feedback: formData.feedback || "",
-          eyeFeedback: formData.eyeFeedback || "",
-          careFeedback: formData.careFeedback || "",
+          skinAfter: formData.skinAfter || "",
+          skinBefore: formData.skinBefore || "",
+          treatment: formData.treatment || "",
+          careGiven: formData.careGiven || "",
         });
         setFormDate(formData.date);
+        setImgUrl(formData.clientSign);
       })
       .catch(() => {});
   }, [router.query.id]);
@@ -92,14 +98,14 @@ const Page = () => {
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
     {
-      label: "Eyelash Extension",
+      label: "Waxing",
       isActive: false,
-      link: "/forms/eyelash-extension",
+      link: "/forms/waxing",
     },
     {
       label: "Details",
       isActive: false,
-      link: `/forms/eyelash-extension/details?id=${router.query.formId}&name=${router.query.name}`,
+      link: `/forms/waxing/details?id=${router.query.formId}&name=${router.query.name}`,
     },
     { label: "Edit", isActive: true },
   ];
@@ -118,7 +124,7 @@ const Page = () => {
             <Breadcrumb items={breadcrumbItems} />
             <Stack spacing={2}>
               <Typography variant="h6">
-                Edit Eyelash Extension Consultation Card Details
+                Edit Waxing Consultation Card Details
               </Typography>
               <Typography variant="h8" color="primary" fontWeight="bold">
                 {`Client: ${router.query.name}`}
@@ -158,18 +164,21 @@ const Page = () => {
                     <Grid xs={12} md={6}>
                       <TextField
                         error={
-                          !!(formik.touched.feedback && formik.errors.feedback)
+                          !!(
+                            formik.touched.skinBefore &&
+                            formik.errors.skinBefore
+                          )
                         }
                         fullWidth
                         helperText={
-                          formik.touched.feedback && formik.errors.feedback
+                          formik.touched.skinBefore && formik.errors.skinBefore
                         }
-                        label="Is the answer to any of the 4 questions 'Yes'?"
-                        name="feedback"
+                        label="Skin Before"
+                        name="skinBefore"
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         type="text"
-                        value={formik.values.feedback}
+                        value={formik.values.skinBefore}
                         required
                       />
                     </Grid>
@@ -177,21 +186,19 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
-                            formik.touched.eyeFeedback &&
-                            formik.errors.eyeFeedback
+                            formik.touched.treatment && formik.errors.treatment
                           )
                         }
                         fullWidth
                         helperText={
-                          formik.touched.eyeFeedback &&
-                          formik.errors.eyeFeedback
+                          formik.touched.treatment && formik.errors.treatment
                         }
-                        label="Eyes OK after treatment?"
-                        name="eyeFeedback"
+                        label="Treatment"
+                        name="treatment"
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         type="text"
-                        value={formik.values.eyeFeedback}
+                        value={formik.values.treatment}
                         required
                       />
                     </Grid>
@@ -199,21 +206,39 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
-                            formik.touched.careFeedback &&
-                            formik.errors.careFeedback
+                            formik.touched.skinAfter && formik.errors.skinAfter
                           )
                         }
                         fullWidth
                         helperText={
-                          formik.touched.careFeedback &&
-                          formik.errors.careFeedback
+                          formik.touched.skinAfter && formik.errors.skinAfter
+                        }
+                        label="Skin After"
+                        name="skinAfter"
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                        type="text"
+                        value={formik.values.skinAfter}
+                        required
+                      />
+                    </Grid>
+                    <Grid xs={12} md={6}>
+                      <TextField
+                        error={
+                          !!(
+                            formik.touched.careGiven && formik.errors.careGiven
+                          )
+                        }
+                        fullWidth
+                        helperText={
+                          formik.touched.careGiven && formik.errors.careGiven
                         }
                         label="After Care Given?"
-                        name="careFeedback"
+                        name="careGiven"
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         type="text"
-                        value={formik.values.careFeedback}
+                        value={formik.values.careGiven}
                         required
                       />
                     </Grid>
@@ -260,7 +285,7 @@ const Page = () => {
                   variant="outlined"
                   onClick={() =>
                     router.push(
-                      `/forms/eyelash-extension/details?id=${router.query.id}&name=${router.query.name}`
+                      `/forms/waxing/details?id=${router.query.id}&name=${router.query.name}`
                     )
                   }
                 >

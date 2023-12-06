@@ -133,6 +133,20 @@ const CustomTable = (props) => {
                             </TableCell>
                           );
                         }
+                        if (header.key === "clientSign") {
+                          return (
+                            <TableCell
+                              key={header.key}
+                              sx={{ minWidth: "200px" }}
+                            >
+                              <img
+                                src={customer.clientSign}
+                                height={20}
+                                width={100}
+                              />
+                            </TableCell>
+                          );
+                        }
                         return (
                           <TableCell
                             key={header.key}

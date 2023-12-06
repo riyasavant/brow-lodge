@@ -13,40 +13,56 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
-import {
-  getEyelashExtensionDetails,
-  deleteEyelashExtensionDetail,
-} from "src/api/lib/forms/details";
 import Breadcrumb from "src/components/Breadcrumb";
+import useFilter from "src/utils/useFilter";
+import useApiStructure from "src/api/lib/structure";
 
 const headers = [
-  { key: "date", label: "Date" },
-  { key: "therapist", label: "Therapist" },
-  { key: "feedback", label: "Is the answer to any of the 4 questions 'Yes'?" },
-  { key: "eyeFeedback", label: "Eyes OK after treatment?" },
-  { key: "careFeedback", label: "After Care Given?" },
-  { key: "signature", label: "Client Signature" },
+  { key: "date", label: "Date", sort: true },
+  { key: "therapist", label: "Therapist", sort: true },
+  { key: "skinBefore", label: "Skin Before", sort: true },
+  { key: "treatment", label: "Treatment", sort: true },
+  { key: "skinAfter", label: "Skin After", sort: true },
+  { key: "careGiven", label: "After Care Given?", sort: true },
+  { key: "clientSign", label: "Client Signature" },
+];
+
+const searchData = [
+  { value: "date", label: "Date" },
+  { value: "therapist", label: "Therapist" },
+  { value: "skinBefore", label: "Skin Before" },
+  { value: "treatment", label: "Treatment" },
+  { value: "skinAfter", label: "Skin After" },
+  { value: "careGiven", label: "After Care Given?" },
 ];
 
 const parseData = (data) => {
   return data.map((form) => ({
     date: dayjs(form?.date || new Date()).format("DD/MM/YYYY"),
     therapist: form?.therapist || "",
-    feedback: form?.feedback || "",
-    eyeFeedback: form?.eyeFeedback || "",
-    careFeedback: form?.careFeedback || "",
+    skinBefore: form?.skinBefore || "",
+    skinAfter: form?.skinAfter || "",
+    treatment: form?.treatment || "",
+    careGiven: form?.careGiven || "",
+    clientSign: form?.clientSign || "",
     id: form?.id,
   }));
 };
 
 const Page = () => {
+  const api = useApiStructure("/wax-consultation-details");
   const router = useRouter();
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { sort, search, setSearch, setSort, resetSearch } = useFilter({
+    column: "date",
+    value: "DESC",
+  });
 
   useEffect(() => {
-    getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
+    api
+      .getAllDetails(router.query.id, "Wax", page, rowsPerPage, sort, search)
       .then((res) => {
         setResponse({
           data: parseData(res.data?.data),
@@ -66,24 +82,33 @@ const Page = () => {
 
   const onEdit = (id) => {
     router.push(
-      `/forms/eyelash-extension/details/${id}?name=${router.query.name}&formId=${router.query.id}`
+      `/forms/waxing/details/${id}?name=${router.query.name}&formId=${router.query.id}`
     );
   };
 
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
     {
-      label: "Eyelash Extension",
+      label: "Waxing",
       isActive: false,
-      link: "/forms/eyelash-extension",
+      link: "/forms/waxing",
     },
     { label: "Details", isActive: true },
   ];
 
   const onDelete = (id) => {
-    deleteEyelashExtensionDetail(id)
+    api
+      .deleteEntry(id)
       .then(() => {
-        getEyelashExtensionDetails(page, rowsPerPage, router.query.id)
+        api
+          .getAllDetails(
+            router.query.id,
+            "Wax",
+            page,
+            rowsPerPage,
+            sort,
+            search
+          )
           .then((res) => {
             setResponse({
               data: parseData(res.data?.data),
@@ -119,7 +144,7 @@ const Page = () => {
                 <Breadcrumb items={breadcrumbItems} />
                 <Stack spacing={1}>
                   <Typography variant="h6">
-                    Eyelash Extension Consultation Card Details
+                    Waxing Consultation Card Details
                   </Typography>
                   <Typography variant="h8" color="primary" fontWeight="bold">
                     {`Client: ${router.query.name}`}
@@ -136,7 +161,7 @@ const Page = () => {
                   variant="contained"
                   onClick={() =>
                     router.push(
-                      `/forms/eyelash-extension/details/add?id=${router.query.id}&name=${router.query.name}`
+                      `/forms/waxing/details/add?id=${router.query.id}&name=${router.query.name}`
                     )
                   }
                 >
@@ -154,6 +179,11 @@ const Page = () => {
               headers={headers}
               onDelete={onDelete}
               onEdit={onEdit}
+              sort={sort}
+              onSearch={setSearch}
+              onResetSearch={resetSearch}
+              onSort={setSort}
+              search={searchData}
             />
           </Stack>
         </Container>

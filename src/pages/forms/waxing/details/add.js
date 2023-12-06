@@ -21,10 +21,11 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
-import { createEyelashExtensionDetail } from "src/api/lib/forms/details";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/lib/structure";
 
 const Page = () => {
+  const api = useApiStructure("/wax-consultation-details");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
@@ -34,31 +35,33 @@ const Page = () => {
   const formik = useFormik({
     initialValues: {
       therapist: "",
-      feedback: "",
-      eyeFeedback: "",
-      careFeedback: "",
+      skinBefore: "",
+      skinAfter: "",
+      treatment: "",
+      careGiven: "",
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
       therapist: Yup.string().required("This field is required"),
-      feedback: Yup.string().required("This field is required"),
-      eyeFeedback: Yup.string().required("This field is required"),
-      careFeedback: Yup.string().required("This field is required"),
+      skinBefore: Yup.string().required("This field is required"),
+      skinAfter: Yup.string().required("This field is required"),
+      treatment: Yup.string().required("This field is required"),
+      careGiven: Yup.string().required("This field is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
-        therapist: values.therapist || "",
-        feedback: values.feedback || "",
-        eyeFeedback: values.eyeFeedback || "",
-        careFeedback: values.careFeedback || "",
+        ...values,
         date: dayjs(formDate).format(),
-        eyelash: router.query.id,
+        wax: router.query.id,
+        clientSign: imgUrl,
+        careGiven: true,
       };
 
-      createEyelashExtensionDetail(payload)
+      api
+        .create(payload)
         .then(() => {
           router.push(
-            `/forms/eyelash-extension/details?id=${router.query.id}&name=${router.query.name}`
+            `/forms/waxing/details?id=${router.query.id}&name=${router.query.name}`
           );
         })
         .catch((err) => {
@@ -73,14 +76,14 @@ const Page = () => {
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
     {
-      label: "Eyelash Extension",
+      label: "Waxing",
       isActive: false,
-      link: "/forms/eyelash-extension",
+      link: "/forms/waxing",
     },
     {
       label: "Details",
       isActive: false,
-      link: `/forms/eyelash-extension/details?id=${router.query.id}&name=${router.query.name}`,
+      link: `/forms/waxing/details?id=${router.query.id}&name=${router.query.name}`,
     },
     { label: "Add", isActive: true },
   ];
@@ -99,7 +102,7 @@ const Page = () => {
             <Breadcrumb items={breadcrumbItems} />
             <Stack spacing={2}>
               <Typography variant="h6">
-                Add Eyelash Extension Consultation Card Details
+                Add Waxing Consultation Card Details
               </Typography>
               <Typography variant="h8" color="primary" fontWeight="bold">
                 {`Client: ${router.query.name}`}
@@ -139,18 +142,21 @@ const Page = () => {
                     <Grid xs={12} md={6}>
                       <TextField
                         error={
-                          !!(formik.touched.feedback && formik.errors.feedback)
+                          !!(
+                            formik.touched.skinBefore &&
+                            formik.errors.skinBefore
+                          )
                         }
                         fullWidth
                         helperText={
-                          formik.touched.feedback && formik.errors.feedback
+                          formik.touched.skinBefore && formik.errors.skinBefore
                         }
-                        label="Is the answer to any of the 4 questions 'Yes'?"
-                        name="feedback"
+                        label="Skin Before"
+                        name="skinBefore"
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         type="text"
-                        value={formik.values.feedback}
+                        value={formik.values.skinBefore}
                         required
                       />
                     </Grid>
@@ -158,21 +164,19 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
-                            formik.touched.eyeFeedback &&
-                            formik.errors.eyeFeedback
+                            formik.touched.treatment && formik.errors.treatment
                           )
                         }
                         fullWidth
                         helperText={
-                          formik.touched.eyeFeedback &&
-                          formik.errors.eyeFeedback
+                          formik.touched.treatment && formik.errors.treatment
                         }
-                        label="Eyes OK after treatment?"
-                        name="eyeFeedback"
+                        label="Treatment"
+                        name="treatment"
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         type="text"
-                        value={formik.values.eyeFeedback}
+                        value={formik.values.treatment}
                         required
                       />
                     </Grid>
@@ -180,21 +184,39 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
-                            formik.touched.careFeedback &&
-                            formik.errors.careFeedback
+                            formik.touched.skinAfter && formik.errors.skinAfter
                           )
                         }
                         fullWidth
                         helperText={
-                          formik.touched.careFeedback &&
-                          formik.errors.careFeedback
+                          formik.touched.skinAfter && formik.errors.skinAfter
+                        }
+                        label="Skin After"
+                        name="skinAfter"
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                        type="text"
+                        value={formik.values.skinAfter}
+                        required
+                      />
+                    </Grid>
+                    <Grid xs={12} md={6}>
+                      <TextField
+                        error={
+                          !!(
+                            formik.touched.careGiven && formik.errors.careGiven
+                          )
+                        }
+                        fullWidth
+                        helperText={
+                          formik.touched.careGiven && formik.errors.careGiven
                         }
                         label="After Care Given?"
-                        name="careFeedback"
+                        name="careGiven"
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         type="text"
-                        value={formik.values.careFeedback}
+                        value={formik.values.careGiven}
                         required
                       />
                     </Grid>
@@ -241,13 +263,17 @@ const Page = () => {
                   variant="outlined"
                   onClick={() =>
                     router.push(
-                      `/forms/eyelash-extension/details?id=${router.query.id}&name=${router.query.name}`
+                      `/forms/waxing/details?id=${router.query.id}&name=${router.query.name}`
                     )
                   }
                 >
                   Cancel
                 </Button>
-                <Button variant="contained" type="submit">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={imgUrl === ""}
+                >
                   Add
                 </Button>
               </CardActions>

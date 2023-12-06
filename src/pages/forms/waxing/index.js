@@ -145,9 +145,7 @@ const Page = () => {
               onEdit={onEdit}
               isRowClickable
               onRowClick={(id, name) =>
-                router.push(
-                  `/forms/eyelash-extension/details?id=${id}&name=${name}`
-                )
+                router.push(`/forms/waxing/details?id=${id}&name=${name}`)
               }
               sort={sort}
               search={searchData}
