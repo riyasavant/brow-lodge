@@ -44,6 +44,8 @@ const Page = () => {
     preferredName: "",
     email: "",
     gender: "Female",
+    address: "",
+    personalContactNumber: "",
   });
 
   useEffect(() => {
@@ -56,6 +58,8 @@ const Page = () => {
           preferredName: clientData.preferredName || "",
           email: clientData.email || "",
           gender: clientData.gender || "Female",
+          address: clientData.address || "",
+          personalContactNumber: clientData.personalContactNumber || "",
         });
       })
       .catch(() => {});
@@ -72,7 +76,10 @@ const Page = () => {
       firstName: Yup.string().required("First name is required"),
       lastName: Yup.string().required("Last name is required"),
       preferredName: Yup.string().required("Preferred name is required"),
-      //   address: Yup.string().required("Address is required"),
+      address: Yup.string().required("Address is required"),
+      personalContactNumber: Yup.string().required(
+        "Contact Number is required"
+      ),
     }),
     onSubmit: (values, helpers) => {
       updateClient(router.query.id, values)
@@ -192,7 +199,7 @@ const Page = () => {
                         required
                       />
                     </Grid>
-                    {/* <Grid xs={12} md={6}>
+                    <Grid xs={12} md={6}>
                       <TextField
                         error={
                           !!(formik.touched.address && formik.errors.address)
@@ -209,7 +216,29 @@ const Page = () => {
                         value={formik.values.address}
                         required
                       />
-                    </Grid> */}
+                    </Grid>
+                    <Grid xs={12} md={6}>
+                      <TextField
+                        error={
+                          !!(
+                            formik.touched.personalContactNumber &&
+                            formik.errors.personalContactNumber
+                          )
+                        }
+                        fullWidth
+                        helperText={
+                          formik.touched.personalContactNumber &&
+                          formik.errors.personalContactNumber
+                        }
+                        label="Contact Number"
+                        name="personalContactNumber"
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                        type="text"
+                        value={formik.values.personalContactNumber}
+                        required
+                      />
+                    </Grid>
                     <Grid xs={12} md={6}>
                       <TextField
                         error={

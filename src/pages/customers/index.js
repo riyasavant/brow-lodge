@@ -19,12 +19,16 @@ const searchData = [
   { value: "preferredName", label: "Name" },
   { value: "email", label: "Email" },
   { value: "gender", label: "Gender" },
+  { value: "personalContactNumber", label: "Contact Number" },
+  { value: "address", label: "Address" },
 ];
 
 const headers = [
   { key: "preferredName", label: "Name", sort: true },
   { key: "email", label: "Email", sort: true },
   { key: "gender", label: "Gender", sort: true },
+  { key: "personalContactNumber", label: "Contact Number", sort: true },
+  { key: "address", label: "Address", sort: true },
 ];
 
 const Page = () => {
