@@ -20,63 +20,53 @@ import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { getClients } from "src/api/lib/client";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
 import Checkbox from "@mui/material/Checkbox";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/lib/structure";
 
 const Page = () => {
+  const api = useApiStructure("/tint-consultation");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
   const [skinTest, setSkinTest] = useState(false);
   const [skinTestDate, setSkinTestDate] = useState(new Date());
   const [clients, setClients] = useState([]);
+  const [diseases, setDiseases] = useState({});
+
   const router = useRouter();
+
   const formik = useFormik({
     initialValues: {
-      day: "",
-      evening: "",
-      technicianName: "",
       doctorName: "",
       doctorAddress: "",
-      isPregnant: "false",
-      eyeSyndrome: "false",
-      hrt: "false",
-      eyeComplaint: "false",
       client: clients.length > 0 ? clients[0].value : "",
+      colourEyelash: "",
+      colourEyebrow: "",
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
-      day: Yup.string().required("Tel (Day) is required"),
-      evening: Yup.string().required("Evening is required"),
-      technicianName: Yup.string().required("Technician name is required"),
       doctorName: Yup.string().required("Doctor's name is required"),
       doctorAddress: Yup.string().required("Doctor's address is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
         ...values,
-        doctorName: imgUrl,
-        isPregnant: values.isPregnant === "true" ? true : false,
-        eyeSyndrome: values.eyeSyndrome === "true" ? true : false,
-        hrt: values.hrt === "true" ? true : false,
-        eyeComplaint: values.eyeComplaint === "true" ? true : false,
         skinPatchTest: skinTest,
         skinPatchTestDate: dayjs(skinTestDate).format(),
         date: dayjs(formDate).format(),
+        disease: Object.keys(diseases).filter((selected) => diseases[selected]),
+        clientSign: imgUrl,
       };
 
-      createEyelashExtension(payload)
+      api
+        .create(payload)
         .then((res) => {
-          router.push("/forms/eyelash-extension");
+          router.push("/forms/tinting");
         })
         .catch((err) => {
           const msg = parseServerErrorMsg(err);
@@ -111,6 +101,22 @@ const Page = () => {
     },
     { label: "Add", isActive: true, link: "/forms/tinting" },
   ];
+
+  const handleDiseaseSelection = (e) => {
+    if (e.target.checked) {
+      const parsed = {
+        ...diseases,
+        [e.target.name]: true,
+      };
+      setDiseases(parsed);
+    } else {
+      const parsed = {
+        ...diseases,
+        [e.target.name]: false,
+      };
+      setDiseases(parsed);
+    }
+  };
 
   return (
     <Box
@@ -160,38 +166,6 @@ const Page = () => {
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField
-                        error={!!(formik.touched.day && formik.errors.day)}
-                        fullWidth
-                        helperText={formik.touched.day && formik.errors.day}
-                        label="Tel (Day)"
-                        name="day"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.day}
-                        required
-                      />
-                    </Grid>
-                    <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(formik.touched.evening && formik.errors.evening)
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.evening && formik.errors.evening
-                        }
-                        label="Evening"
-                        name="evening"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.evening}
-                        required
-                      />
-                    </Grid>
-                    <Grid xs={12} md={6}>
-                      <TextField
                         error={
                           !!(
                             formik.touched.doctorName &&
@@ -233,6 +207,50 @@ const Page = () => {
                         required
                       />
                     </Grid>
+                    <Grid xs={12} md={6}>
+                      <TextField
+                        error={
+                          !!(
+                            formik.touched.colourEyebrow &&
+                            formik.errors.colourEyebrow
+                          )
+                        }
+                        fullWidth
+                        helperText={
+                          formik.touched.colourEyebrow &&
+                          formik.errors.colourEyebrow
+                        }
+                        label="Colour Eye brows"
+                        name="colourEyebrow"
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                        type="text"
+                        value={formik.values.colourEyebrow}
+                        required
+                      />
+                    </Grid>
+                    <Grid xs={12} md={6}>
+                      <TextField
+                        error={
+                          !!(
+                            formik.touched.colourEyelash &&
+                            formik.errors.colourEyelash
+                          )
+                        }
+                        fullWidth
+                        helperText={
+                          formik.touched.colourEyelash &&
+                          formik.errors.colourEyelash
+                        }
+                        label="Colour Eye lashes"
+                        name="colourEyelash"
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                        type="text"
+                        value={formik.values.colourEyelash}
+                        required
+                      />
+                    </Grid>
                     <Grid xs={12}>
                       <Typography
                         sx={{ mt: 1, ml: 2, fontWeight: "bold" }}
@@ -247,9 +265,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="inflammation"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -266,9 +283,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                onChange={handleDiseaseSelection}
+                                name="bruising"
                               />
                             }
                             label={
@@ -285,9 +301,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="eyeDisease"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -304,9 +319,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="hypersensitiveSkin"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -323,9 +337,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="oedema"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -342,9 +355,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="lenses"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -361,9 +373,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="allergies"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -380,9 +391,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="newScarTissue"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -399,9 +409,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="Psoriasis"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -418,9 +427,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="cutsAndAbrasion"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -437,9 +445,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="skinDiseases"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -456,9 +463,8 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                name="skinPatchTest"
-                                value={skinTest}
-                                onChange={() => setSkinTest((prev) => !prev)}
+                                name="positiveReactionToTint"
+                                onChange={handleDiseaseSelection}
                               />
                             }
                             label={
@@ -471,6 +477,7 @@ const Page = () => {
                         </FormGroup>
                       </Grid>
                     </Grid>
+
                     <Grid xs={12}>
                       <Box sx={{ display: "flex", mt: 3, ml: 2 }}>
                         <FormGroup>

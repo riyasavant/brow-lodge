@@ -28,7 +28,6 @@ import FormLabel from "@mui/material/FormLabel";
 import Checkbox from "@mui/material/Checkbox";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/lib/structure";
@@ -44,13 +43,14 @@ const Page = () => {
   const [products, setProducts] = useState({});
   const [clients, setClients] = useState([]);
   const [waxTreatment, setWaxTreatment] = useState(false);
+
   const router = useRouter();
+
   const formik = useFormik({
     initialValues: {
       doctorName: "",
       doctorAddress: "",
       client: clients.length > 0 ? clients[0].value : "",
-      clientSign: null,
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
@@ -67,9 +67,8 @@ const Page = () => {
         disease: Object.keys(diseases).filter((selected) => diseases[selected]),
         clientSign: imgUrl,
         waxTreatment,
+        prescribedMedicine: prescribedMedicine ? medicineDetails : null,
       };
-
-      console.log(payload);
 
       api
         .create(payload)
