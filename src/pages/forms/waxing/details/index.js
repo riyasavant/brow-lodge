@@ -70,7 +70,7 @@ const Page = () => {
         });
       })
       .catch(() => {});
-  }, [rowsPerPage, page]);
+  }, [rowsPerPage, page, sort, search]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);

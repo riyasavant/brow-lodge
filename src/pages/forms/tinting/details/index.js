@@ -19,7 +19,7 @@ import useApiStructure from "src/api/structure";
 
 const headers = [
   { key: "date", label: "Date", sort: true },
-  { value: "therapist", label: "Therapist", sort: true },
+  { key: "therapist", label: "Therapist", sort: true },
   { key: "browColour", label: "Brow Colour", sort: true },
   { key: "lashColour", label: "Lash Colour", sort: true },
   {
@@ -77,7 +77,7 @@ const Page = () => {
         });
       })
       .catch(() => {});
-  }, [rowsPerPage, page]);
+  }, [rowsPerPage, page, sort, search]);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
