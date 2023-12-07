@@ -16,12 +16,11 @@ import {
 import { Scrollbar } from "src/components/Scrollbar";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
-import ArrowLongDownIcon from "@heroicons/react/24/solid/ArrowLongDownIcon";
-import ArrowLongUpIcon from "@heroicons/react/24/solid/ArrowLongUpIcon";
 import DeleteModal from "src/components/DeleteModal";
 import { useState } from "react";
 import Search from "../Search";
 import Sort from "../Sort";
+import dayjs from "dayjs";
 
 const CustomTable = (props) => {
   const {
@@ -122,18 +121,6 @@ const CustomTable = (props) => {
                       }}
                     >
                       {headers.map((header) => {
-                        if (header.key === "preferredName") {
-                          return (
-                            <TableCell
-                              key={header.key}
-                              sx={{ minWidth: "200px" }}
-                            >
-                              <Typography variant="subtitle2">
-                                {customer.preferredName}
-                              </Typography>
-                            </TableCell>
-                          );
-                        }
                         if (header.key === "clientSign") {
                           return (
                             <TableCell
@@ -145,6 +132,16 @@ const CustomTable = (props) => {
                                 height={20}
                                 width={100}
                               />
+                            </TableCell>
+                          );
+                        }
+                        if (header.key === "dateOfBirth") {
+                          return (
+                            <TableCell
+                              key={header.key}
+                              sx={{ minWidth: "200px" }}
+                            >
+                              {dayjs(customer[header.key]).format("DD/MM/YYYY")}
                             </TableCell>
                           );
                         }

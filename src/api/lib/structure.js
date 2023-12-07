@@ -1,11 +1,12 @@
 import axios from "src/api/config";
 
+const DATE_COLUMNS = ["date", "dateOfBirth"];
+
 const useApiStructure = (endpoint) => {
   const getAll = (page, items, sort = null, filter = null) => {
-    console.log(sort, filter);
     const filterQuery = filter
       ? `&where[${filter.column}_${
-          filter.column === "date" ? "eq" : "contains"
+          DATE_COLUMNS.includes(filter.column) ? "eq" : "contains"
         }]=${filter.value}`
       : "";
     const sortQuery = sort ? `&sort=${sort.column}:${sort.value}` : "";
@@ -40,7 +41,7 @@ const useApiStructure = (endpoint) => {
   ) => {
     const filterQuery = filter
       ? `&where[${filter.column}_${
-          filter.column === "date" ? "eq" : "contains"
+          DATE_COLUMNS.includes(filter.column) ? "eq" : "contains"
         }]=${filter.value}`
       : "";
     const sortQuery = sort

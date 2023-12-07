@@ -15,11 +15,13 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { updateClient, getClientProfileById } from "src/api/lib/client";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Breadcrumb from "src/components/Breadcrumb";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import useApiStructure from "src/api/lib/structure";
 
 const gender = [
   {
@@ -37,6 +39,7 @@ const gender = [
 ];
 
 const Page = () => {
+  const api = useApiStructure("/client-profile");
   const router = useRouter();
   const [data, setData] = useState({
     firstName: "",
@@ -46,10 +49,12 @@ const Page = () => {
     gender: "Female",
     address: "",
     personalContactNumber: "",
+    dateOfBirth: dayjs(new Date()),
   });
 
   useEffect(() => {
-    getClientProfileById(router.query.id)
+    api
+      .getById(router.query.id)
       .then((res) => {
         const clientData = res.data;
         setData({
@@ -60,6 +65,7 @@ const Page = () => {
           gender: clientData.gender || "Female",
           address: clientData.address || "",
           personalContactNumber: clientData.personalContactNumber || "",
+          dateOfBirth: dayjs(clientData.dateOfBirth),
         });
       })
       .catch(() => {});
@@ -80,9 +86,11 @@ const Page = () => {
       personalContactNumber: Yup.string().required(
         "Contact Number is required"
       ),
+      dateOfBirth: Yup.date().required("Date is required"),
     }),
     onSubmit: (values, helpers) => {
-      updateClient(router.query.id, values)
+      api
+        .update(router.query.id, values)
         .then((response) => {
           if (response.status === 200) {
             router.push("/customers");
@@ -260,6 +268,31 @@ const Page = () => {
                         ))}
                       </TextField>
                     </Grid>
+                    <Grid xs={12} sm={6}>
+                      <DatePicker
+                        required
+                        error={
+                          !!(
+                            formik.touched.dateOfBirth &&
+                            formik.errors.dateOfBirth
+                          )
+                        }
+                        value={formik.values.dateOfBirth}
+                        sx={{ width: "100%" }}
+                        fullWidth
+                        format="DD/MM/YYYY"
+                        label="Date of Birth"
+                        onChange={(e) => {
+                          formik.setFieldValue("dateOfBirth", dayjs(e));
+                        }}
+                        name="dateOfBirth"
+                        type="date"
+                        helperText={
+                          formik.touched.dateOfBirth &&
+                          formik.errors.dateOfBirth
+                        }
+                      />
+                    </Grid>
                   </Grid>
                 </Box>
                 {formik.errors.submit && (
@@ -270,6 +303,12 @@ const Page = () => {
               </CardContent>
               <Divider />
               <CardActions sx={{ justifyContent: "flex-end" }}>
+                <Button
+                  variant="outlined"
+                  onClick={() => router.push("/customers")}
+                >
+                  Cancel
+                </Button>
                 <Button variant="contained" type="submit">
                   Edit
                 </Button>

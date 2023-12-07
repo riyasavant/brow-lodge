@@ -15,10 +15,12 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { createClient } from "src/api/lib/client";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import Breadcrumb from "src/components/Breadcrumb";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import useApiStructure from "src/api/lib/structure";
 
 const gender = [
   {
@@ -36,6 +38,7 @@ const gender = [
 ];
 
 const Page = () => {
+  const api = useApiStructure("/client-profile");
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -46,6 +49,7 @@ const Page = () => {
       gender: "Female",
       address: "",
       personalContactNumber: "",
+      dateOfBirth: dayjs(new Date()),
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -59,9 +63,11 @@ const Page = () => {
       personalContactNumber: Yup.string().required(
         "Contact Number is required"
       ),
+      dateOfBirth: Yup.date().required("Date is required"),
     }),
     onSubmit: (values, helpers) => {
-      createClient(values)
+      api
+        .create(values)
         .then((response) => {
           if (response.status === 200) {
             router.push("/customers");
@@ -238,6 +244,31 @@ const Page = () => {
                           </option>
                         ))}
                       </TextField>
+                    </Grid>
+                    <Grid xs={12} sm={6}>
+                      <DatePicker
+                        required
+                        error={
+                          !!(
+                            formik.touched.dateOfBirth &&
+                            formik.errors.dateOfBirth
+                          )
+                        }
+                        value={formik.values.dateOfBirth}
+                        sx={{ width: "100%" }}
+                        fullWidth
+                        format="DD/MM/YYYY"
+                        label="Date of Birth"
+                        onChange={(e) => {
+                          formik.setFieldValue("dateOfBirth", dayjs(e));
+                        }}
+                        name="dateOfBirth"
+                        type="date"
+                        helperText={
+                          formik.touched.dateOfBirth &&
+                          formik.errors.dateOfBirth
+                        }
+                      />
                     </Grid>
                   </Grid>
                 </Box>

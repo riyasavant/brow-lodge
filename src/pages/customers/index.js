@@ -29,6 +29,7 @@ const headers = [
   { key: "gender", label: "Gender", sort: true },
   { key: "personalContactNumber", label: "Contact Number", sort: true },
   { key: "address", label: "Address", sort: true },
+  { key: "dateOfBirth", label: "Date of Birth", sort: true },
 ];
 
 const Page = () => {

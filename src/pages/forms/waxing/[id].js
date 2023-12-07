@@ -130,8 +130,6 @@ const Page = () => {
       .catch(() => {});
   }, [router.query.id]);
 
-  console.log("aaa", diseases, products);
-
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
     {
