@@ -11,6 +11,9 @@ import {
   Unstable_Grid2 as Grid,
 } from "@mui/material";
 import { useAuthContext } from "src/auth/authContext";
+import useApiStructure from "src/api/lib/structure";
+import { getUserProfile } from "src/api/lib/auth";
+import { useAuth } from "src/auth/useAuth";
 
 const gender = [
   {
@@ -28,6 +31,8 @@ const gender = [
 ];
 
 export const AccountProfileDetails = () => {
+  const auth = useAuth();
+  const api = useApiStructure("/staff-profile");
   const { user } = useAuthContext();
   const profileData = user.Staff ? user.Staff : user;
   const [values, setValues] = useState({
@@ -45,7 +50,13 @@ export const AccountProfileDetails = () => {
     }));
   }, []);
 
-  const submitDetails = () => {};
+  const submitDetails = () => {
+    api.update(profileData.id, values).then(() => {
+      getUserProfile(window.localStorage.getItem("auth-token")).then((res) => {
+        auth.setUserProfile(res.data);
+      });
+    });
+  };
 
   return (
     <Card>

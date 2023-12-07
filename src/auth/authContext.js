@@ -14,6 +14,7 @@ const HANDLERS = {
   LOGOUT: "LOGOUT",
   INITIALIZE: "INITIALIZE",
   IS_LOADING: "IS_LOADING",
+  PROFILE: "PROFILE",
 };
 
 const initialState = {
@@ -53,6 +54,13 @@ const handlers = {
     return {
       ...state,
       isLoading: action.payload,
+    };
+  },
+  [HANDLERS.PROFILE]: (state, action) => {
+    console.log(state, action);
+    return {
+      ...state,
+      user: action.payload.user,
     };
   },
 };
@@ -134,6 +142,15 @@ export const AuthProvider = (props) => {
     });
   };
 
+  const setUserProfile = (user) => {
+    dispatch({
+      type: HANDLERS.PROFILE,
+      payload: {
+        user,
+      },
+    });
+  };
+
   const logout = () => {
     window.sessionStorage.clear();
     window.localStorage.clear();
@@ -148,6 +165,7 @@ export const AuthProvider = (props) => {
         ...state,
         setLogin,
         logout,
+        setUserProfile,
       }}
     >
       {children}
