@@ -19,7 +19,6 @@ import * as Yup from "yup";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { updateEyelashExtensionForm } from "src/api/lib/forms/eyelash-extension";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -41,8 +40,6 @@ const Page = () => {
   const [imgUrl, setImgUrl] = useState("");
   const [prescribedMedicine, setPrescribedMedicine] = useState(false);
   const [medicineDetails, setDetails] = useState("");
-  const [diseases, setDiseases] = useState({});
-  const [products, setProducts] = useState({});
   const [waxTreatment, setWaxTreatment] = useState(false);
 
   // Form initial values
@@ -50,6 +47,8 @@ const Page = () => {
     doctorName: "",
     doctorAddress: "",
     client: clients.length > 0 ? clients[0].value : "",
+    disease: [],
+    containProducts: [],
   });
 
   const router = useRouter();
@@ -65,10 +64,9 @@ const Page = () => {
       const payload = {
         ...values,
         date: dayjs(formDate).format(),
-        containProducts: Object.keys(products).filter(
-          (selected) => products[selected]
-        ),
-        disease: Object.keys(diseases).filter((selected) => diseases[selected]),
+        containProducts:
+          values.containProducts.length !== 0 ? values.containProducts : null,
+        disease: values.disease.length !== 0 ? values.disease : null,
         clientSign: imgUrl,
         waxTreatment,
         prescribedMedicine: prescribedMedicine ? medicineDetails : null,
@@ -109,22 +107,17 @@ const Page = () => {
             doctorName: formData.doctorName || "",
             doctorAddress: formData.doctorAddress || "",
             client: client.id,
+            disease: formData.disease || [],
+            containProducts: formData.containProducts || [],
           });
-
-          const parsedProducts = {};
-          formData.containProducts?.forEach((product) => {
-            parsedProducts[product] = true;
-          });
-
-          const parsedDiseases = {};
-          formData.disease?.forEach((disease) => {
-            parsedDiseases[disease] = true;
-          });
-          setProducts({ ...parsedProducts });
-          setDiseases({ ...parsedDiseases });
           setImgUrl(formData.clientSign);
           setFormDate(formData.date);
           setWaxTreatment(formData.waxTreatment);
+
+          if (formData.prescribedMedicine) {
+            setPrescribedMedicine(true);
+            setDetails(formData.prescribedMedicine);
+          }
         });
       })
       .catch(() => {});
@@ -140,36 +133,15 @@ const Page = () => {
     { label: "Edit", isActive: true, link: "" },
   ];
 
-  const handleDiseaseSelection = (e) => {
-    if (e.target.checked) {
-      const parsed = {
-        ...diseases,
-        [e.target.name]: true,
-      };
-      setDiseases(parsed);
+  const onCheckboxChange = (e, type = "disease") => {
+    const isChecked = !e.target.checked;
+    let filtered;
+    if (!isChecked) {
+      filtered = [...formik.values[type], e.target.name];
     } else {
-      const parsed = {
-        ...diseases,
-        [e.target.name]: false,
-      };
-      setDiseases(parsed);
+      filtered = formik.values[type].filter((name) => name !== e.target.name);
     }
-  };
-
-  const handleProductsSelection = (e) => {
-    if (e.target.checked) {
-      const parsed = {
-        ...products,
-        [e.target.name]: true,
-      };
-      setProducts(parsed);
-    } else {
-      const parsed = {
-        ...products,
-        [e.target.name]: false,
-      };
-      setProducts(parsed);
-    }
+    formik.setFieldValue(type, filtered);
   };
 
   return (
@@ -273,9 +245,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.diabetes}
                                 name="diabetes"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "diabetes"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -292,9 +266,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.epilepsy}
                                 name="epilepsy"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "epilepsy"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -311,9 +287,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.moles}
                                 name="moles"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "moles"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -330,9 +308,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.hypersensitiveSkin}
                                 name="hypersensitiveSkin"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "hypersensitiveSkin"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -349,9 +329,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.oedema}
                                 name="oedema"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "oedema"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -368,9 +350,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.phlebitis}
                                 name="phlebitis"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "phlebitis"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -387,9 +371,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.pregnancy}
                                 name="pregnancy"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "pregnancy"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -406,9 +392,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.newScarTissue}
                                 name="newScarTissue"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "newScarTissue"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -425,9 +413,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.psoriasis}
                                 name="psoriasis"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "psoriasis"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -440,13 +430,15 @@ const Page = () => {
                         </FormGroup>
                       </Grid>
                       <Grid xs={12} sm={6} md={4} p={0}>
-                        <FormGroup value={diseases.poorCirculation}>
+                        <FormGroup>
                           <FormControlLabel
                             control={
                               <Checkbox
-                                defaultChecked={diseases.poorCirculation}
                                 name="poorCirculation"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "poorCirculation"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -463,9 +455,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.skinDiseases}
                                 name="skinDiseases"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "skinDiseases"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -482,9 +476,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.undiagnosedLumpsAndBumps}
                                 name="undiagnosedLumpsAndBumps"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "undiagnosedLumpsAndBumps"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -501,9 +497,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.sunburn}
                                 name="sunburn"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "sunburn"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -520,9 +518,11 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={diseases.varicoseVeins}
                                 name="varicoseVeins"
-                                onChange={(e) => handleDiseaseSelection(e)}
+                                checked={formik.values.disease.includes(
+                                  "varicoseVeins"
+                                )}
+                                onChange={(e) => onCheckboxChange(e, "disease")}
                               />
                             }
                             label={
@@ -544,7 +544,7 @@ const Page = () => {
                             control={
                               <Checkbox
                                 name="prescribedMedicine"
-                                value={prescribedMedicine}
+                                checked={prescribedMedicine}
                                 onChange={() =>
                                   setPrescribedMedicine((prev) => !prev)
                                 }
@@ -587,8 +587,12 @@ const Page = () => {
                             control={
                               <Checkbox
                                 name="retinA"
-                                checked={products.retinA}
-                                onChange={handleProductsSelection}
+                                checked={formik.values.containProducts.includes(
+                                  "retinA"
+                                )}
+                                onChange={(e) =>
+                                  onCheckboxChange(e, "containProducts")
+                                }
                               />
                             }
                             label={
@@ -606,8 +610,12 @@ const Page = () => {
                             control={
                               <Checkbox
                                 name="accutane"
-                                checked={products.accutane}
-                                onChange={handleProductsSelection}
+                                checked={formik.values.containProducts.includes(
+                                  "accutane"
+                                )}
+                                onChange={(e) =>
+                                  onCheckboxChange(e, "containProducts")
+                                }
                               />
                             }
                             label={
@@ -625,8 +633,12 @@ const Page = () => {
                             control={
                               <Checkbox
                                 name="glycolicAcid"
-                                checked={products.glycolicAcid}
-                                onChange={handleProductsSelection}
+                                checked={formik.values.containProducts.includes(
+                                  "glycolicAcid"
+                                )}
+                                onChange={(e) =>
+                                  onCheckboxChange(e, "containProducts")
+                                }
                               />
                             }
                             label={
@@ -643,9 +655,13 @@ const Page = () => {
                           <FormControlLabel
                             control={
                               <Checkbox
-                                checked={products.AHASkinCare}
                                 name="AHASkinCare"
-                                onChange={handleProductsSelection}
+                                checked={formik.values.containProducts.includes(
+                                  "AHASkinCare"
+                                )}
+                                onChange={(e) =>
+                                  onCheckboxChange(e, "containProducts")
+                                }
                               />
                             }
                             label={
