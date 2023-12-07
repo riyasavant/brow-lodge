@@ -54,7 +54,6 @@ const Page = () => {
         date: dayjs(formDate).format(),
         wax: router.query.id,
         clientSign: imgUrl,
-        careGiven: true,
       };
 
       api

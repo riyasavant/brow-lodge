@@ -717,7 +717,7 @@ const Page = () => {
               <CardActions sx={{ justifyContent: "flex-end" }}>
                 <Button
                   variant="outlined"
-                  onClick={() => router.push("/forms/eyelash-extension")}
+                  onClick={() => router.push("/forms/waxing")}
                 >
                   Cancel
                 </Button>
