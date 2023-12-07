@@ -599,7 +599,11 @@ const Page = () => {
                 >
                   Cancel
                 </Button>
-                <Button variant="contained" type="submit">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={imgUrl === ""}
+                >
                   Add
                 </Button>
               </CardActions>
