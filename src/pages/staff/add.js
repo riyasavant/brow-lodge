@@ -17,9 +17,9 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
-import { createStaff } from "src/api/lib/staff";
 import { useState } from "react";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/structure";
 
 const gender = [
   {
@@ -88,6 +88,7 @@ const adminRoleSchema = {
 };
 
 const Page = () => {
+  const api = useApiStructure("/staff-profile");
   const [selectedRole, setSelectedRole] = useState("None");
   const router = useRouter();
   const formik = useFormik({
@@ -122,7 +123,8 @@ const Page = () => {
         payload.password = values.password;
       }
 
-      createStaff(payload)
+      api
+        .create(payload)
         .then((response) => {
           if (response.status === 200) {
             router.push("/staff");

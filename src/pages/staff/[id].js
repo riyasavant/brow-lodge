@@ -18,8 +18,8 @@ import * as Yup from "yup";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getStaffProfileById, updateStaff } from "src/api/lib/staff";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/structure";
 
 const gender = [
   {
@@ -37,6 +37,7 @@ const gender = [
 ];
 
 const Page = () => {
+  const api = useApiStructure("/staff-profile");
   const router = useRouter();
   const [data, setData] = useState({
     firstName: "",
@@ -47,7 +48,8 @@ const Page = () => {
   });
 
   useEffect(() => {
-    getStaffProfileById(router.query.id)
+    api
+      .getById(router.query.id)
       .then((res) => {
         const staffData = res.data;
         setData({
@@ -75,7 +77,8 @@ const Page = () => {
       //   address: Yup.string().required("Address is required"),
     }),
     onSubmit: (values, helpers) => {
-      updateStaff(router.query.id, values)
+      api
+        .update(router.query.id, values)
         .then((response) => {
           if (response.status === 200) {
             router.push("/staff");

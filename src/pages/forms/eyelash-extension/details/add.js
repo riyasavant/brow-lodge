@@ -21,10 +21,11 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
-import { createEyelashExtensionDetail } from "src/api/lib/forms/details";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/structure";
 
 const Page = () => {
+  const api = useApiStructure("/eyelash-extension-details");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
@@ -56,7 +57,8 @@ const Page = () => {
         clientSign: imgUrl,
       };
 
-      createEyelashExtensionDetail(payload)
+      api
+        .create(payload)
         .then(() => {
           router.push(
             `/forms/eyelash-extension/details?id=${router.query.id}&name=${router.query.name}`

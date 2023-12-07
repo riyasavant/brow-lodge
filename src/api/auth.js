@@ -1,4 +1,4 @@
-import axios from "../config";
+import axios from "./config";
 
 export const getUserProfile = (jwt) => {
   return axios.get("/user/me", {

@@ -20,7 +20,7 @@ import { useRouter } from "next/router";
 import Breadcrumb from "src/components/Breadcrumb";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import useApiStructure from "src/api/lib/structure";
+import useApiStructure from "src/api/structure";
 
 const gender = [
   {

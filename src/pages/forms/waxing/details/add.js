@@ -22,7 +22,7 @@ import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
-import useApiStructure from "src/api/lib/structure";
+import useApiStructure from "src/api/structure";
 
 const Page = () => {
   const api = useApiStructure("/wax-consultation-details");

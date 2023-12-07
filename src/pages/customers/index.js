@@ -13,7 +13,7 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import { useRouter } from "next/router";
 import CustomTable from "src/components/Table";
 import useFilter from "src/utils/useFilter";
-import useApiStructure from "src/api/lib/structure";
+import useApiStructure from "src/api/structure";
 
 const searchData = [
   { value: "preferredName", label: "Name" },

@@ -13,7 +13,7 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
 import useFilter from "src/utils/useFilter";
-import useApiStructure from "src/api/lib/structure";
+import useApiStructure from "src/api/structure";
 
 const headers = [
   { key: "preferredName", label: "Name", sort: true },

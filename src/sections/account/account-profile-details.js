@@ -11,8 +11,8 @@ import {
   Unstable_Grid2 as Grid,
 } from "@mui/material";
 import { useAuthContext } from "src/auth/authContext";
-import useApiStructure from "src/api/lib/structure";
-import { getUserProfile } from "src/api/lib/auth";
+import useApiStructure from "src/api/structure";
+import { getUserProfile } from "src/api/auth";
 import { useAuth } from "src/auth/useAuth";
 
 const gender = [

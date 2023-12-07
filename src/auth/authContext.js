@@ -7,7 +7,7 @@ import {
 } from "react";
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
-import { getUserProfile } from "src/api/lib/auth";
+import { getUserProfile } from "src/api/auth";
 
 const HANDLERS = {
   LOGIN: "LOGIN",

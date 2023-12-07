@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import Breadcrumb from "src/components/Breadcrumb";
 import useFilter from "src/utils/useFilter";
-import useApiStructure from "src/api/lib/structure";
+import useApiStructure from "src/api/structure";
 
 const searchData = [
   { value: "date", label: "Date" },

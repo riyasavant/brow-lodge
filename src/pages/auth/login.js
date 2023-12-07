@@ -11,9 +11,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useAuth } from "src/auth/useAuth";
-import { doLogin } from "src/api/lib/auth";
+import { doLogin } from "src/api/auth";
 import { parseServerErrorMsg } from "src/utils/axios";
-import { getUserProfile } from "src/api/lib/auth";
+import { getUserProfile } from "src/api/auth";
 
 const Page = () => {
   const router = useRouter();

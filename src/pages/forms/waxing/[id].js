@@ -28,11 +28,11 @@ import Checkbox from "@mui/material/Checkbox";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
-import { getClients } from "src/api/lib/client";
 import Breadcrumb from "src/components/Breadcrumb";
-import useApiStructure from "src/api/lib/structure";
+import useApiStructure from "src/api/structure";
 
 const Page = () => {
+  const clientApi = useApiStructure("/client-profile");
   const api = useApiStructure("/wax-consultation");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
@@ -97,7 +97,7 @@ const Page = () => {
     api
       .getById(router.query.id)
       .then((res) => {
-        getClients(0, 1000).then((response) => {
+        clientApi.getAll(0, 1000).then((response) => {
           const formData = res.data;
           const client = response.data.data.filter(
             (client) => client.id === formData.client
