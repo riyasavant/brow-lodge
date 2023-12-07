@@ -19,10 +19,6 @@ import * as Yup from "yup";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import {
-  getEyelashExtensionById,
-  updateEyelashExtensionForm,
-} from "src/api/lib/forms/eyelash-extension";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -31,12 +27,13 @@ import FormLabel from "@mui/material/FormLabel";
 import Checkbox from "@mui/material/Checkbox";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
-import { getClients } from "src/api/lib/client";
 import Breadcrumb from "src/components/Breadcrumb";
+import useApiStructure from "src/api/lib/structure";
 
 const Page = () => {
+  const api = useApiStructure("/eyelash-extension");
+  const clientApi = useApiStructure("/client-profile");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
@@ -76,9 +73,11 @@ const Page = () => {
         skinPatchTest: skinTest,
         skinPatchTestDate: dayjs(skinTestDate).format(),
         date: dayjs(formDate).format(),
+        clientSign: imgUrl,
       };
 
-      updateEyelashExtensionForm(router.query.id, payload)
+      api
+        .update(router.query.id, payload)
         .then(() => {
           router.push("/forms/eyelash-extension");
         })
@@ -99,9 +98,10 @@ const Page = () => {
   };
 
   useEffect(() => {
-    getEyelashExtensionById(router.query.id)
+    api
+      .getById(router.query.id)
       .then((res) => {
-        getClients(0, 1000).then((response) => {
+        clientApi.getAll(0, 1000).then((response) => {
           const formData = res.data;
           const client = response.data.data.filter(
             (client) => client.id === formData.client
@@ -120,6 +120,7 @@ const Page = () => {
           setFormDate(formData.date);
           setSkinTest(formData.skinPatchTest);
           setSkinTestDate(formData.skinPatchTestDate);
+          setImgUrl(formData.clientSign);
         });
       })
       .catch(() => {});
@@ -148,7 +149,7 @@ const Page = () => {
           <Breadcrumb items={breadcrumbItems} />
           <div>
             <Typography variant="h6">
-              Add Eyelash Extension Consultation Card
+              Edit Eyelash Extension Consultation Card
             </Typography>
           </div>
           <form noValidate onSubmit={formik.handleSubmit}>

@@ -21,6 +21,7 @@ const headers = [
   { key: "date", label: "Date", sort: true },
   { key: "name", label: "Name", sort: true },
   { key: "doctorName", label: "Doctor's Name", sort: true },
+  { key: "technicianName", label: "Technician Name", sort: true },
   { key: "clientSign", label: "Client signature" },
 ];
 
@@ -28,6 +29,7 @@ const searchData = [
   { value: "date", label: "Date" },
   { value: "Client.preferredName", label: "Name" },
   { value: "doctorName", label: "Doctor's Name" },
+  { value: "technicianName", label: "Technician Name" },
 ];
 
 const parseData = (data) => {
@@ -36,6 +38,7 @@ const parseData = (data) => {
     name: form?.Client?.preferredName || "",
     doctorName: form?.doctorName || "",
     clientSign: form?.clientSign || "",
+    technicianName: form?.technicianName || "",
     id: form?.id,
   }));
 };
@@ -90,14 +93,6 @@ const Page = () => {
           .catch(() => {});
       })
       .catch(() => {});
-  };
-
-  const onSearch = (column, value) => {
-    setSearch({ column, value });
-  };
-
-  const onResetSearch = () => {
-    setSearch(null);
   };
 
   const breadcrumbItems = [

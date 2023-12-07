@@ -27,7 +27,7 @@ const headers = [
   },
   { key: "eyeFeedback", label: "Eyes OK after treatment?", sort: true },
   { key: "careFeedback", label: "After Care Given?", sort: true },
-  { key: "signature", label: "Client Signature" },
+  { key: "clientSign", label: "Client Signature" },
 ];
 
 const searchData = [
@@ -48,6 +48,7 @@ const parseData = (data) => {
     feedback: form?.feedback || "",
     eyeFeedback: form?.eyeFeedback || "",
     careFeedback: form?.careFeedback || "",
+    clientSign: form?.clientSign || "",
     id: form?.id,
   }));
 };

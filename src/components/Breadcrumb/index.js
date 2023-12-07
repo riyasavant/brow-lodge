@@ -9,7 +9,9 @@ const Breadcrumb = ({ items }) => {
 
   function handleClick(event) {
     event.preventDefault();
-    router.push(`${event.target.pathname}${event.target.search || ""}`);
+    if (event.target.pathname !== undefined) {
+      router.push(`${event.target.pathname}${event.target.search || ""}`);
+    }
   }
 
   return (

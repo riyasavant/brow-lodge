@@ -27,13 +27,13 @@ import FormLabel from "@mui/material/FormLabel";
 import Checkbox from "@mui/material/Checkbox";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { createEyelashExtension } from "src/api/lib/forms/eyelash-extension";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/lib/structure";
 
 const Page = () => {
   const clientApi = useApiStructure("/client-profile");
+  const api = useApiStructure("/eyelash-extension");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
@@ -68,10 +68,12 @@ const Page = () => {
         skinPatchTest: skinTest,
         skinPatchTestDate: dayjs(skinTestDate).format(),
         date: dayjs(formDate).format(),
+        clientSign: imgUrl,
       };
 
-      createEyelashExtension(payload)
-        .then((res) => {
+      api
+        .create(payload)
+        .then(() => {
           router.push("/forms/eyelash-extension");
         })
         .catch((err) => {

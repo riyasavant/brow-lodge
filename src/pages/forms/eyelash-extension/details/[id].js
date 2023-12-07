@@ -57,6 +57,7 @@ const Page = () => {
         careFeedback: values.careFeedback || "",
         date: dayjs(formDate).format(),
         eyelash: router.query.formId,
+        clientSign: imgUrl,
       };
 
       updateEyelashExtensionDetail(router.query.id, payload)
@@ -85,6 +86,7 @@ const Page = () => {
           careFeedback: formData.careFeedback || "",
         });
         setFormDate(formData.date);
+        setImgUrl(formData.clientSign);
       })
       .catch(() => {});
   }, [router.query.id]);
@@ -266,7 +268,11 @@ const Page = () => {
                 >
                   Cancel
                 </Button>
-                <Button variant="contained" type="submit">
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={imgUrl === ""}
+                >
                   Edit
                 </Button>
               </CardActions>
