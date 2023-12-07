@@ -15,10 +15,11 @@ import debounce from "lodash.debounce";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
-const Search = ({ headers, onChange, onResetSearch }) => {
+const Search = ({ headers, onChange, onResetSearch, tableData }) => {
   const [column, setColumn] = useState(headers[0].value);
   const [dateVal, setDateVal] = useState(null);
   const [val, setVal] = useState("");
+  const noData = tableData?.length === 0;
 
   const debouncedResults = useMemo(() => {
     return debounce((value, column) => onChange({ column, value }), 500);
@@ -73,6 +74,7 @@ const Search = ({ headers, onChange, onResetSearch }) => {
             select
             SelectProps={{ native: true }}
             value={column}
+            disabled={noData}
           >
             {headers.map((option) => (
               <option key={option.value} value={option.value}>
@@ -90,10 +92,12 @@ const Search = ({ headers, onChange, onResetSearch }) => {
               format="DD/MM/YYYY"
               label="Search Date"
               onChange={onDateSearch}
+              disabled={noData}
             />
           )}
           {column !== "date" && (
             <OutlinedInput
+              disabled={noData}
               value={val}
               fullWidth
               placeholder={`Search`}
@@ -109,7 +113,12 @@ const Search = ({ headers, onChange, onResetSearch }) => {
           )}
         </Grid>
         <Grid xs={12} sm={2}>
-          <Button fullWidth variant="contained" onClick={reset}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={reset}
+            disabled={noData}
+          >
             <SvgIcon fontSize="small" sx={{ mr: 1 }}>
               <ArrowUTurnLeftIcon />
             </SvgIcon>
