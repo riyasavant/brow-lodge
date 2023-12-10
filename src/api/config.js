@@ -1,6 +1,7 @@
 import Axios from "axios";
 
-const baseURL = "http://localhost:9000/api";
+const baseURL =
+  process.env.NODE_ENV === "production" ? "/api" : "http://localhost:9000/api";
 
 const axios = Axios.create({
   baseURL,
