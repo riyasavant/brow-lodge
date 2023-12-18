@@ -8,7 +8,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { Scrollbar } from "src/components/scrollbar";
+import { Scrollbar } from "src/components/Scrollbar/Scrollbar";
 import { items } from "./config";
 import SideNavItem from "./Item";
 
