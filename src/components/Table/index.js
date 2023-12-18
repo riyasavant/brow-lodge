@@ -8,12 +8,11 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography,
   IconButton,
   SvgIcon,
   Alert,
 } from "@mui/material";
-import { Scrollbar } from "src/components/Scrollbar";
+import { Scrollbar } from "src/components/Scrollbar.js";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
 import DeleteModal from "src/components/DeleteModal";
