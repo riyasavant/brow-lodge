@@ -8,7 +8,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { createTheme } from "src/theme";
 import { createEmotionCache } from "src/utils/create-emotion-cache";
 import "simplebar-react/dist/simplebar.min.css";
-import Loader from "src/components/Loader";
+import Loader from "src/components/Loader/Loader";
 import "src/components/Signature/signature.css";
 
 const clientSideEmotionCache = createEmotionCache();
