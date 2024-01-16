@@ -17,6 +17,10 @@ import { useAuth } from "src/auth/useAuth";
 
 const gender = [
   {
+    value: null,
+    label: "Not selected",
+  },
+  {
     value: "Female",
     label: "Female",
   },
@@ -38,9 +42,8 @@ export const AccountProfileDetails = () => {
   const [values, setValues] = useState({
     firstName: profileData.firstName || "",
     lastName: profileData.lastName || "",
-    preferredName: profileData.preferredName || "",
     email: profileData.email || "",
-    gender: profileData.gender || "",
+    gender: profileData.gender || null,
   });
 
   const handleChange = useCallback((event) => {
@@ -87,20 +90,9 @@ export const AccountProfileDetails = () => {
             <Grid xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Preferred Name"
-                name="preferredName"
-                onChange={handleChange}
-                required
-                value={values.preferredName}
-              />
-            </Grid>
-            <Grid xs={12} md={6}>
-              <TextField
-                fullWidth
                 label="Email Address"
                 name="email"
                 onChange={handleChange}
-                required
                 value={values.email}
               />
             </Grid>
@@ -110,7 +102,6 @@ export const AccountProfileDetails = () => {
                 label="Select Gender"
                 name="gender"
                 onChange={handleChange}
-                required
                 select
                 SelectProps={{ native: true }}
                 value={values.state}

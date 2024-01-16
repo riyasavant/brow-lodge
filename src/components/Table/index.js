@@ -20,8 +20,11 @@ import { useState } from "react";
 import Search from "../Search";
 import Sort from "../Sort";
 import dayjs from "dayjs";
+import { useAuthContext } from "src/auth/authContext";
 
 const CustomTable = (props) => {
+  const { user } = useAuthContext();
+  const currentEmail = user?.Staff?.email || "";
   const {
     count = 0,
     items = [],
@@ -40,6 +43,7 @@ const CustomTable = (props) => {
     sort = {},
     onSort = () => {},
     onResetSearch = () => {},
+    isStaff = false,
   } = props;
   const [modalData, setModalData] = useState({ show: false, id: "" });
 
@@ -158,28 +162,32 @@ const CustomTable = (props) => {
                       })}
                       {hasActionsColumn && (
                         <TableCell align="right" sx={{ minWidth: "120px" }}>
-                          <IconButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onEdit(customer.id);
-                            }}
-                            size="medium"
-                          >
-                            <SvgIcon fontSize="small">
-                              <PencilIcon />
-                            </SvgIcon>
-                          </IconButton>
-                          <IconButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setModalData({ show: true, id: customer.id });
-                            }}
-                            size="medium"
-                          >
-                            <SvgIcon fontSize="small">
-                              <TrashIcon />
-                            </SvgIcon>
-                          </IconButton>
+                          {(!isStaff || currentEmail !== customer.email) && (
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onEdit(customer.id);
+                              }}
+                              size="medium"
+                            >
+                              <SvgIcon fontSize="small">
+                                <PencilIcon />
+                              </SvgIcon>
+                            </IconButton>
+                          )}
+                          {(!isStaff || currentEmail !== customer.email) && (
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setModalData({ show: true, id: customer.id });
+                              }}
+                              size="medium"
+                            >
+                              <SvgIcon fontSize="small">
+                                <TrashIcon />
+                              </SvgIcon>
+                            </IconButton>
+                          )}
                         </TableCell>
                       )}
                     </TableRow>

@@ -16,13 +16,15 @@ import useFilter from "src/utils/useFilter";
 import useApiStructure from "src/api/structure";
 
 const headers = [
-  { key: "preferredName", label: "Name", sort: true },
+  { key: "firstName", label: "First Name", sort: true },
+  { key: "lastName", label: "Last Name", sort: true },
   { key: "email", label: "Email", sort: true },
   { key: "gender", label: "Gender", sort: true },
 ];
 
 const searchData = [
-  { value: "preferredName", label: "Name" },
+  { value: "firstName", label: "First Name" },
+  { value: "lastName", label: "Last Name" },
   { value: "email", label: "Email" },
   { value: "gender", label: "Gender" },
 ];
@@ -33,7 +35,7 @@ const Page = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { sort, search, setSearch, setSort, resetSearch } = useFilter({
-    column: "preferredName",
+    column: "firstName",
     value: "ASC",
   });
   const api = useApiStructure("/staff-profile");
@@ -120,6 +122,7 @@ const Page = () => {
               onResetSearch={resetSearch}
               onSearch={setSearch}
               search={searchData}
+              isStaff={true}
             />
           </Stack>
         </Container>

@@ -57,7 +57,6 @@ const handlers = {
     };
   },
   [HANDLERS.PROFILE]: (state, action) => {
-    console.log(state, action);
     return {
       ...state,
       user: action.payload.user,

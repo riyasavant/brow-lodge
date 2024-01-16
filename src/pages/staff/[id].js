@@ -23,6 +23,10 @@ import useApiStructure from "src/api/structure";
 
 const gender = [
   {
+    value: null,
+    label: "Not selected",
+  },
+  {
     value: "Female",
     label: "Female",
   },
@@ -42,9 +46,8 @@ const Page = () => {
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
-    preferredName: "",
     email: "",
-    gender: "Female",
+    gender: null,
   });
 
   useEffect(() => {
@@ -55,9 +58,8 @@ const Page = () => {
         setData({
           firstName: staffData.firstName || "",
           lastName: staffData.lastName || "",
-          preferredName: staffData.preferredName || "",
           email: staffData.email || "",
-          gender: staffData.gender || "Female",
+          gender: staffData.gender || null,
         });
       })
       .catch(() => {});
@@ -67,14 +69,9 @@ const Page = () => {
     initialValues: data,
     enableReinitialize: true,
     validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Must be a valid email")
-        .max(255)
-        .required("Email is required"),
+      email: Yup.string().email("Must be a valid email").max(255),
       firstName: Yup.string().required("First name is required"),
       lastName: Yup.string().required("Last name is required"),
-      preferredName: Yup.string().required("Preferred name is required"),
-      //   address: Yup.string().required("Address is required"),
     }),
     onSubmit: (values, helpers) => {
       api
@@ -161,28 +158,6 @@ const Page = () => {
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField
-                        error={
-                          !!(
-                            formik.touched.preferredName &&
-                            formik.errors.preferredName
-                          )
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.preferredName &&
-                          formik.errors.preferredName
-                        }
-                        label="Preferred name"
-                        name="preferredName"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.preferredName}
-                        required
-                      />
-                    </Grid>
-                    <Grid xs={12} md={6}>
-                      <TextField
                         error={!!(formik.touched.email && formik.errors.email)}
                         fullWidth
                         helperText={formik.touched.email && formik.errors.email}
@@ -192,27 +167,8 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="email"
                         value={formik.values.email}
-                        required
                       />
                     </Grid>
-                    {/* <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(formik.touched.address && formik.errors.address)
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.address && formik.errors.address
-                        }
-                        label="Address"
-                        name="address"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.address}
-                        required
-                      />
-                    </Grid> */}
                     <Grid xs={12} md={6}>
                       <TextField
                         error={
@@ -222,7 +178,6 @@ const Page = () => {
                         label="Select Gender"
                         name="gender"
                         onChange={formik.handleChange}
-                        required
                         select
                         SelectProps={{ native: true }}
                         value={formik.values.gender}
