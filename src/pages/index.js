@@ -59,7 +59,7 @@ const Page = () => {
           px: 4,
         }}
       >
-        <h1>{`Welcome, ${user?.Staff?.preferredName}!`}</h1>
+        <h1>{`Welcome, ${user?.Staff?.firstName}!`}</h1>
         <Grid container spacing={3}>
           {PROFILE_CARDS.map((item, index) => (
             <Grid xs={12} sm={4} key={index}>

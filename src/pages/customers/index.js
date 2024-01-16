@@ -16,7 +16,8 @@ import useFilter from "src/utils/useFilter";
 import useApiStructure from "src/api/structure";
 
 const searchData = [
-  { value: "preferredName", label: "Name" },
+  { value: "firstName", label: "First Name" },
+  { value: "lastName", label: "Last Name" },
   { value: "email", label: "Email" },
   { value: "gender", label: "Gender" },
   { value: "personalContactNumber", label: "Contact Number" },
@@ -24,7 +25,8 @@ const searchData = [
 ];
 
 const headers = [
-  { key: "preferredName", label: "Name", sort: true },
+  { key: "firstName", label: "First Name", sort: true },
+  { key: "lastName", label: "Last Name", sort: true },
   { key: "email", label: "Email", sort: true },
   { key: "gender", label: "Gender", sort: true },
   { key: "personalContactNumber", label: "Contact Number", sort: true },
@@ -38,7 +40,7 @@ const Page = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const router = useRouter();
   const { sort, search, setSearch, setSort, resetSearch } = useFilter({
-    column: "preferredName",
+    column: "firstName",
     value: "ASC",
   });
   const api = useApiStructure("/client-profile");

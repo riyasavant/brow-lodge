@@ -140,7 +140,10 @@ const CustomTable = (props) => {
                               key={header.key}
                               sx={{ minWidth: "200px" }}
                             >
-                              {dayjs(customer[header.key]).format("DD/MM/YYYY")}
+                              {customer[header.key] &&
+                                dayjs(customer[header.key]).format(
+                                  "DD/MM/YYYY"
+                                )}
                             </TableCell>
                           );
                         }

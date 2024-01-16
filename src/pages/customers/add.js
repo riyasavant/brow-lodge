@@ -24,6 +24,10 @@ import useApiStructure from "src/api/structure";
 
 const gender = [
   {
+    value: null,
+    label: "Not selected",
+  },
+  {
     value: "Female",
     label: "Female",
   },
@@ -44,30 +48,29 @@ const Page = () => {
     initialValues: {
       firstName: "",
       lastName: "",
-      preferredName: "",
       email: "",
-      gender: "Female",
+      gender: null,
       address: "",
       personalContactNumber: "",
-      dateOfBirth: dayjs(new Date()),
+      dateOfBirth: null,
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Must be a valid email")
-        .max(255)
-        .required("Email is required"),
+      email: Yup.string().email("Must be a valid email").max(255),
       firstName: Yup.string().required("First name is required"),
       lastName: Yup.string().required("Last name is required"),
-      preferredName: Yup.string().required("Preferred name is required"),
-      address: Yup.string().required("Address is required"),
-      personalContactNumber: Yup.string().required(
-        "Contact Number is required"
-      ),
-      dateOfBirth: Yup.date().required("Date is required"),
+      address: Yup.string(),
+      personalContactNumber: Yup.string(),
     }),
     onSubmit: (values, helpers) => {
+      const payload = Object.keys(values).reduce((acc, current) => {
+        if (values[current] !== null && values[current].length !== 0) {
+          acc[current] = values[current];
+        }
+        return acc;
+      }, {});
+
       api
-        .create(values)
+        .create(payload)
         .then((response) => {
           if (response.status === 200) {
             router.push("/customers");
@@ -150,28 +153,6 @@ const Page = () => {
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField
-                        error={
-                          !!(
-                            formik.touched.preferredName &&
-                            formik.errors.preferredName
-                          )
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.preferredName &&
-                          formik.errors.preferredName
-                        }
-                        label="Preferred name"
-                        name="preferredName"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.preferredName}
-                        required
-                      />
-                    </Grid>
-                    <Grid xs={12} md={6}>
-                      <TextField
                         error={!!(formik.touched.email && formik.errors.email)}
                         fullWidth
                         helperText={formik.touched.email && formik.errors.email}
@@ -181,7 +162,6 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="email"
                         value={formik.values.email}
-                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
@@ -199,7 +179,6 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="text"
                         value={formik.values.address}
-                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
@@ -221,7 +200,6 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="text"
                         value={formik.values.personalContactNumber}
-                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
@@ -233,7 +211,6 @@ const Page = () => {
                         label="Select Gender"
                         name="gender"
                         onChange={formik.handleChange}
-                        required
                         select
                         SelectProps={{ native: true }}
                         value={formik.values.gender}
@@ -247,7 +224,6 @@ const Page = () => {
                     </Grid>
                     <Grid xs={12} sm={6}>
                       <DatePicker
-                        required
                         error={
                           !!(
                             formik.touched.dateOfBirth &&
