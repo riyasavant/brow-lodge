@@ -29,6 +29,7 @@ import useApiStructure from "src/api/structure";
 
 const Page = () => {
   const clientApi = useApiStructure("/client-profile");
+  const staffApi = useApiStructure("/staff-profile");
   const api = useApiStructure("/tint-consultation");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
@@ -36,6 +37,7 @@ const Page = () => {
   const [skinTest, setSkinTest] = useState(false);
   const [skinTestDate, setSkinTestDate] = useState(new Date());
   const [clients, setClients] = useState([]);
+  const [staff, setStaff] = useState([]);
   const [diseases, setDiseases] = useState({});
 
   // Form initial values
@@ -46,6 +48,7 @@ const Page = () => {
     colourEyebrow: "",
     colourEyelash: "",
     disease: [],
+    technicianName: staff.length > 0 ? staff[0].value : "",
   });
 
   const router = useRouter();
@@ -56,8 +59,8 @@ const Page = () => {
     validationSchema: Yup.object({
       doctorName: Yup.string().required("Doctor's name is required"),
       doctorAddress: Yup.string().required("Doctor's address is required"),
-      colourEyebrow: Yup.string().required("Colour Eye brows is required"),
-      colourEyelash: Yup.string().required("Colour Eye lashes is required"),
+      colourEyebrow: Yup.string(),
+      colourEyelash: Yup.string(),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
@@ -85,8 +88,15 @@ const Page = () => {
 
   const parseClients = (data) => {
     return data.map((client) => ({
-      label: client.preferredName,
+      label: client.firstName + " " + client.lastName,
       value: client.id,
+    }));
+  };
+
+  const parseStaff = (data) => {
+    return data.map((client) => ({
+      label: client.firstName + " " + client.lastName,
+      value: client.firstName + " " + client.lastName,
     }));
   };
 
@@ -95,23 +105,32 @@ const Page = () => {
       .getById(router.query.id)
       .then((res) => {
         clientApi.getAll(0, 1000).then((response) => {
-          const formData = res.data;
-          const client = response.data.data.filter(
-            (client) => client.id === formData.client
-          )[0];
-          setClients(parseClients(response.data.data));
-          setFormData({
-            doctorName: formData.doctorName || "",
-            doctorAddress: formData.doctorAddress || "",
-            colourEyebrow: formData.colourEyebrow || "",
-            colourEyelash: formData.colourEyelash || "",
-            client: client.id,
-            disease: formData?.disease || [],
+          staffApi.getAll(0, 1000).then((staffRes) => {
+            const formData = res.data;
+            const client = response.data.data.filter(
+              (client) => client.id === formData.client
+            )[0];
+            const technician = staffRes.data.data.filter((item) => {
+              return (
+                item.firstName + " " + item.lastName === formData.technicianName
+              );
+            })[0];
+            setClients(parseClients(response.data.data));
+            setStaff(parseStaff(staffRes.data.data));
+            setFormData({
+              doctorName: formData.doctorName || "",
+              doctorAddress: formData.doctorAddress || "",
+              colourEyebrow: formData.colourEyebrow || "",
+              colourEyelash: formData.colourEyelash || "",
+              client: client.id,
+              technicianName: technician.firstName + " " + technician.lastName,
+              disease: formData?.disease || [],
+            });
+            setFormDate(formData.date);
+            setSkinTest(formData.skinPatchTest);
+            setSkinTestDate(formData.skinPatchTestDate);
+            setImgUrl(formData.clientSign);
           });
-          setFormDate(formData.date);
-          setSkinTest(formData.skinPatchTest);
-          setSkinTestDate(formData.skinPatchTestDate);
-          setImgUrl(formData.clientSign);
         });
       })
       .catch(() => {});
@@ -231,6 +250,30 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
+                            formik.touched.technicianName &&
+                            formik.errors.technicianName
+                          )
+                        }
+                        fullWidth
+                        label="Technician Name"
+                        name="technicianName"
+                        onChange={formik.handleChange}
+                        required
+                        select
+                        SelectProps={{ native: true }}
+                        value={formik.values.technicianName}
+                      >
+                        {staff.map((option) => (
+                          <option key={option.label} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </TextField>
+                    </Grid>
+                    <Grid xs={12} md={6}>
+                      <TextField
+                        error={
+                          !!(
                             formik.touched.colourEyebrow &&
                             formik.errors.colourEyebrow
                           )
@@ -246,7 +289,6 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="text"
                         value={formik.values.colourEyebrow}
-                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
@@ -268,7 +310,6 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="text"
                         value={formik.values.colourEyelash}
-                        required
                       />
                     </Grid>
                     <Grid xs={12}>

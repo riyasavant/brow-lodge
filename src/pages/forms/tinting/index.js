@@ -18,22 +18,25 @@ import useFilter from "src/utils/useFilter";
 import useApiStructure from "src/api/structure";
 
 const searchData = [
+  { value: "Client.firstName", label: "Client Name" },
   { value: "date", label: "Date" },
-  { value: "Client.preferredName", label: "Name" },
   { value: "doctorName", label: "Doctor's Name" },
+  { value: "technicianName", label: "Technician Name" },
 ];
 
 const headers = [
   { key: "date", label: "Date", sort: true },
-  { key: "name", label: "Name", sort: true },
+  { key: "name", label: "Client Name", sort: true },
   { key: "doctorName", label: "Doctor's Name", sort: true },
+  { key: "technicianName", label: "Technician Name" },
   { key: "clientSign", label: "Client signature" },
 ];
 
 const parseData = (data) => {
   return data.map((form) => ({
     date: dayjs(form?.date || new Date()).format("DD/MM/YYYY"),
-    name: form?.Client?.preferredName || "",
+    name: form?.Client?.firstName + " " + form?.Client?.lastName || "",
+    technicianName: form?.technicianName || "",
     doctorName: form?.doctorName || "",
     clientSign: form?.clientSign || "",
     id: form?.id,

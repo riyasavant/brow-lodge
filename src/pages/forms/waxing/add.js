@@ -33,6 +33,7 @@ import useApiStructure from "src/api/structure";
 
 const Page = () => {
   const clientApi = useApiStructure("/client-profile");
+  const staffApi = useApiStructure("/staff-profile");
   const api = useApiStructure("/wax-consultation");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
@@ -40,6 +41,7 @@ const Page = () => {
   const [prescribedMedicine, setPrescribedMedicine] = useState(false);
   const [medicineDetails, setDetails] = useState("");
   const [clients, setClients] = useState([]);
+  const [staff, setStaff] = useState([]);
   const [waxTreatment, setWaxTreatment] = useState(false);
 
   const router = useRouter();
@@ -49,6 +51,7 @@ const Page = () => {
       doctorName: "",
       doctorAddress: "",
       client: clients.length > 0 ? clients[0].value : "",
+      technicianName: staff.length > 0 ? staff[0].value : "",
       disease: [],
       containProducts: [],
     },
@@ -86,12 +89,22 @@ const Page = () => {
 
   const parseClients = (data) => {
     return data.map((client) => ({
-      label: client.preferredName,
+      label: client.firstName + " " + client.lastName,
       value: client.id,
     }));
   };
 
+  const parseStaff = (data) => {
+    return data.map((client) => ({
+      label: client.firstName + " " + client.lastName,
+      value: client.firstName + " " + client.lastName,
+    }));
+  };
+
   useEffect(() => {
+    staffApi.getAll(0, 1000).then((res) => {
+      setStaff(parseStaff(res.data.data));
+    });
     clientApi
       .getAll(0, 1000)
       .then((res) => {
@@ -208,6 +221,30 @@ const Page = () => {
                         value={formik.values.doctorAddress}
                         required
                       />
+                    </Grid>
+                    <Grid xs={12} md={6}>
+                      <TextField
+                        error={
+                          !!(
+                            formik.touched.technicianName &&
+                            formik.errors.technicianName
+                          )
+                        }
+                        fullWidth
+                        label="Technician Name"
+                        name="technicianName"
+                        onChange={formik.handleChange}
+                        required
+                        select
+                        SelectProps={{ native: true }}
+                        value={formik.values.technicianName}
+                      >
+                        {staff.map((option) => (
+                          <option key={option.label} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </TextField>
                     </Grid>
                     <Grid xs={12}>
                       <Typography

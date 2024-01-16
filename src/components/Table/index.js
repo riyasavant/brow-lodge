@@ -24,6 +24,9 @@ import { useAuthContext } from "src/auth/authContext";
 
 const CustomTable = (props) => {
   const { user } = useAuthContext();
+  const roles = user.Roles || [];
+  const hasDeleteAccess =
+    roles.filter((item) => item.name === "Super Admin").length > 0;
   const currentEmail = user?.Staff?.email || "";
   const {
     count = 0,
@@ -175,19 +178,20 @@ const CustomTable = (props) => {
                               </SvgIcon>
                             </IconButton>
                           )}
-                          {(!isStaff || currentEmail !== customer.email) && (
-                            <IconButton
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setModalData({ show: true, id: customer.id });
-                              }}
-                              size="medium"
-                            >
-                              <SvgIcon fontSize="small">
-                                <TrashIcon />
-                              </SvgIcon>
-                            </IconButton>
-                          )}
+                          {(!isStaff || currentEmail !== customer.email) &&
+                            hasDeleteAccess && (
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setModalData({ show: true, id: customer.id });
+                                }}
+                                size="medium"
+                              >
+                                <SvgIcon fontSize="small">
+                                  <TrashIcon />
+                                </SvgIcon>
+                              </IconButton>
+                            )}
                         </TableCell>
                       )}
                     </TableRow>

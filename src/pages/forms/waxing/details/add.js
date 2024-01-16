@@ -121,8 +121,7 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
-                            formik.touched.therapist &&
-                            formik.errors.dtherapistay
+                            formik.touched.therapist && formik.errors.therapist
                           )
                         }
                         fullWidth

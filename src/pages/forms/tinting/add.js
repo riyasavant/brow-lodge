@@ -29,6 +29,7 @@ import useApiStructure from "src/api/structure";
 
 const Page = () => {
   const clientApi = useApiStructure("/client-profile");
+  const staffApi = useApiStructure("/staff-profile");
   const api = useApiStructure("/tint-consultation");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
@@ -36,6 +37,7 @@ const Page = () => {
   const [skinTest, setSkinTest] = useState(false);
   const [skinTestDate, setSkinTestDate] = useState(new Date());
   const [clients, setClients] = useState([]);
+  const [staff, setStaff] = useState([]);
 
   const router = useRouter();
 
@@ -44,6 +46,7 @@ const Page = () => {
       doctorName: "",
       doctorAddress: "",
       client: clients.length > 0 ? clients[0].value : "",
+      technicianName: staff.length > 0 ? staff[0].value : "",
       colourEyelash: "",
       colourEyebrow: "",
       disease: [],
@@ -52,6 +55,7 @@ const Page = () => {
     validationSchema: Yup.object({
       doctorName: Yup.string().required("Doctor's name is required"),
       doctorAddress: Yup.string().required("Doctor's address is required"),
+      technicianName: Yup.string().required("Technician address is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
@@ -79,12 +83,22 @@ const Page = () => {
 
   const parseClients = (data) => {
     return data.map((client) => ({
-      label: client.preferredName,
+      label: client.firstName + " " + client.lastName,
       value: client.id,
     }));
   };
 
+  const parseStaff = (data) => {
+    return data.map((client) => ({
+      label: client.firstName + " " + client.lastName,
+      value: client.firstName + " " + client.lastName,
+    }));
+  };
+
   useEffect(() => {
+    staffApi.getAll(0, 1000).then((res) => {
+      setStaff(parseStaff(res.data.data));
+    });
     clientApi
       .getAll(0, 1000)
       .then((res) => {
@@ -207,6 +221,30 @@ const Page = () => {
                       <TextField
                         error={
                           !!(
+                            formik.touched.technicianName &&
+                            formik.errors.technicianName
+                          )
+                        }
+                        fullWidth
+                        label="Technician Name"
+                        name="technicianName"
+                        onChange={formik.handleChange}
+                        required
+                        select
+                        SelectProps={{ native: true }}
+                        value={formik.values.technicianName}
+                      >
+                        {clients.map((option) => (
+                          <option key={option.label} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </TextField>
+                    </Grid>
+                    <Grid xs={12} md={6}>
+                      <TextField
+                        error={
+                          !!(
                             formik.touched.colourEyebrow &&
                             formik.errors.colourEyebrow
                           )
@@ -222,7 +260,6 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="text"
                         value={formik.values.colourEyebrow}
-                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
@@ -244,7 +281,6 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="text"
                         value={formik.values.colourEyelash}
-                        required
                       />
                     </Grid>
                     <Grid xs={12}>

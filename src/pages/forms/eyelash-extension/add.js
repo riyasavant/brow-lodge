@@ -33,6 +33,7 @@ import useApiStructure from "src/api/structure";
 
 const Page = () => {
   const clientApi = useApiStructure("/client-profile");
+  const staffApi = useApiStructure("/staff-profile");
   const api = useApiStructure("/eyelash-extension");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
@@ -40,10 +41,11 @@ const Page = () => {
   const [skinTest, setSkinTest] = useState(false);
   const [skinTestDate, setSkinTestDate] = useState(new Date());
   const [clients, setClients] = useState([]);
+  const [staff, setStaff] = useState([]);
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      technicianName: "",
+      technicianName: staff.length > 0 ? staff[0].value : "",
       doctorName: "",
       doctorAddress: "",
       isPregnant: "false",
@@ -87,12 +89,22 @@ const Page = () => {
 
   const parseClients = (data) => {
     return data.map((client) => ({
-      label: client.preferredName,
+      label: client.firstName + " " + client.lastName,
       value: client.id,
     }));
   };
 
+  const parseStaff = (data) => {
+    return data.map((item) => ({
+      label: item.firstName + " " + item.lastName,
+      value: item.firstName + " " + item.lastName,
+    }));
+  };
+
   useEffect(() => {
+    staffApi.getAll(0, 1000).then((res) => {
+      setStaff(parseStaff(res.data.data));
+    });
     clientApi
       .getAll(0, 1000)
       .then((res) => {
@@ -209,18 +221,20 @@ const Page = () => {
                           )
                         }
                         fullWidth
-                        helperText={
-                          formik.touched.technicianName &&
-                          formik.errors.technicianName
-                        }
-                        label="Name of Technician"
+                        label="Technician Name"
                         name="technicianName"
-                        onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.technicianName}
                         required
-                      />
+                        select
+                        SelectProps={{ native: true }}
+                        value={formik.values.technicianName}
+                      >
+                        {staff?.map((option) => (
+                          <option key={option.label} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </TextField>
                     </Grid>
                     <Grid xs={12}>
                       <Typography
