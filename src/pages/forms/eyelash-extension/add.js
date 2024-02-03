@@ -57,8 +57,6 @@ const Page = () => {
     enableReinitialize: true,
     validationSchema: Yup.object({
       technicianName: Yup.string().required("Technician name is required"),
-      doctorName: Yup.string().required("Doctor's name is required"),
-      doctorAddress: Yup.string().required("Doctor's address is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
@@ -187,7 +185,6 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="text"
                         value={formik.values.doctorName}
-                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
@@ -209,7 +206,6 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="text"
                         value={formik.values.doctorAddress}
-                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
