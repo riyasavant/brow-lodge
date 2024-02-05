@@ -88,7 +88,11 @@ const Page = () => {
 
   const parseStaff = (data) => {
     return data.map((client) => ({
-      label: client.firstName + " " + client.lastName,
+      label: `${client.firstName} ${client.lastName} ${
+        client.dateOfBirth
+          ? `(${dayjs(client.dateOfBirth).format("DD/MM/YYYY")})`
+          : ""
+      }`,
       value: client.firstName + " " + client.lastName,
     }));
   };

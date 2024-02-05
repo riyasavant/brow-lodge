@@ -57,6 +57,14 @@ const Search = ({ headers, onChange, onResetSearch }) => {
     }
   }, [val]);
 
+  const isClearDisabled = () => {
+    if (DATE_PICKER_COLUMNS.includes(column)) {
+      return !dateVal;
+    } else {
+      return !val;
+    }
+  };
+
   return (
     <Card sx={{ px: 2 }}>
       <CardHeader
@@ -112,11 +120,16 @@ const Search = ({ headers, onChange, onResetSearch }) => {
           )}
         </Grid>
         <Grid xs={12} sm={3}>
-          <Button fullWidth variant="contained" onClick={reset}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={reset}
+            disabled={isClearDisabled()}
+          >
             <SvgIcon fontSize="small" sx={{ mr: 1 }}>
               <ArrowUTurnLeftIcon />
             </SvgIcon>
-            Clear Filter
+            Remove Filter
           </Button>
         </Grid>
       </Grid>

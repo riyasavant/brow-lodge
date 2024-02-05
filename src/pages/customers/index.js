@@ -16,16 +16,24 @@ import useFilter from "src/utils/useFilter";
 import useApiStructure from "src/api/structure";
 import { useAuthContext } from "src/auth/authContext";
 
-const searchData = [
+const searchData_su = [
   { value: "firstName", label: "First Name" },
   { value: "lastName", label: "Last Name" },
+  { value: "dateOfBirth", label: "Date of Birth" },
   { value: "email", label: "Email" },
   { value: "gender", label: "Gender" },
   { value: "personalContactNumber", label: "Contact Number" },
   { value: "address", label: "Address" },
 ];
 
-const headers = [
+const search_admin = [
+  { value: "firstName", label: "First Name" },
+  { value: "lastName", label: "Last Name" },
+  { value: "dateOfBirth", label: "Date of Birth" },
+  { value: "gender", label: "Gender" },
+];
+
+const headers_su = [
   { key: "firstName", label: "First Name", sort: true },
   { key: "lastName", label: "Last Name", sort: true },
   { key: "email", label: "Email", sort: true },
@@ -35,12 +43,23 @@ const headers = [
   { key: "dateOfBirth", label: "Date of Birth", sort: true },
 ];
 
+const headers_admin = [
+  { key: "firstName", label: "First Name", sort: true },
+  { key: "lastName", label: "Last Name", sort: true },
+  { key: "dateOfBirth", label: "Date of Birth", sort: true },
+  { key: "gender", label: "Gender", sort: true },
+];
+
 const Page = () => {
   const { user } = useAuthContext();
   const roles = user.Roles || [];
   const currentRole = Array.isArray(roles) ? roles[0] : {};
   const permissions = currentRole.permissions || {};
+  const isAdmin = currentRole?.name === "Admin";
   const customerPermissions = permissions["clientProfile"].actions || {};
+
+  const HEADERS = isAdmin ? headers_admin : headers_su;
+  const SEARCH = isAdmin ? search_admin : searchData_su;
 
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
@@ -126,14 +145,14 @@ const Page = () => {
               onRowsPerPageChange={handleRowsPerPageChange}
               page={page}
               rowsPerPage={rowsPerPage}
-              headers={headers}
+              headers={HEADERS}
               onDelete={onDelete}
               onEdit={onEdit}
               onSearch={setSearch}
               onSort={setSort}
               sort={sort}
               onResetSearch={resetSearch}
-              search={searchData}
+              search={SEARCH}
               permissions={customerPermissions}
             />
           </Stack>

@@ -92,7 +92,11 @@ const Page = () => {
 
   const parseClients = (data) => {
     return data.map((client) => ({
-      label: client.firstName + " " + client.lastName,
+      label: `${client.firstName} ${client.lastName} ${
+        client.dateOfBirth
+          ? `(${dayjs(client.dateOfBirth).format("DD/MM/YYYY")})`
+          : ""
+      }`,
       value: client.id,
     }));
   };
