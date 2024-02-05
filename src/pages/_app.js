@@ -10,6 +10,10 @@ import { createEmotionCache } from "src/utils/create-emotion-cache";
 import "simplebar-react/dist/simplebar.min.css";
 import Loader from "src/components/Loader/Loader";
 import "src/components/Signature/signature.css";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 const clientSideEmotionCache = createEmotionCache();
 

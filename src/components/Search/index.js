@@ -15,7 +15,7 @@ import debounce from "lodash.debounce";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
-const DATE_PICKER_COLUMNS = ["date", "dateOfBirth"];
+const DATE_PICKER_COLUMNS = ["date", "dateOfBirth", "Client.dateOfBirth"];
 
 const Search = ({ headers, onChange, onResetSearch }) => {
   const [column, setColumn] = useState(headers[0].value);
@@ -65,7 +65,7 @@ const Search = ({ headers, onChange, onResetSearch }) => {
         sx={{ px: 0, color: "#4337C9" }}
       />
       <Grid container spacing={3} sx={{ pb: 2, alignItems: "center" }}>
-        <Grid xs={12} sm={4}>
+        <Grid xs={12} sm={3}>
           <TextField
             fullWidth
             label="Select Column"
@@ -92,6 +92,7 @@ const Search = ({ headers, onChange, onResetSearch }) => {
               format="DD/MM/YYYY"
               label="Search Date"
               onChange={onDateSearch}
+              timezone="UTC"
             />
           )}
           {!DATE_PICKER_COLUMNS.includes(column) && (
@@ -110,12 +111,12 @@ const Search = ({ headers, onChange, onResetSearch }) => {
             />
           )}
         </Grid>
-        <Grid xs={12} sm={2}>
+        <Grid xs={12} sm={3}>
           <Button fullWidth variant="contained" onClick={reset}>
             <SvgIcon fontSize="small" sx={{ mr: 1 }}>
               <ArrowUTurnLeftIcon />
             </SvgIcon>
-            Clear
+            Clear Filter
           </Button>
         </Grid>
       </Grid>

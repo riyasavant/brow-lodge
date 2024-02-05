@@ -1,6 +1,6 @@
 import axios from "src/api/config";
 
-const DATE_COLUMNS = ["date", "dateOfBirth"];
+const DATE_COLUMNS = ["date", "dateOfBirth", "Client.dateOfBirth"];
 
 const useApiStructure = (endpoint) => {
   const getAll = (page, items, sort = null, filter = null) => {

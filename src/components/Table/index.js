@@ -24,8 +24,8 @@ import { useAuthContext } from "src/auth/authContext";
 
 const CustomTable = (props) => {
   const { user } = useAuthContext();
-  const roles = user.Roles || [];
   const currentEmail = user?.Staff?.email || "";
+
   const {
     count = 0,
     items = [],
@@ -46,6 +46,7 @@ const CustomTable = (props) => {
     isStaff = false,
     permissions = {},
   } = props;
+
   const [modalData, setModalData] = useState({ show: false, id: "" });
   const { delete: deleteAction, update } = permissions;
 
