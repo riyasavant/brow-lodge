@@ -89,7 +89,7 @@ const Page = () => {
     return data.map((client) => ({
       label: `${client.firstName} ${client.lastName} ${
         client.dateOfBirth
-          ? `(${dayjs(client.dateOfBirth).format("DD/MM/YYYY")})`
+          ? `(DOB: ${dayjs(client.dateOfBirth).format("DD/MM/YYYY")})`
           : ""
       }`,
       value: client.id,
