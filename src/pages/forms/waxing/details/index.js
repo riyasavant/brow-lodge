@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import Breadcrumb from "src/components/Breadcrumb";
 import useFilter from "src/utils/useFilter";
 import useApiStructure from "src/api/structure";
+import { useAuthContext } from "src/auth/authContext";
 
 const headers = [
   { key: "date", label: "Date", sort: true },
@@ -50,6 +51,13 @@ const parseData = (data) => {
 };
 
 const Page = () => {
+  const { user } = useAuthContext();
+  const roles = user.Roles || [];
+  const currentRole = Array.isArray(roles) ? roles[0] : {};
+  const permissions = currentRole.permissions || {};
+  const waxDetailPermission =
+    permissions["waxConsultationDetail"].actions || {};
+
   const api = useApiStructure("/wax-consultation-details");
   const router = useRouter();
   const [response, setResponse] = useState({ data: [], total: 0 });
@@ -184,6 +192,7 @@ const Page = () => {
               onResetSearch={resetSearch}
               onSort={setSort}
               search={searchData}
+              permissions={waxDetailPermission}
             />
           </Stack>
         </Container>

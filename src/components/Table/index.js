@@ -25,8 +25,6 @@ import { useAuthContext } from "src/auth/authContext";
 const CustomTable = (props) => {
   const { user } = useAuthContext();
   const roles = user.Roles || [];
-  const hasDeleteAccess =
-    roles.filter((item) => item.name === "Super Admin").length > 0;
   const currentEmail = user?.Staff?.email || "";
   const {
     count = 0,
@@ -38,7 +36,6 @@ const CustomTable = (props) => {
     onDelete = () => {},
     onEdit = () => {},
     headers = [],
-    hasActionsColumn = true,
     isRowClickable = false,
     onRowClick = () => {},
     onSearch = () => {},
@@ -47,8 +44,10 @@ const CustomTable = (props) => {
     onSort = () => {},
     onResetSearch = () => {},
     isStaff = false,
+    permissions = {},
   } = props;
   const [modalData, setModalData] = useState({ show: false, id: "" });
+  const { delete: deleteAction, update } = permissions;
 
   const onDeleteEntry = () => {
     onDelete(modalData.id);
@@ -106,7 +105,7 @@ const CustomTable = (props) => {
                       </div>
                     </TableCell>
                   ))}
-                  {hasActionsColumn && (
+                  {(deleteAction || update) && (
                     <TableCell align="right" sx={{ minWidth: "120px" }}>
                       Actions
                     </TableCell>
@@ -163,27 +162,31 @@ const CustomTable = (props) => {
                           </TableCell>
                         );
                       })}
-                      {hasActionsColumn && (
+                      {(deleteAction || update) && (
                         <TableCell align="right" sx={{ minWidth: "120px" }}>
-                          {(!isStaff || currentEmail !== customer.email) && (
-                            <IconButton
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onEdit(customer.id);
-                              }}
-                              size="medium"
-                            >
-                              <SvgIcon fontSize="small">
-                                <PencilIcon />
-                              </SvgIcon>
-                            </IconButton>
-                          )}
                           {(!isStaff || currentEmail !== customer.email) &&
-                            hasDeleteAccess && (
+                            update && (
                               <IconButton
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setModalData({ show: true, id: customer.id });
+                                  onEdit(customer.id);
+                                }}
+                                size="medium"
+                              >
+                                <SvgIcon fontSize="small">
+                                  <PencilIcon />
+                                </SvgIcon>
+                              </IconButton>
+                            )}
+                          {(!isStaff || currentEmail !== customer.email) &&
+                            deleteAction && (
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setModalData({
+                                    show: true,
+                                    id: customer.id,
+                                  });
                                 }}
                                 size="medium"
                               >

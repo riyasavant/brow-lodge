@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import CustomTable from "src/components/Table";
 import useFilter from "src/utils/useFilter";
 import useApiStructure from "src/api/structure";
+import { useAuthContext } from "src/auth/authContext";
 
 const searchData = [
   { value: "firstName", label: "First Name" },
@@ -35,6 +36,12 @@ const headers = [
 ];
 
 const Page = () => {
+  const { user } = useAuthContext();
+  const roles = user.Roles || [];
+  const currentRole = Array.isArray(roles) ? roles[0] : {};
+  const permissions = currentRole.permissions || {};
+  const customerPermissions = permissions["clientProfile"].actions || {};
+
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -127,6 +134,7 @@ const Page = () => {
               sort={sort}
               onResetSearch={resetSearch}
               search={searchData}
+              permissions={customerPermissions}
             />
           </Stack>
         </Container>

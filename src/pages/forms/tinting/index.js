@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import Breadcrumb from "src/components/Breadcrumb";
 import useFilter from "src/utils/useFilter";
 import useApiStructure from "src/api/structure";
+import { useAuthContext } from "src/auth/authContext";
 
 const searchData = [
   { value: "Client.firstName", label: "Client Name" },
@@ -44,6 +45,12 @@ const parseData = (data) => {
 };
 
 const Page = () => {
+  const { user } = useAuthContext();
+  const roles = user.Roles || [];
+  const currentRole = Array.isArray(roles) ? roles[0] : {};
+  const permissions = currentRole.permissions || {};
+  const tintPermission = permissions["tintConsultation"].actions || {};
+
   const router = useRouter();
   const [response, setResponse] = useState({ data: [], total: 0 });
   const [page, setPage] = useState(0);
@@ -159,6 +166,7 @@ const Page = () => {
               onSearch={setSearch}
               onSort={setSort}
               onResetSearch={resetSearch}
+              permissions={tintPermission}
             />
           </Stack>
         </Container>
