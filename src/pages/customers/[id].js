@@ -49,7 +49,7 @@ const Page = () => {
     firstName: "",
     lastName: "",
     email: "",
-    gender: "Female",
+    gender: null,
     address: "",
     personalContactNumber: "",
     dateOfBirth: dayjs(new Date()),

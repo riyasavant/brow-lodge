@@ -65,6 +65,13 @@ const Search = ({ headers, onChange, onResetSearch }) => {
     }
   };
 
+  const handleColumnChange = (colVal) => {
+    setColumn(colVal);
+    onResetSearch();
+    setVal("");
+    setDateVal(null);
+  };
+
   return (
     <Card sx={{ px: 2 }}>
       <CardHeader
@@ -78,7 +85,7 @@ const Search = ({ headers, onChange, onResetSearch }) => {
             fullWidth
             label="Select Column"
             name="column"
-            onChange={(e) => setColumn(e.target.value)}
+            onChange={(e) => handleColumnChange(e.target.value)}
             required
             select
             SelectProps={{ native: true }}
