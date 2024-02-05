@@ -19,26 +19,20 @@ import useApiStructure from "src/api/structure";
 import { useAuthContext } from "src/auth/authContext";
 
 const headers = [
-  { key: "date", label: "Date", sort: true },
   { key: "name", label: "Client Name", sort: true },
   { key: "dateOfBirth", label: "Client Date of Birth", sort: true },
-  { key: "technicianName", label: "Technician Name", sort: true },
   { key: "clientSign", label: "Client signature" },
 ];
 
 const searchData = [
   { value: "Client.firstName", label: "Client Name" },
-  { value: "date", label: "Date" },
-  { value: "technicianName", label: "Technician Name" },
   { value: "Client.dateOfBirth", label: "Client Date of Birth" },
 ];
 
 const parseData = (data) => {
   return data.map((form) => ({
-    date: dayjs(form?.date || new Date()).format("DD/MM/YYYY"),
     name: form?.Client?.firstName + " " + form?.Client?.lastName || "",
     dateOfBirth: form?.Client?.dateOfBirth || "",
-    technicianName: form?.technicianName || "",
     clientSign: form?.clientSign || "",
     id: form?.id,
   }));
