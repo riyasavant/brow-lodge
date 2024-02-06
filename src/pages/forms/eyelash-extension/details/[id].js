@@ -24,6 +24,7 @@ import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
 import StaffDropdown from "src/components/Dropdown/Staff";
+import BooleanDropdown from "src/components/Dropdown/Boolean";
 
 const Page = () => {
   const api = useApiStructure("/eyelash-extension-details");
@@ -145,65 +146,24 @@ const Page = () => {
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(formik.touched.feedback && formik.errors.feedback)
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.feedback && formik.errors.feedback
-                        }
+                      <BooleanDropdown
+                        formik={formik}
+                        inputKey="feedback"
                         label="Is the answer to any of the 4 questions 'Yes'?"
-                        name="feedback"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.feedback}
-                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.eyeFeedback &&
-                            formik.errors.eyeFeedback
-                          )
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.eyeFeedback &&
-                          formik.errors.eyeFeedback
-                        }
+                      <BooleanDropdown
+                        formik={formik}
+                        inputKey="eyeFeedback"
                         label="Eyes OK after treatment?"
-                        name="eyeFeedback"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.eyeFeedback}
-                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.careFeedback &&
-                            formik.errors.careFeedback
-                          )
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.careFeedback &&
-                          formik.errors.careFeedback
-                        }
+                      <BooleanDropdown
+                        formik={formik}
+                        inputKey="careFeedback"
                         label="After Care Given?"
-                        name="careFeedback"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.careFeedback}
-                        required
                       />
                     </Grid>
                   </Grid>

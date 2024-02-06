@@ -39,7 +39,6 @@ const Page = () => {
   const [clients, setClients] = useState([]);
   const [staff, setStaff] = useState([]);
 
-  // Form initial values
   const [formData, setFormData] = useState({
     doctorName: "",
     doctorAddress: "",

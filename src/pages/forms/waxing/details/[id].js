@@ -24,6 +24,7 @@ import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
 import StaffDropdown from "src/components/Dropdown/Staff";
+import BooleanDropdown from "src/components/Dropdown/Boolean";
 
 const Page = () => {
   const api = useApiStructure("/wax-consultation-details");
@@ -206,23 +207,10 @@ const Page = () => {
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.careGiven && formik.errors.careGiven
-                          )
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.careGiven && formik.errors.careGiven
-                        }
+                      <BooleanDropdown
+                        formik={formik}
+                        inputKey="careGiven"
                         label="After Care Given?"
-                        name="careGiven"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.careGiven}
-                        required
                       />
                     </Grid>
                   </Grid>

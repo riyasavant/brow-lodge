@@ -24,6 +24,7 @@ import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
 import StaffDropdown from "src/components/Dropdown/Staff";
+import BooleanDropdown from "src/components/Dropdown/Boolean";
 
 const Page = () => {
   const api = useApiStructure("/tint-consultation-details");
@@ -54,7 +55,7 @@ const Page = () => {
       const payload = {
         ...values,
         date: dayjs(formDate).format(),
-        tint: router.query.id,
+        tint: router.query.formId,
         clientSign: imgUrl,
       };
 
@@ -187,45 +188,17 @@ const Page = () => {
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.overleafCondition &&
-                            formik.errors.overleafCondition
-                          )
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.overleafCondition &&
-                          formik.errors.overleafCondition
-                        }
-                        label="Do any of the conditions overleaf apply to you"
-                        name="overleafCondition"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.overleafCondition}
-                        required
+                      <BooleanDropdown
+                        formik={formik}
+                        inputKey="overleafCondition"
+                        label="Do any of the conditions overleaf apply to you?"
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.careGiven && formik.errors.careGiven
-                          )
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.careGiven && formik.errors.careGiven
-                        }
+                      <BooleanDropdown
+                        formik={formik}
+                        inputKey="careGiven"
                         label="After Care Leaflet Given?"
-                        name="careGiven"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.careGiven}
-                        required
                       />
                     </Grid>
                   </Grid>
