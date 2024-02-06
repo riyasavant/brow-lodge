@@ -38,7 +38,6 @@ const Page = () => {
   const [skinTestDate, setSkinTestDate] = useState(new Date());
   const [clients, setClients] = useState([]);
   const [staff, setStaff] = useState([]);
-  const [diseases, setDiseases] = useState({});
 
   // Form initial values
   const [formData, setFormData] = useState({
@@ -66,7 +65,7 @@ const Page = () => {
         skinPatchTest: skinTest,
         skinPatchTestDate: dayjs(skinTestDate).format(),
         date: dayjs(formDate).format(),
-        disease: Object.keys(diseases).filter((selected) => diseases[selected]),
+        disease: values.disease.length > 0 ? values.disease : null,
         clientSign: imgUrl,
       };
 
