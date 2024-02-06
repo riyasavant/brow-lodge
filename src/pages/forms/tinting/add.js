@@ -81,18 +81,18 @@ const Page = () => {
 
   const parseClients = (data) => {
     return data.map((client) => ({
-      label: client.firstName + " " + client.lastName,
+      label: `${client.firstName} ${client.lastName} ${
+        client.dateOfBirth
+          ? `(DOB: ${dayjs(client.dateOfBirth).format("DD/MM/YYYY")})`
+          : ""
+      }`,
       value: client.id,
     }));
   };
 
   const parseStaff = (data) => {
     return data.map((client) => ({
-      label: `${client.firstName} ${client.lastName} ${
-        client.dateOfBirth
-          ? `(DOB: ${dayjs(client.dateOfBirth).format("DD/MM/YYYY")})`
-          : ""
-      }`,
+      label: client.firstName + " " + client.lastName,
       value: client.firstName + " " + client.lastName,
     }));
   };
@@ -234,7 +234,7 @@ const Page = () => {
                         SelectProps={{ native: true }}
                         value={formik.values.technicianName}
                       >
-                        {clients.map((option) => (
+                        {staff.map((option) => (
                           <option key={option.label} value={option.value}>
                             {option.label}
                           </option>

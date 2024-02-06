@@ -23,6 +23,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
+import StaffDropdown from "src/components/Dropdown/Staff";
 
 const Page = () => {
   const api = useApiStructure("/eyelash-extension-details");
@@ -137,24 +138,10 @@ const Page = () => {
                 <Box sx={{ m: -1.5 }}>
                   <Grid container spacing={3}>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.therapist &&
-                            formik.errors.dtherapistay
-                          )
-                        }
-                        fullWidth
-                        helperText={
-                          formik.touched.therapist && formik.errors.therapist
-                        }
+                      <StaffDropdown
+                        inputKey="therapist"
                         label="Therapist"
-                        name="therapist"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.therapist}
-                        required
+                        formik={formik}
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
