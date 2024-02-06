@@ -12,7 +12,6 @@ import {
 import { Layout as DashboardLayout } from "src/layouts/dashboard";
 import CustomTable from "src/components/Table";
 import { useRouter } from "next/router";
-import dayjs from "dayjs";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
 import useFilter from "src/utils/useFilter";
@@ -25,7 +24,8 @@ const headers = [
 ];
 
 const searchData = [
-  { value: "Client.firstName", label: "Client Name" },
+  { value: "Client.firstName", label: "Client First Name" },
+  { value: "Client.lastName", label: "Client Last Name" },
   { value: "Client.dateOfBirth", label: "Client Date of Birth" },
 ];
 

@@ -24,7 +24,8 @@ const headers = [
 ];
 
 const searchData = [
-  { value: "Client.firstName", label: "Client Name" },
+  { value: "Client.firstName", label: "Client First Name" },
+  { value: "Client.lastName", label: "Client Last Name" },
   { value: "Client.dateOfBirth", label: "Client Date of Birth" },
 ];
 
