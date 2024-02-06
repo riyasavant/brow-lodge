@@ -260,7 +260,10 @@ const Page = () => {
                         format="DD/MM/YYYY"
                         label="Date of Birth"
                         onChange={(e) => {
-                          formik.setFieldValue("dateOfBirth", dayjs(e));
+                          formik.setFieldValue(
+                            "dateOfBirth",
+                            dayjs(e).utcOffset(0).startOf("date")
+                          );
                         }}
                         name="dateOfBirth"
                         type="date"
