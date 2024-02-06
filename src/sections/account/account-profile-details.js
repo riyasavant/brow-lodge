@@ -39,6 +39,7 @@ export const AccountProfileDetails = () => {
   const api = useApiStructure("/staff-profile");
   const { user } = useAuthContext();
   const profileData = user.Staff ? user.Staff : user;
+  console.log(profileData);
   const [values, setValues] = useState({
     firstName: profileData.firstName || "",
     lastName: profileData.lastName || "",
@@ -104,7 +105,7 @@ export const AccountProfileDetails = () => {
                 onChange={handleChange}
                 select
                 SelectProps={{ native: true }}
-                value={values.state}
+                value={values.gender}
               >
                 {gender.map((option) => (
                   <option key={option.value} value={option.value}>
