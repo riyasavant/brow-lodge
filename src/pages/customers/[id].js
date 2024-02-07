@@ -12,6 +12,7 @@ import {
   CardContent,
   CardActions,
   Divider,
+  Snackbar,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -54,6 +55,7 @@ const Page = () => {
     personalContactNumber: "",
     dateOfBirth: dayjs(new Date()),
   });
+  const [dobError, setDobError] = useState(false);
 
   useEffect(() => {
     api
@@ -83,29 +85,35 @@ const Page = () => {
       firstName: Yup.string().required("First name is required"),
       lastName: Yup.string().required("Last name is required"),
       address: Yup.string(),
-      personalContactNumber: Yup.string(),
+      personalContactNumber: Yup.string().required(
+        "Contact number is required"
+      ),
     }),
     onSubmit: (values, helpers) => {
-      const payload = Object.keys(values).reduce((acc, current) => {
-        if (values[current] !== null && values[current].length !== 0) {
-          acc[current] = values[current];
-        }
-        return acc;
-      }, {});
-
-      api
-        .update(router.query.id, payload)
-        .then((response) => {
-          if (response.status === 200) {
-            router.push("/customers");
+      if (values.dateOfBirth === null) {
+        setDobError(true);
+      } else {
+        const payload = Object.keys(values).reduce((acc, current) => {
+          if (values[current] !== null && values[current].length !== 0) {
+            acc[current] = values[current];
           }
-        })
-        .catch((err) => {
-          const msg = parseServerErrorMsg(err);
-          helpers.setStatus({ success: false });
-          helpers.setErrors({ submit: msg });
-          helpers.setSubmitting(false);
-        });
+          return acc;
+        }, {});
+
+        api
+          .update(router.query.id, payload)
+          .then((response) => {
+            if (response.status === 200) {
+              router.push("/customers");
+            }
+          })
+          .catch((err) => {
+            const msg = parseServerErrorMsg(err);
+            helpers.setStatus({ success: false });
+            helpers.setErrors({ submit: msg });
+            helpers.setSubmitting(false);
+          });
+      }
     },
   });
 
@@ -122,6 +130,14 @@ const Page = () => {
         py: 4,
       }}
     >
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        open={dobError}
+        onClose={setDobError}
+        message="Date of Birth is required!"
+        key="Dob"
+        autoHideDuration={5000}
+      />
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <Breadcrumb items={breadcrumbItems} />
