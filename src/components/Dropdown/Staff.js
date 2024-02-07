@@ -1,24 +1,16 @@
 import { TextField } from "@mui/material";
-import { useState, useEffect } from "react";
-import useApiStructure from "src/api/structure";
+import { useAuthContext } from "src/auth/authContext";
+import { useEffect } from "react";
 
 const StaffDropdown = ({ label, inputKey, formik }) => {
-  const api = useApiStructure("/staff-profile");
-  const [staff, setStaff] = useState([]);
+  const { staff: STAFF } = useAuthContext();
 
-  const parseStaff = (data) => {
-    return data.map((item) => ({
-      label: item.firstName + " " + item.lastName,
-      value: item.firstName + " " + item.lastName,
-    }));
+  const getLabel = (item) => {
+    return item.firstName + " " + item.lastName;
   };
 
   useEffect(() => {
-    api.getAll(0, 10000).then((res) => {
-      const parsedStaff = parseStaff(res.data.data);
-      setStaff(parsedStaff);
-      formik.setFieldValue(inputKey, parsedStaff[0].value);
-    });
+    formik.setFieldValue(inputKey, getLabel(STAFF[0]));
   }, []);
 
   return (
@@ -33,9 +25,9 @@ const StaffDropdown = ({ label, inputKey, formik }) => {
       SelectProps={{ native: true }}
       value={formik.values[inputKey]}
     >
-      {staff.map((option) => (
-        <option key={option.label} value={option.value}>
-          {option.label}
+      {STAFF?.map((option) => (
+        <option key={getLabel(option)} value={getLabel(option)}>
+          {getLabel(option)}
         </option>
       ))}
     </TextField>

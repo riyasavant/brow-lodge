@@ -8,6 +8,7 @@ import {
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import { getUserProfile } from "src/api/auth";
+import { getAllClients, getAllStaff } from "src/api/common";
 
 const HANDLERS = {
   LOGIN: "LOGIN",
@@ -15,6 +16,8 @@ const HANDLERS = {
   INITIALIZE: "INITIALIZE",
   IS_LOADING: "IS_LOADING",
   PROFILE: "PROFILE",
+  SET_STAFF: "SET_STAFF",
+  SET_CLIENTS: "SET_CLIENTS",
 };
 
 const initialState = {
@@ -22,6 +25,8 @@ const initialState = {
   isLoading: true,
   user: null,
   isAuthenticated: false,
+  staff: [],
+  clients: [],
 };
 
 const handlers = {
@@ -60,6 +65,18 @@ const handlers = {
     return {
       ...state,
       user: action.payload.user,
+    };
+  },
+  [HANDLERS.SET_CLIENTS]: (state, action) => {
+    return {
+      ...state,
+      clients: action.payload.clients,
+    };
+  },
+  [HANDLERS.SET_STAFF]: (state, action) => {
+    return {
+      ...state,
+      staff: action.payload.staff,
     };
   },
 };
@@ -101,6 +118,22 @@ export const AuthProvider = (props) => {
               authToken: jwt,
               isAuthenticated: true,
               user: res.data,
+            },
+          });
+        });
+        getAllClients().then((res) => {
+          dispatch({
+            type: HANDLERS.SET_CLIENTS,
+            payload: {
+              clients: res.data.data,
+            },
+          });
+        });
+        getAllStaff().then((res) => {
+          dispatch({
+            type: HANDLERS.SET_STAFF,
+            payload: {
+              staff: res.data.data,
             },
           });
         });

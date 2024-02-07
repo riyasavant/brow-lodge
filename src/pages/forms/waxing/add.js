@@ -30,18 +30,17 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
+import { useAuthContext } from "src/auth/authContext";
+import { getClientLabel, getStaffLabel } from "src/utils/common";
 
 const Page = () => {
-  const clientApi = useApiStructure("/client-profile");
-  const staffApi = useApiStructure("/staff-profile");
+  const { staff, clients } = useAuthContext();
   const api = useApiStructure("/wax-consultation");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
   const [prescribedMedicine, setPrescribedMedicine] = useState(false);
   const [medicineDetails, setDetails] = useState("");
-  const [clients, setClients] = useState([]);
-  const [staff, setStaff] = useState([]);
   const [waxTreatment, setWaxTreatment] = useState(false);
 
   const router = useRouter();
@@ -50,8 +49,8 @@ const Page = () => {
     initialValues: {
       doctorName: "",
       doctorAddress: "",
-      client: clients.length > 0 ? clients[0].value : "",
-      technicianName: staff.length > 0 ? staff[0].value : "",
+      client: clients.length > 0 ? clients[0].id : "",
+      technicianName: staff.length > 0 ? getStaffLabel(staff[0]) : "",
       disease: [],
       containProducts: [],
     },
@@ -83,36 +82,6 @@ const Page = () => {
         });
     },
   });
-
-  const parseClients = (data) => {
-    return data.map((client) => ({
-      label: `${client.firstName} ${client.lastName} ${
-        client.dateOfBirth
-          ? `(DOB: ${dayjs(client.dateOfBirth).format("DD/MM/YYYY")})`
-          : ""
-      }`,
-      value: client.id,
-    }));
-  };
-
-  const parseStaff = (data) => {
-    return data.map((client) => ({
-      label: client.firstName + " " + client.lastName,
-      value: client.firstName + " " + client.lastName,
-    }));
-  };
-
-  useEffect(() => {
-    staffApi.getAll(0, 1000).then((res) => {
-      setStaff(parseStaff(res.data.data));
-    });
-    clientApi
-      .getAll(0, 1000)
-      .then((res) => {
-        setClients(parseClients(res.data.data));
-      })
-      .catch(() => {});
-  }, []);
 
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
@@ -174,8 +143,8 @@ const Page = () => {
                         value={formik.values.client}
                       >
                         {clients.map((option) => (
-                          <option key={option.label} value={option.value}>
-                            {option.label}
+                          <option key={option.id} value={option.id}>
+                            {getClientLabel(option)}
                           </option>
                         ))}
                       </TextField>
@@ -239,8 +208,11 @@ const Page = () => {
                         value={formik.values.technicianName}
                       >
                         {staff.map((option) => (
-                          <option key={option.label} value={option.value}>
-                            {option.label}
+                          <option
+                            key={getStaffLabel(option)}
+                            value={getStaffLabel(option)}
+                          >
+                            {getStaffLabel(option)}
                           </option>
                         ))}
                       </TextField>
