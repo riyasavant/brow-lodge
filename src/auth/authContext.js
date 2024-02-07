@@ -165,6 +165,22 @@ export const AuthProvider = (props) => {
   );
 
   const setLogin = (jwt, user) => {
+    getAllClients().then((res) => {
+      dispatch({
+        type: HANDLERS.SET_CLIENTS,
+        payload: {
+          clients: res.data.data,
+        },
+      });
+    });
+    getAllStaff().then((res) => {
+      dispatch({
+        type: HANDLERS.SET_STAFF,
+        payload: {
+          staff: res.data.data,
+        },
+      });
+    });
     dispatch({
       type: HANDLERS.LOGIN,
       payload: {
