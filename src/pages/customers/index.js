@@ -15,6 +15,7 @@ import CustomTable from "src/components/Table";
 import useFilter from "src/utils/useFilter";
 import useApiStructure from "src/api/structure";
 import { useAuthContext } from "src/auth/authContext";
+import { useAuth } from "src/auth/useAuth";
 
 const searchData_su = [
   { value: "firstName", label: "First Name" },
@@ -51,6 +52,7 @@ const headers_admin = [
 ];
 
 const Page = () => {
+  const auth = useAuth();
   const { user } = useAuthContext();
   const roles = user.Roles || [];
   const currentRole = Array.isArray(roles) ? roles[0] : {};
@@ -79,6 +81,10 @@ const Page = () => {
       })
       .catch(() => {});
   }, [rowsPerPage, page, sort, search]);
+
+  useEffect(() => {
+    auth.refreshClientData();
+  }, []);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);

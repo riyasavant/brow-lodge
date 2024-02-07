@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import useFilter from "src/utils/useFilter";
 import useApiStructure from "src/api/structure";
 import { useAuthContext } from "src/auth/authContext";
+import { useAuth } from "src/auth/useAuth";
 
 const headers = [
   { key: "firstName", label: "First Name", sort: true },
@@ -31,6 +32,7 @@ const searchData = [
 ];
 
 const Page = () => {
+  const auth = useAuth();
   const { user } = useAuthContext();
   const roles = user.Roles || [];
   const currentRole = Array.isArray(roles) ? roles[0] : {};
@@ -55,6 +57,10 @@ const Page = () => {
       })
       .catch(() => {});
   }, [rowsPerPage, page, sort, search]);
+
+  useEffect(() => {
+    auth.refreshStaffData();
+  }, []);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);

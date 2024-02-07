@@ -183,6 +183,28 @@ export const AuthProvider = (props) => {
     });
   };
 
+  const refreshStaffData = () => {
+    getAllStaff().then((res) => {
+      dispatch({
+        type: HANDLERS.SET_STAFF,
+        payload: {
+          staff: res.data.data,
+        },
+      });
+    });
+  };
+
+  const refreshClientData = () => {
+    getAllClients().then((res) => {
+      dispatch({
+        type: HANDLERS.SET_CLIENTS,
+        payload: {
+          clients: res.data.data,
+        },
+      });
+    });
+  };
+
   const logout = () => {
     window.sessionStorage.clear();
     window.localStorage.clear();
@@ -198,6 +220,8 @@ export const AuthProvider = (props) => {
         setLogin,
         logout,
         setUserProfile,
+        refreshClientData,
+        refreshStaffData,
       }}
     >
       {children}
