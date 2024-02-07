@@ -12,6 +12,7 @@ import {
   CardContent,
   CardActions,
   Divider,
+  Snackbar,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -21,6 +22,7 @@ import Breadcrumb from "src/components/Breadcrumb";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import useApiStructure from "src/api/structure";
+import { useState } from "react";
 
 const gender = [
   {
@@ -43,6 +45,7 @@ const gender = [
 
 const Page = () => {
   const api = useApiStructure("/client-profile");
+  const [dobError, setDobError] = useState(false);
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -59,29 +62,35 @@ const Page = () => {
       firstName: Yup.string().required("First name is required"),
       lastName: Yup.string().required("Last name is required"),
       address: Yup.string(),
-      personalContactNumber: Yup.string(),
+      personalContactNumber: Yup.string().required(
+        "Contact number is required"
+      ),
     }),
     onSubmit: (values, helpers) => {
-      const payload = Object.keys(values).reduce((acc, current) => {
-        if (values[current] !== null && values[current].length !== 0) {
-          acc[current] = values[current];
-        }
-        return acc;
-      }, {});
-
-      api
-        .create(payload)
-        .then((response) => {
-          if (response.status === 200) {
-            router.push("/customers");
+      if (values.dateOfBirth === null) {
+        setDobError(true);
+      } else {
+        const payload = Object.keys(values).reduce((acc, current) => {
+          if (values[current] !== null && values[current].length !== 0) {
+            acc[current] = values[current];
           }
-        })
-        .catch((err) => {
-          const msg = parseServerErrorMsg(err);
-          helpers.setStatus({ success: false });
-          helpers.setErrors({ submit: msg });
-          helpers.setSubmitting(false);
-        });
+          return acc;
+        }, {});
+
+        api
+          .create(payload)
+          .then((response) => {
+            if (response.status === 200) {
+              router.push("/customers");
+            }
+          })
+          .catch((err) => {
+            const msg = parseServerErrorMsg(err);
+            helpers.setStatus({ success: false });
+            helpers.setErrors({ submit: msg });
+            helpers.setSubmitting(false);
+          });
+      }
     },
   });
 
@@ -98,6 +107,14 @@ const Page = () => {
         py: 4,
       }}
     >
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        open={dobError}
+        onClose={setDobError}
+        message="Date of Birth is required!"
+        key="Dob"
+        autoHideDuration={5000}
+      />
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <Breadcrumb items={breadcrumbItems} />
@@ -200,6 +217,7 @@ const Page = () => {
                         onChange={formik.handleChange}
                         type="text"
                         value={formik.values.personalContactNumber}
+                        required
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
@@ -224,6 +242,7 @@ const Page = () => {
                     </Grid>
                     <Grid xs={12} sm={6}>
                       <DatePicker
+                        required
                         error={
                           !!(
                             formik.touched.dateOfBirth &&

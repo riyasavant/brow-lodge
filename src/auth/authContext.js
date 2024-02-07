@@ -44,6 +44,8 @@ const handlers = {
       authToken: null,
       user: null,
       isAuthenticated: false,
+      staff: [],
+      clients: [],
     };
   },
   [HANDLERS.INITIALIZE]: (state, action) => {
