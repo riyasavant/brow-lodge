@@ -24,8 +24,8 @@ const searchData = [
 ];
 
 const headers = [
-  { key: "name", label: "Client Name", sort: true },
-  { key: "dateOfBirth", label: "Client Date of Birth", sort: true },
+  { key: "name", label: "Client Name" },
+  { key: "dateOfBirth", label: "Client Date of Birth" },
   { key: "clientSign", label: "Client signature" },
 ];
 

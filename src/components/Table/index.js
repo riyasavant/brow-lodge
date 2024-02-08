@@ -61,7 +61,6 @@ const CustomTable = (props) => {
         headers={search}
         onChange={onSearch}
         onResetSearch={onResetSearch}
-        tableData={items}
       />
       <Card>
         {items.length === 0 && (
