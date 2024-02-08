@@ -36,7 +36,7 @@ const Page = () => {
 
   const formik = useFormik({
     initialValues: {
-      therapist: "",
+      therapist: null,
       browColour: "",
       lashColour: "",
       overleafCondition: "No",
@@ -44,7 +44,7 @@ const Page = () => {
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
-      therapist: Yup.string().required("This field is required"),
+      therapist: Yup.object().required("This field is required"),
       browColour: Yup.string().required("This field is required"),
       lashColour: Yup.string().required("This field is required"),
       overleafCondition: Yup.string().required("This field is required"),
@@ -56,6 +56,7 @@ const Page = () => {
         date: dayjs(formDate).format(),
         tint: router.query.id,
         clientSign: imgUrl,
+        therapist: values.therapist.value || "",
       };
 
       api

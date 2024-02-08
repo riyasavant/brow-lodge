@@ -78,6 +78,7 @@ const Page = () => {
     api
       .deleteEntry(id)
       .then(() => {
+        auth.refreshStaffData();
         api
           .getAll(page, rowsPerPage, sort, search)
           .then((res) => {

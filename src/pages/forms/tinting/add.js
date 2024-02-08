@@ -18,7 +18,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { parseServerErrorMsg } from "src/utils/axios";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import dayjs from "dayjs";
@@ -26,11 +26,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
-import { useAuthContext } from "src/auth/authContext";
-import { getClientLabel, getStaffLabel } from "src/utils/common";
+import ClientDropdown from "src/components/Dropdown/Client";
+import StaffDropdown from "src/components/Dropdown/Staff";
 
 const Page = () => {
-  const { staff, clients } = useAuthContext();
   const api = useApiStructure("/tint-consultation");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
@@ -44,15 +43,16 @@ const Page = () => {
     initialValues: {
       doctorName: "",
       doctorAddress: "",
-      client: clients.length > 0 ? clients[0].id : "",
-      technicianName: staff.length > 0 ? getStaffLabel(staff[0]) : "",
+      technicianName: null,
       colourEyelash: "",
       colourEyebrow: "",
       disease: [],
+      client: null,
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
-      technicianName: Yup.string().required("Technician address is required"),
+      client: Yup.object().required("This field is required"),
+      technicianName: Yup.object().required("This field is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
@@ -62,6 +62,8 @@ const Page = () => {
         date: dayjs(formDate).format(),
         disease: values.disease.length === 0 ? null : values.disease,
         clientSign: imgUrl,
+        client: values.client.value,
+        technicianName: values.technicianName.value,
       };
 
       api
@@ -125,25 +127,7 @@ const Page = () => {
                 <Box sx={{ m: -1.5 }}>
                   <Grid container spacing={3}>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(formik.touched.client && formik.errors.client)
-                        }
-                        fullWidth
-                        label="Select client"
-                        name="client"
-                        onChange={formik.handleChange}
-                        required
-                        select
-                        SelectProps={{ native: true }}
-                        value={formik.values.client}
-                      >
-                        {clients.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {getClientLabel(option)}
-                          </option>
-                        ))}
-                      </TextField>
+                      <ClientDropdown formik={formik} />
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField
@@ -187,31 +171,11 @@ const Page = () => {
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.technicianName &&
-                            formik.errors.technicianName
-                          )
-                        }
-                        fullWidth
+                      <StaffDropdown
+                        inputKey="technicianName"
                         label="Technician Name"
-                        name="technicianName"
-                        onChange={formik.handleChange}
-                        required
-                        select
-                        SelectProps={{ native: true }}
-                        value={formik.values.technicianName}
-                      >
-                        {staff.map((option) => (
-                          <option
-                            key={getStaffLabel(option)}
-                            value={getStaffLabel(option)}
-                          >
-                            {getStaffLabel(option)}
-                          </option>
-                        ))}
-                      </TextField>
+                        formik={formik}
+                      />
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField

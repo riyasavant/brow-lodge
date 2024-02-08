@@ -25,14 +25,16 @@ import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
 import StaffDropdown from "src/components/Dropdown/Staff";
 import BooleanDropdown from "src/components/Dropdown/Boolean";
+import { useAuthContext } from "src/auth/authContext";
 
 const Page = () => {
+  const { staff } = useAuthContext();
   const api = useApiStructure("/wax-consultation-details");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
   const [data, setData] = useState({
-    therapist: "",
+    therapist: null,
     skinBefore: "",
     skinAfter: "",
     treatment: "",
@@ -45,7 +47,7 @@ const Page = () => {
     initialValues: data,
     enableReinitialize: true,
     validationSchema: Yup.object({
-      therapist: Yup.string().required("This field is required"),
+      therapist: Yup.object().required("This field is required"),
       skinBefore: Yup.string().required("This field is required"),
       skinAfter: Yup.string().required("This field is required"),
       treatment: Yup.string().required("This field is required"),
@@ -57,6 +59,7 @@ const Page = () => {
         date: dayjs(formDate).format(),
         wax: router.query.formId,
         clientSign: imgUrl,
+        therapist: values.therapist.value || "",
       };
 
       api
@@ -80,8 +83,11 @@ const Page = () => {
       .getById(router.query.id)
       .then((res) => {
         const formData = res.data;
+        const staffData = staff.filter(
+          (item) => item.value === formData.therapist
+        )[0];
         setData({
-          therapist: formData.therapist || "",
+          therapist: staffData || "",
           skinAfter: formData.skinAfter || "",
           skinBefore: formData.skinBefore || "",
           treatment: formData.treatment || "",
@@ -143,6 +149,7 @@ const Page = () => {
                         inputKey="therapist"
                         label="Therapist"
                         formik={formik}
+                        isEdit
                       />
                     </Grid>
                     <Grid xs={12} md={6}>

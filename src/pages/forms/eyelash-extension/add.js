@@ -30,11 +30,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
-import { useAuthContext } from "src/auth/authContext";
-import { getClientLabel } from "src/utils/common";
+import ClientDropdown from "src/components/Dropdown/Client";
+import StaffDropdown from "src/components/Dropdown/Staff";
 
 const Page = () => {
-  const { staff: STAFF, clients: CLIENTS } = useAuthContext();
   const api = useApiStructure("/eyelash-extension");
 
   const [formDate, setFormDate] = useState(new Date());
@@ -47,19 +46,19 @@ const Page = () => {
 
   const formik = useFormik({
     initialValues: {
-      technicianName:
-        STAFF.length > 0 ? `${STAFF[0].firstName} ${STAFF[0].lastName}` : "",
+      technicianName: null,
       doctorName: "",
       doctorAddress: "",
       isPregnant: "false",
       eyeSyndrome: "false",
       hrt: "false",
       eyeComplaint: "false",
-      client: CLIENTS.length > 0 ? getClientLabel(CLIENTS[0]) : "",
+      client: null,
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
-      technicianName: Yup.string().required("Technician name is required"),
+      client: Yup.object().required("This field is required"),
+      technicianName: Yup.object().required("This field is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
@@ -72,6 +71,8 @@ const Page = () => {
         skinPatchTestDate: dayjs(skinTestDate).format(),
         date: dayjs(formDate).format(),
         clientSign: imgUrl,
+        client: values.client.value,
+        technicianName: values.technicianName.value,
       };
 
       api
@@ -124,25 +125,7 @@ const Page = () => {
                 <Box sx={{ m: -1.5 }}>
                   <Grid container spacing={3}>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(formik.touched.client && formik.errors.client)
-                        }
-                        fullWidth
-                        label="Select client"
-                        name="client"
-                        onChange={formik.handleChange}
-                        required
-                        select
-                        SelectProps={{ native: true }}
-                        value={formik.values.client}
-                      >
-                        {CLIENTS.map((option) => (
-                          <option key={option.label} value={option.id}>
-                            {getClientLabel(option)}
-                          </option>
-                        ))}
-                      </TextField>
+                      <ClientDropdown formik={formik} />
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField
@@ -186,31 +169,11 @@ const Page = () => {
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.technicianName &&
-                            formik.errors.technicianName
-                          )
-                        }
-                        fullWidth
+                      <StaffDropdown
+                        inputKey="technicianName"
                         label="Technician Name"
-                        name="technicianName"
-                        onChange={formik.handleChange}
-                        required
-                        select
-                        SelectProps={{ native: true }}
-                        value={formik.values.technicianName}
-                      >
-                        {STAFF?.map((option) => (
-                          <option
-                            key={option.label}
-                            value={`${option.firstName} ${option.lastName}`}
-                          >
-                            {`${option.firstName} ${option.lastName}`}
-                          </option>
-                        ))}
-                      </TextField>
+                        formik={formik}
+                      />
                     </Grid>
                     <Grid xs={12}>
                       <Typography

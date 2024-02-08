@@ -32,6 +32,8 @@ import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
 import { useAuthContext } from "src/auth/authContext";
 import { getClientLabel, getStaffLabel } from "src/utils/common";
+import ClientDropdown from "src/components/Dropdown/Client";
+import StaffDropdown from "src/components/Dropdown/Staff";
 
 const Page = () => {
   const { staff, clients } = useAuthContext();
@@ -49,17 +51,20 @@ const Page = () => {
     initialValues: {
       doctorName: "",
       doctorAddress: "",
-      client: clients.length > 0 ? clients[0].id : "",
-      technicianName: staff.length > 0 ? getStaffLabel(staff[0]) : "",
+      client: null,
+      technicianName: null,
       disease: [],
       containProducts: [],
     },
     enableReinitialize: true,
-    validationSchema: Yup.object({}),
+    validationSchema: Yup.object({
+      client: Yup.object().required("This field is required"),
+      technicianName: Yup.object().required("This field is required"),
+    }),
     onSubmit: (values, helpers) => {
       const payload = {
         ...values,
-        client: values.client,
+        client: values.client.value,
         date: dayjs(formDate).format(),
         containProducts:
           values.containProducts.length !== 0 ? values.containProducts : null,
@@ -67,6 +72,7 @@ const Page = () => {
         clientSign: imgUrl,
         waxTreatment,
         prescribedMedicine: prescribedMedicine ? medicineDetails : null,
+        technicianName: values.technicianName.value,
       };
 
       api
@@ -94,7 +100,6 @@ const Page = () => {
   ];
 
   const onCheckboxChange = (e, type = "disease") => {
-    console.log(e, type);
     const isChecked = !e.target.checked;
     let filtered;
     if (!isChecked) {
@@ -129,25 +134,7 @@ const Page = () => {
                 <Box sx={{ m: -1.5 }}>
                   <Grid container spacing={3}>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(formik.touched.client && formik.errors.client)
-                        }
-                        fullWidth
-                        label="Select client"
-                        name="client"
-                        onChange={formik.handleChange}
-                        required
-                        select
-                        SelectProps={{ native: true }}
-                        value={formik.values.client}
-                      >
-                        {clients.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {getClientLabel(option)}
-                          </option>
-                        ))}
-                      </TextField>
+                      <ClientDropdown formik={formik} />
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField
@@ -191,31 +178,11 @@ const Page = () => {
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.technicianName &&
-                            formik.errors.technicianName
-                          )
-                        }
-                        fullWidth
+                      <StaffDropdown
+                        inputKey="technicianName"
                         label="Technician Name"
-                        name="technicianName"
-                        onChange={formik.handleChange}
-                        required
-                        select
-                        SelectProps={{ native: true }}
-                        value={formik.values.technicianName}
-                      >
-                        {staff.map((option) => (
-                          <option
-                            key={getStaffLabel(option)}
-                            value={getStaffLabel(option)}
-                          >
-                            {getStaffLabel(option)}
-                          </option>
-                        ))}
-                      </TextField>
+                        formik={formik}
+                      />
                     </Grid>
                     <Grid xs={12}>
                       <Typography

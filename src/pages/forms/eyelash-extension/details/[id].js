@@ -25,14 +25,16 @@ import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
 import StaffDropdown from "src/components/Dropdown/Staff";
 import BooleanDropdown from "src/components/Dropdown/Boolean";
+import { useAuthContext } from "src/auth/authContext";
 
 const Page = () => {
+  const { staff } = useAuthContext();
   const api = useApiStructure("/eyelash-extension-details");
   const [formDate, setFormDate] = useState(new Date());
   const [signature, setSignature] = useState(false);
   const [imgUrl, setImgUrl] = useState("");
   const [data, setData] = useState({
-    therapist: "",
+    therapist: null,
     feedback: "",
     eyeFeedback: "",
     careFeedback: "",
@@ -44,14 +46,14 @@ const Page = () => {
     initialValues: data,
     enableReinitialize: true,
     validationSchema: Yup.object({
-      therapist: Yup.string().required("This field is required"),
+      therapist: Yup.object().required("This field is required"),
       feedback: Yup.string().required("This field is required"),
       eyeFeedback: Yup.string().required("This field is required"),
       careFeedback: Yup.string().required("This field is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
-        therapist: values.therapist || "",
+        therapist: values.therapist.value || "",
         feedback: values.feedback || "",
         eyeFeedback: values.eyeFeedback || "",
         careFeedback: values.careFeedback || "",
@@ -81,8 +83,11 @@ const Page = () => {
       .getById(router.query.id)
       .then((res) => {
         const formData = res.data;
+        const staffData = staff.filter(
+          (item) => item.value === formData.therapist
+        )[0];
         setData({
-          therapist: formData.therapist || "",
+          therapist: staffData || "",
           feedback: formData.feedback || "",
           eyeFeedback: formData.eyeFeedback || "",
           careFeedback: formData.careFeedback || "",
@@ -143,6 +148,7 @@ const Page = () => {
                         inputKey="therapist"
                         label="Therapist"
                         formik={formik}
+                        isEdit
                       />
                     </Grid>
                     <Grid xs={12} md={6}>

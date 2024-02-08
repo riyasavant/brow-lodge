@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 import { useRouter } from "next/router";
 import { getUserProfile } from "src/api/auth";
 import { getAllClients, getAllStaff } from "src/api/common";
+import { parseClients, parseStaff } from "src/utils/common";
 
 const HANDLERS = {
   LOGIN: "LOGIN",
@@ -18,6 +19,10 @@ const HANDLERS = {
   PROFILE: "PROFILE",
   SET_STAFF: "SET_STAFF",
   SET_CLIENTS: "SET_CLIENTS",
+  SET_CLIENTS_LOADING: "SET_CLIENTS_LOADING",
+  SET_STAFF_LOADING: "SET_STAFF_LOADING",
+  SET_DATA: "SET_DATA",
+  SET_LOADING: "SET_LOADING",
 };
 
 const initialState = {
@@ -27,6 +32,8 @@ const initialState = {
   isAuthenticated: false,
   staff: [],
   clients: [],
+  isClientsLoading: true,
+  isStaffLoading: true,
 };
 
 const handlers = {
@@ -81,6 +88,22 @@ const handlers = {
       staff: action.payload.staff,
     };
   },
+  [HANDLERS.SET_DATA]: (state, action) => {
+    return {
+      ...state,
+      clients: action.payload.clients,
+      staff: action.payload.staff,
+      isClientsLoading: false,
+      isStaffLoading: false,
+    };
+  },
+  [HANDLERS.SET_LOADING]: (state) => {
+    return {
+      ...state,
+      isClientsLoading: true,
+      isStaffLoading: true,
+    };
+  },
 };
 
 const reducer = (state, action) =>
@@ -123,19 +146,17 @@ export const AuthProvider = (props) => {
             },
           });
         });
-        getAllClients().then((res) => {
+        dispatch({ type: HANDLERS.SET_LOADING });
+        Promise.all([
+          getAllClients().then((res) => res),
+          getAllStaff().then((res) => res),
+        ]).then((res) => {
+          const [clientData, staffData] = res;
           dispatch({
-            type: HANDLERS.SET_CLIENTS,
+            type: HANDLERS.SET_DATA,
             payload: {
-              clients: res.data.data,
-            },
-          });
-        });
-        getAllStaff().then((res) => {
-          dispatch({
-            type: HANDLERS.SET_STAFF,
-            payload: {
-              staff: res.data.data,
+              clients: parseClients(clientData.data.data),
+              staff: parseStaff(staffData.data.data),
             },
           });
         });
@@ -167,19 +188,17 @@ export const AuthProvider = (props) => {
   );
 
   const setLogin = (jwt, user) => {
-    getAllClients().then((res) => {
+    dispatch({ type: HANDLERS.SET_LOADING });
+    Promise.all([
+      getAllClients().then((res) => res),
+      getAllStaff().then((res) => res),
+    ]).then((res) => {
+      const [clientData, staffData] = res;
       dispatch({
-        type: HANDLERS.SET_CLIENTS,
+        type: HANDLERS.SET_DATA,
         payload: {
-          clients: res.data.data,
-        },
-      });
-    });
-    getAllStaff().then((res) => {
-      dispatch({
-        type: HANDLERS.SET_STAFF,
-        payload: {
-          staff: res.data.data,
+          clients: parseClients(clientData.data.data),
+          staff: parseStaff(staffData.data.data),
         },
       });
     });
@@ -206,7 +225,7 @@ export const AuthProvider = (props) => {
       dispatch({
         type: HANDLERS.SET_STAFF,
         payload: {
-          staff: res.data.data,
+          staff: parseStaff(res.data.data),
         },
       });
     });
@@ -217,7 +236,7 @@ export const AuthProvider = (props) => {
       dispatch({
         type: HANDLERS.SET_CLIENTS,
         payload: {
-          clients: res.data.data,
+          clients: parseClients(res.data.data),
         },
       });
     });

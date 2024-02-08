@@ -1,37 +1,46 @@
-import { TextField } from "@mui/material";
+import * as React from "react";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 import { useAuthContext } from "src/auth/authContext";
 import { useEffect } from "react";
 
-const StaffDropdown = ({ label, inputKey, formik }) => {
-  const { staff: STAFF } = useAuthContext();
-
-  const getLabel = (item) => {
-    return item.firstName + " " + item.lastName;
-  };
+export default function StaffDropdown({
+  formik,
+  isEdit = false,
+  label,
+  inputKey,
+}) {
+  const { staff, isStaffLoading } = useAuthContext();
 
   useEffect(() => {
-    formik.setFieldValue(inputKey, getLabel(STAFF[0]));
-  }, []);
+    if (!isStaffLoading && !isEdit) {
+      formik.setFieldValue(inputKey, staff[0]);
+    }
+  }, [isStaffLoading, isEdit]);
 
   return (
-    <TextField
-      error={!!(formik.touched[inputKey] && formik.errors[inputKey])}
-      fullWidth
-      label={label}
-      name={inputKey}
-      onChange={formik.handleChange}
-      required
-      select
-      SelectProps={{ native: true }}
+    <Autocomplete
+      disablePortal
+      id="staff-dropdown"
+      options={isStaffLoading ? [] : staff}
+      renderOption={(props, option) => (
+        <li {...props} key={option.id}>
+          {option.label}
+        </li>
+      )}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={isStaffLoading ? "Loading..." : label}
+          required
+          error={!!(formik.touched[inputKey] && formik.errors[inputKey])}
+          fullWidth
+          helperText={formik.touched[inputKey] && formik.errors[inputKey]}
+        />
+      )}
+      onChange={(_, newVal) => formik.setFieldValue(inputKey, newVal)}
+      disableClearable
       value={formik.values[inputKey]}
-    >
-      {STAFF?.map((option) => (
-        <option key={getLabel(option)} value={getLabel(option)}>
-          {getLabel(option)}
-        </option>
-      ))}
-    </TextField>
+    />
   );
-};
-
-export default StaffDropdown;
+}

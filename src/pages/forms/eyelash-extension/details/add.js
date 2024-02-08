@@ -35,21 +35,21 @@ const Page = () => {
 
   const formik = useFormik({
     initialValues: {
-      therapist: "",
+      therapist: null,
       feedback: "Yes",
       eyeFeedback: "Yes",
       careFeedback: "Yes",
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
-      therapist: Yup.string().required("This field is required"),
+      therapist: Yup.object().required("This field is required"),
       feedback: Yup.string().required("This field is required"),
       eyeFeedback: Yup.string().required("This field is required"),
       careFeedback: Yup.string().required("This field is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
-        therapist: values.therapist || "",
+        therapist: values.therapist.value || "",
         feedback: values.feedback || "",
         eyeFeedback: values.eyeFeedback || "",
         careFeedback: values.careFeedback || "",

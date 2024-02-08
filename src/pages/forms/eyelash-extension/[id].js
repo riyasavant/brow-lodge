@@ -31,7 +31,8 @@ import Signature from "src/components/Signature";
 import Breadcrumb from "src/components/Breadcrumb";
 import useApiStructure from "src/api/structure";
 import { useAuthContext } from "src/auth/authContext";
-import { getClientLabel } from "src/utils/common";
+import ClientDropdown from "src/components/Dropdown/Client";
+import StaffDropdown from "src/components/Dropdown/Staff";
 
 const Page = () => {
   const { clients: CLIENTS, staff: STAFF } = useAuthContext();
@@ -60,7 +61,8 @@ const Page = () => {
     initialValues: formData,
     enableReinitialize: true,
     validationSchema: Yup.object({
-      technicianName: Yup.string().required("Technician name is required"),
+      client: Yup.object().required("This field is required"),
+      technicianName: Yup.object().required("This field is required"),
     }),
     onSubmit: (values, helpers) => {
       const payload = {
@@ -73,6 +75,8 @@ const Page = () => {
         skinPatchTestDate: dayjs(skinTestDate).format(),
         date: dayjs(formDate).format(),
         clientSign: imgUrl,
+        client: values.client.value,
+        technicianName: values.technicianName.value,
       };
 
       api
@@ -95,22 +99,20 @@ const Page = () => {
       .then((res) => {
         const formData = res.data;
         const client = CLIENTS.filter(
-          (client) => client.id === formData.client
+          (client) => client.value === formData.client
         )[0];
         const technician = STAFF.filter((item) => {
-          return (
-            item.firstName + " " + item.lastName === formData.technicianName
-          );
+          return item.value === formData.technicianName;
         })[0];
         setFormData({
-          technicianName: technician.firstName + " " + technician.lastName,
+          technicianName: technician,
           doctorName: formData.doctorName || "",
           doctorAddress: formData.doctorAddress || "",
           isPregnant: formData.isPregnant ? "true" : "false",
           eyeSyndrome: formData.eyeSyndrome ? "true" : "false",
           hrt: formData.hrt ? "true" : "false",
           eyeComplaint: formData.eyeComplaint ? "true" : "false",
-          client: client.id,
+          client,
         });
         setFormDate(formData.date);
         setSkinTest(formData.skinPatchTest);
@@ -118,7 +120,7 @@ const Page = () => {
         setImgUrl(formData.clientSign);
       })
       .catch(() => {});
-  }, [router.query.id]);
+  }, []);
 
   const breadcrumbItems = [
     { label: "All Forms", isActive: false, link: "/forms" },
@@ -156,28 +158,7 @@ const Page = () => {
                 <Box sx={{ m: -1.5 }}>
                   <Grid container spacing={3}>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(formik.touched.client && formik.errors.client)
-                        }
-                        fullWidth
-                        label="Select client"
-                        name="client"
-                        onChange={formik.handleChange}
-                        required
-                        select
-                        SelectProps={{ native: true }}
-                        value={formik.values.client}
-                      >
-                        {CLIENTS.map((option) => (
-                          <option
-                            key={getClientLabel(option)}
-                            value={option.id}
-                          >
-                            {getClientLabel(option)}
-                          </option>
-                        ))}
-                      </TextField>
+                      <ClientDropdown isEdit formik={formik} />
                     </Grid>
                     <Grid xs={12} md={6}>
                       <TextField
@@ -221,31 +202,12 @@ const Page = () => {
                       />
                     </Grid>
                     <Grid xs={12} md={6}>
-                      <TextField
-                        error={
-                          !!(
-                            formik.touched.technicianName &&
-                            formik.errors.technicianName
-                          )
-                        }
-                        fullWidth
+                      <StaffDropdown
+                        inputKey="technicianName"
                         label="Technician Name"
-                        name="technicianName"
-                        onChange={formik.handleChange}
-                        required
-                        select
-                        SelectProps={{ native: true }}
-                        value={formik.values.technicianName}
-                      >
-                        {STAFF.map((option) => (
-                          <option
-                            key={`${option.firstName} ${option.lastName}`}
-                            value={`${option.firstName} ${option.lastName}`}
-                          >
-                            {`${option.firstName} ${option.lastName}`}
-                          </option>
-                        ))}
-                      </TextField>
+                        formik={formik}
+                        isEdit
+                      />
                     </Grid>
                     <Grid xs={12}>
                       <Typography

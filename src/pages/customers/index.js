@@ -102,6 +102,7 @@ const Page = () => {
     api
       .deleteEntry(id)
       .then((res) => {
+        auth.refreshClientData();
         api
           .getAll(page, rowsPerPage, sort, search)
           .then((res) => {
